@@ -7,13 +7,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import CustomButton from '../components/CustomButton';
 import {Picker} from '@react-native-picker/picker';
 import DocumentPicker from 'react-native-document-picker';
 import CalendarComponent from '../components/CalendarComponent';
 import CalendarComponent1 from '../components/CalendarComponent1';
 import PriceBreakupCard from '../components/PriceBreakupCard';
+import axios from 'axios';
 
 const RoomBooking = () => {
   const [selectedGender, setSelectedGender] = useState('');
@@ -25,6 +26,8 @@ const RoomBooking = () => {
   const [name, setName] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [selectedFile2, setSelectedFile2] = useState(0);
+  const [titles, setTitles] = useState([]);
+  const [selectedTitle, setSelectedTitle] = useState('');
 
   const pickFile = async () => {
     try {
@@ -42,6 +45,21 @@ const RoomBooking = () => {
       }
     }
   };
+
+  useEffect(() => {
+    axios
+      .get('http://97.74.86.231:3001/api/v1/en/rooms-category/')
+      .then(res => {
+        console.log(res.data);
+        const result = res.data.result;
+        const titles = result.map(item => item.title);
+        setSelectedRoom(titles);
+        setTitles(titles);
+        setSelectedTitle(titles[0]);
+       
+        console.log(titles);
+      });
+  }, []);
 
   const RoomOptions = [
     {label: 'Select Room No.', value: 'Select Room No.'},
@@ -154,12 +172,11 @@ const RoomBooking = () => {
             </View>
             <View style={styles.textinput}>
               <Picker
-                selectedValue={selectedRoomType}
-                onValueChange={itemValue => setSelectedRoomType(itemValue)}>
-                <Picker.Item label="Select Room Type" value="" />
-                <Picker.Item label="Single" value="single" />
-                <Picker.Item label="Double" value="double" />
-                <Picker.Item label="Deluxe" value="deluxe" />
+                selectedValue={selectedTitle}
+                onValueChange={itemValue => setSelectedTitle(itemValue)}>
+                {titles.map((title, index) => (
+                  <Picker.Item key={index} label={title} value={title} />
+                ))}
               </Picker>
             </View>
           </View>
@@ -220,10 +237,8 @@ const RoomBooking = () => {
           placeholderTextColor="gray"
         />
         <CustomButton title="Add Booking" width="95%" onPress={handleSubmit} />
-
-       
       </View>
-      <PriceBreakupCard/>
+      <PriceBreakupCard />
     </ScrollView>
   );
 };

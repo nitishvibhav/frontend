@@ -6,125 +6,23 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
+import axios from 'axios';
 
 const AllRoomBooking = () => {
   const navigation = useNavigation();
-  const data = [
-    {
-      id: '1',
-      roomtype: 'Double',
-      roomno: 102,
-      rent: '$1200',
-      status: 'Available',
-    },
-    {
-      id: '2',
-      roomtype: 'Single',
-      roomno: 103,
-      rent: '$1000',
-      status: 'Available',
-    },
-    {
-      id: '3',
-      roomtype: 'Deluxe',
-      roomno: 304,
-      rent: '$1500',
-      status: 'Booked',
-    },
-    {
-      id: '4',
-      roomtype: 'Double',
-      roomno: 202,
-      rent: '$1200',
-      status: 'Available',
-    },
-    {
-      id: '5',
-      roomtype: 'Single',
-      roomno: 203,
-      rent: '$1000',
-      status: 'Available',
-    },
-    {
-      id: '6',
-      roomtype: 'Deluxe',
-      roomno: 404,
-      rent: '$1500',
-      status: 'Booked',
-    },
-    {
-      id: '7',
-      roomtype: 'Double',
-      roomno: 102,
-      rent: '$1200',
-      status: 'Available',
-    },
-    {
-      id: '8',
-      roomtype: 'Single',
-      roomno: 103,
-      rent: '$1000',
-      status: 'Available',
-    },
-    {
-      id: '9',
-      roomtype: 'Deluxe',
-      roomno: 304,
-      rent: '$1500',
-      status: 'Booked',
-    },
-    {
-      id: '10',
-      roomtype: 'Double',
-      roomno: 202,
-      rent: '$1200',
-      status: 'Available',
-    },
-    {
-      id: '11',
-      roomtype: 'Single',
-      roomno: 203,
-      rent: '$1000',
-      status: 'Available',
-    },
-    {
-      id: '12',
-      roomtype: 'Deluxe',
-      roomno: 404,
-      rent: '$1500',
-      status: 'Booked',
-    },
-    {
-      id: '13',
-      roomtype: 'Single',
-      roomno: 203,
-      rent: '$1000',
-      status: 'Available',
-    },
-    {
-      id: '14',
-      roomtype: 'Deluxe',
-      roomno: 404,
-      rent: '$1500',
-      status: 'Booked',
-    },
-    {
-      id: '15',
-      roomtype: 'Single',
-      roomno: 203,
-      rent: '$1000',
-      status: 'Available',
-    },
-    {
-      id: '16',
-      roomtype: 'Deluxe',
-      roomno: 404,
-      rent: '$1500',
-      status: 'Booked',
-    },
-  ];
+  const [rooms, setRooms] = useState([]);
+  useEffect(() => {
+    axios
+      .get('http://97.74.86.231:3001/api/v1/en/rooms')
+      .then(res => {
+        console.log(res.data);
+        const result = res.data.result
+        setRooms(result)
+      });
+  }, []);
+
   return (
     <ScrollView>
       <View style={styles.topContainer}>
@@ -147,31 +45,31 @@ const AllRoomBooking = () => {
           </View>
         </View>
         <View style={styles.line} />
-        {data.map(item => (
-          <View key={item.id}>
+        {rooms.map(item => (
+          <View key={item._id}>
             <View style={{flexDirection: 'row', alignItems: 'center', paddingVertical:4}}>
               <View style={{width: '15%', alignItems: 'flex-start'}}>
                 <Text style={{color: 'purple', fontWeight: '800'}}>
-                  {item.roomno}
+                  {item.roomNumber}
                 </Text>
               </View>
               <View style={{width: '20%', alignItems: 'flex-start'}}>
                 <Text style={{color: 'black', fontWeight: '500'}}>
-                  {item.roomtype}
+                  {item.roomCategory}
                 </Text>
               </View>
               <View style={{width: '25%', alignItems: 'flex-start'}}>
                 <Text
                   style={{
-                    color: item.status == 'Available' ? 'orange' : 'green',
+                    color: item.roomStatus == 'Vacant' ? 'orange' : 'green',
                     fontWeight: '800',
                   }}>
-                  {item.status}
+                  {item.roomStatus}
                 </Text>
               </View>
               <View style={{width: '20%', alignItems: 'flex-start'}}>
                 <Text style={{color: 'black', fontWeight: '500'}}>
-                  {item.rent}
+                  {item.description}
                 </Text>
               </View>
 
@@ -183,7 +81,7 @@ const AllRoomBooking = () => {
                 }}>
                 <TouchableOpacity
                   style={{
-                    backgroundColor: item.status=="Available"? 'orange':'green',
+                    backgroundColor: item.roomStatus=="Vacant"? 'orange':'green',
                     width: '70%',
                     height: 32,
                     borderRadius: 3,
@@ -191,13 +89,13 @@ const AllRoomBooking = () => {
                     justifyContent: 'center',
                   }}
                   onPress={() =>
-                    item.status == 'Available'
+                    item.roomStatus == 'Vacant'
                       ? navigation.navigate('Booking', {screen: 'Add booking'})
                       : navigation.navigate('RoomDetails')
                   }>
                   <Image
                     source={
-                      item.status == 'Available'
+                      item.roomStatus == 'Vacant'
                         ? require('../../../assets/images/add-group.png')
                         : require('../../../assets/images/view.png')
                     }

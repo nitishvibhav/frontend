@@ -32,38 +32,19 @@ const Login = () => {
   };
 
  console.log(data, "data")
-
-  // const loginHandler = async () => {
-  //   console.log(data, "data inside")
-  //   const res = await dispatch(login(data));
-  //   const status = get(res, 'value.status');
-  //   console.log('status', status);
-
-  //   if (status === 200) {
-  //     navigation.navigate('MainScreen');
-  //     //   window.location.reload();
-  //   } else {
-  //     console.log('res', res);
-  //     alert('Invalied username or password...');
-  //   }
-  // };
-
-
+ 
   const loginHandler = async () => {
     const res = await dispatch(login(data))
     const status = get(res, 'value.status')
     console.log('status', status)
     if (status === 200) {
       alert('Login Successfully')
-      // navigate('/')
-      // window.location.reload();
+      navigation.navigate('MainScreen')
     } else {
       console.log('res', res)
       alert("Invalied username or password...")
     }
   }
-
-
   return (
     <View style={styles.mainContainer}>
       <Image

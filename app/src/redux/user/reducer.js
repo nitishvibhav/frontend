@@ -20,7 +20,7 @@ const reducer = (state = initialState, action) => {
             case `${LOGIN_USER}_FULFILLED`:
             const user = action.payload.data
             setUser(user);
-            // localStorage.setItem('user', JSON.stringify(user))
+            AsyncStorage.setItem('user', JSON.stringify(user))
             AsyncStorage.setItem("token", user.token);
             return { ...state, loginState: 2, user }
             case `${LOGIN_USER}_REJECTED`:

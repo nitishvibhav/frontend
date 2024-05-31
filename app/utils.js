@@ -2,8 +2,9 @@ import React, { Component } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { get, pickBy } from "lodash";
 // import permissions from "./permissions";
-import CryptoJS from "crypto-js";
+// ssssss
 import { updateToken } from "./request";
+
 
 const getArr = (obj, ltr) => get(obj, ltr) || [];
 
@@ -11,14 +12,14 @@ const getUser = () => {
   const storedUser = AsyncStorage.getItem("user");
   if (!storedUser) return null;
 
-  const cipher = CryptoJS.AES.decrypt(storedUser, "1e7d66861419ab410c2f182ad1a7bda4345e2c569c0372b2bad5c5f7711d695725fbe23969484b2de4bd2cad1325ae2db75debca864b22b636a84c89d714dc82");
-  const data = JSON.parse(cipher.toString(CryptoJS.enc.Utf8));
-  const userNave= [
-    "dashboard", "Appointment"
-  ]
+  // const cipher = CryptoJS.AES.decrypt(storedUser, "1e7d66861419ab410c2f182ad1a7bda4345e2c569c0372b2bad5c5f7711d695725fbe23969484b2de4bd2cad1325ae2db75debca864b22b636a84c89d714dc82");
+  // const data = JSON.parse(cipher.toString(CryptoJS.enc.Utf8));
+  // const userNave= [
+  //   "dashboard", "Appointment"
+  // ]
   // data["userNav"] =userNave
-console.log(data, "dataaa")  
-  return data;
+// console.log(data, "dataaa")  
+  return storedUser;
   
 };
 
@@ -29,7 +30,6 @@ const getLanguage = () => {
   const storedUser = AsyncStorage.getItem("language");
   console.log(storedUser, "storedusers");
   if (!storedUser) return null;
-
   return storedUser;
 };
 
@@ -40,33 +40,35 @@ const getAccessToken = () => {
 const isApproved = "APPROVED";
 const isPending = "PENDING";
 const isRejected = "REJECTED";
-console.log(AsyncStorage.token, "localstoregae");
+console.log(AsyncStorage.token, "token");
 
 const updateAccessToken = () =>
   updateToken(get(getUser(), "token") /*getAccessToken()*/);
 
 const getGroups = () => getArr(getUser(), "groups");
-console.log(getGroups, "groups");
+console.log(getGroups(), "groups");
 
 const isAdmin = () =>
   getGroups().findIndex((_item) => _item === "ADMIN") !== -1;
-console.log(isAdmin, "admin");
+console.log(isAdmin(), "admin");
 
 const setUser = (data) => {
-  console.log("1e7d66861419ab410c2f182ad1a7bda4345e2c569c0372b2bad5c5f7711d695725fbe23969484b2de4bd2cad1325ae2db75debca864b22b636a84c89d714dc82", "the data in setuser");
-  var ciphertext = CryptoJS.AES.encrypt(
-    JSON.stringify(data),
-    "1e7d66861419ab410c2f182ad1a7bda4345e2c569c0372b2bad5c5f7711d695725fbe23969484b2de4bd2cad1325ae2db75debca864b22b636a84c89d714dc82"
-  ).toString();
-  console.log(ciphertext, "ciphertext");
-  AsyncStorage.setItem("user", ciphertext);
+  // console.log("1e7d66861419ab410c2f182ad1a7bda4345e2c569c0372b2bad5c5f7711d695725fbe23969484b2de4bd2cad1325ae2db75debca864b22b636a84c89d714dc82", "the data in setuser");
+  // var ciphertext = CryptoJS.AES.encrypt(
+  //   JSON.stringify(data),
+  //   "1e7d66861419ab410c2f182ad1a7bda4345e2c569c0372b2bad5c5f7711d695725fbe23969484b2de4bd2cad1325ae2db75debca864b22b636a84c89d714dc82"
+  // ).toString();
+  // console.log(ciphertext, "ciphertext");
+  AsyncStorage.setItem("user", data);
 };
+
+
 
 
 const isStudent = () =>
   getGroups().findIndex((_item) => _item === "STUDENT") !== -1;
 
-console.log(isStudent, "student");
+console.log(isStudent(), "student");
 
 // const getPermissions = (group = get(getGroups(), "0")) => {
 // //   console.log(get(permissions, group), "Groups");
@@ -120,6 +122,6 @@ export {
   isApproved,
   isPending,
   isRejected,
-  setUser
+   setUser
 
 };
