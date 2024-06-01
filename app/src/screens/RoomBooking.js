@@ -7,9 +7,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import CustomButton from '../components/CustomButton';
-import {Picker} from '@react-native-picker/picker';
+import { Picker } from '@react-native-picker/picker';
 import DocumentPicker from 'react-native-document-picker';
 import CalendarComponent from '../components/CalendarComponent';
 import CalendarComponent1 from '../components/CalendarComponent1';
@@ -20,14 +20,15 @@ const RoomBooking = () => {
   const [selectedGender, setSelectedGender] = useState('');
   const [selectedRoomType, setSelectedRoomType] = useState('');
   const [selectedRoom, setSelectedRoom] = useState('');
-  const [selectedFile, setSelectedFile] = useState(0);
-  const [person, setPerson] = useState(0);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [person, setPerson] = useState('');
   const [nameError, setNameError] = useState('');
   const [name, setName] = useState('');
   const [submitted, setSubmitted] = useState(false);
-  const [selectedFile2, setSelectedFile2] = useState(0);
+  const [selectedFile2, setSelectedFile2] = useState(null);
   const [titles, setTitles] = useState([]);
   const [selectedTitle, setSelectedTitle] = useState('');
+  const [rooms, setRooms] = useState([]);
 
   const pickFile = async () => {
     try {
@@ -47,29 +48,27 @@ const RoomBooking = () => {
   };
 
   useEffect(() => {
-    axios
-      .get('http://97.74.86.231:3001/api/v1/en/rooms-category/')
-      .then(res => {
-        console.log(res.data);
-        const result = res.data.result;
-        const titles = result.map(item => item.title);
-        setSelectedRoom(titles);
+    const fetchData = async () => {
+      try {
+        const [roomsCategoryRes, roomsRes] = await axios.all([
+          axios.get('http://97.74.86.231:3001/api/v1/en/rooms-category/'),
+          axios.get('http://97.74.86.231:3001/api/v1/en/rooms'),
+        ]);
+
+        const titles = roomsCategoryRes.data.result.map(item => item.title);
         setTitles(titles);
         setSelectedTitle(titles[0]);
-       
-        console.log(titles);
-      });
-  }, []);
 
-  const RoomOptions = [
-    {label: 'Select Room No.', value: 'Select Room No.'},
-    {label: 101, value: 101},
-    {label: 102, value: 102},
-    {label: 103, value: 103},
-    {label: 104, value: 104},
-    {label: 105, value: 105},
-    {label: 106, value: 106},
-  ];
+        const rooms = roomsRes.data.result.filter(item => item.roomStatus === 'Vacant');
+        setRooms(rooms);
+        setSelectedRoom(rooms[0]?.roomNumber || '');
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleNameChange = text => {
     setName(text);
@@ -82,7 +81,7 @@ const RoomBooking = () => {
 
   const handleSubmit = () => {
     setSubmitted(true);
-    if (!text.trim()) {
+    if (!name.trim()) {
       setNameError('Name is required');
     } else {
       // Perform submission logic
@@ -95,12 +94,9 @@ const RoomBooking = () => {
       <View style={styles.container}>
         <View style={styles.labelview}>
           <Text style={styles.label}>Full Name</Text>
-          {submitted &&
-            !text.trim()(
-              <Text style={{color: 'red', fontWeight: '700'}}>
-                Name is required
-              </Text>,
-            )}
+          {submitted && !name.trim() && (
+            <Text style={{ color: 'red', fontWeight: '700' }}>Name is required</Text>
+          )}
         </View>
         <TextInput
           style={styles.textinput}
@@ -135,13 +131,13 @@ const RoomBooking = () => {
         />
 
         <View style={styles.containerhalf}>
-          <View style={{width: '50%'}}>
+          <View style={{ width: '50%' }}>
             <View style={styles.labelview}>
               <Text style={styles.label}>Arrival Date</Text>
             </View>
             <CalendarComponent1 />
           </View>
-          <View style={{width: '50%'}}>
+          <View style={{ width: '50%' }}>
             <View style={styles.labelview}>
               <Text style={styles.label}>Departure Date</Text>
             </View>
@@ -149,15 +145,16 @@ const RoomBooking = () => {
           </View>
         </View>
         <View style={styles.containerhalf}>
-          <View style={{width: '50%'}}>
+          <View style={{ width: '50%' }}>
             <View style={styles.labelview}>
               <Text style={styles.label}>Total Person</Text>
             </View>
             <View style={styles.textinput}>
               <Picker
                 selectedValue={person}
-                onValueChange={itemValue => setPerson(itemValue)}>
-                <Picker.Item label="Total Person" value=" " />
+                onValueChange={itemValue => setPerson(itemValue)}
+              >
+                <Picker.Item label="Total Person" value="" />
                 <Picker.Item label="1" value="1" />
                 <Picker.Item label="2" value="2" />
                 <Picker.Item label="3" value="3" />
@@ -166,14 +163,15 @@ const RoomBooking = () => {
               </Picker>
             </View>
           </View>
-          <View style={{width: '50%'}}>
+          <View style={{ width: '50%' }}>
             <View style={styles.labelview}>
               <Text style={styles.label}>Select Room Type</Text>
             </View>
             <View style={styles.textinput}>
               <Picker
                 selectedValue={selectedTitle}
-                onValueChange={itemValue => setSelectedTitle(itemValue)}>
+                onValueChange={itemValue => setSelectedTitle(itemValue)}
+              >
                 {titles.map((title, index) => (
                   <Picker.Item key={index} label={title} value={title} />
                 ))}
@@ -182,32 +180,30 @@ const RoomBooking = () => {
           </View>
         </View>
         <View style={styles.containerhalf}>
-          <View style={{width: '50%'}}>
+          <View style={{ width: '50%' }}>
             <View style={styles.labelview}>
               <Text style={styles.label}>Select Room No.</Text>
             </View>
             <View style={styles.textinput}>
               <Picker
                 selectedValue={selectedRoom}
-                onValueChange={itemValue => setSelectedRoom(itemValue)}>
-                {RoomOptions.map(option => (
-                  <Picker.Item
-                    key={option.value}
-                    label={option.label}
-                    value={option.value}
-                  />
+                onValueChange={itemValue => setSelectedRoom(itemValue)}
+              >
+                {rooms.map(room => (
+                  <Picker.Item key={room._id} label={room.roomNumber.toString()} value={room.roomNumber} />
                 ))}
               </Picker>
             </View>
           </View>
-          <View style={{width: '50%'}}>
+          <View style={{ width: '50%' }}>
             <View style={styles.labelview}>
               <Text style={styles.label}>Select Gender</Text>
             </View>
             <View style={styles.textinput}>
               <Picker
                 selectedValue={selectedGender}
-                onValueChange={itemValue => setSelectedGender(itemValue)}>
+                onValueChange={itemValue => setSelectedGender(itemValue)}
+              >
                 <Picker.Item label="Select Gender" value="" />
                 <Picker.Item label="Male" value="male" />
                 <Picker.Item label="Female" value="female" />
@@ -220,10 +216,10 @@ const RoomBooking = () => {
         </View>
         <View style={styles.button}>
           <TouchableOpacity onPress={pickFile} style={styles.touchableopacity}>
-            <Text>Selected File {selectedFile[{}]}</Text>
+            <Text>{selectedFile ? selectedFile.name : 'Select File'}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={pickFile} style={styles.touchableopacity}>
-            <Text>Selected File {selectedFile2[{}]}</Text>
+            <Text>{selectedFile2 ? selectedFile2.name : 'Select File'}</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.labelview}>
@@ -233,7 +229,7 @@ const RoomBooking = () => {
           style={styles.textinput}
           multiline={true}
           numberOfLines={1}
-          placeholder="note"
+          placeholder="Note"
           placeholderTextColor="gray"
         />
         <CustomButton title="Add Booking" width="95%" onPress={handleSubmit} />

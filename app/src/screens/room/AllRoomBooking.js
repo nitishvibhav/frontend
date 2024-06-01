@@ -6,27 +6,30 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import React, { useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 
+import {useDispatch, useSelector} from 'react-redux';
+
+import {getRooms} from '../../redux/rooms/action';
+
 const AllRoomBooking = () => {
+  const dispatch = useDispatch();
   const navigation = useNavigation();
-  const [rooms, setRooms] = useState([]);
+
+  const {roomsState, rooms} = useSelector(state => state.roomReducer);
+
   useEffect(() => {
-    axios
-      .get('http://97.74.86.231:3001/api/v1/en/rooms')
-      .then(res => {
-        console.log(res.data);
-        const result = res.data.result
-        setRooms(result)
-      });
+    dispatch(getRooms());
   }, []);
+
+  console.log(rooms, 'rooms data');
 
   return (
     <ScrollView>
       <View style={styles.topContainer}>
-        <View style={{flexDirection: 'row', }}>
+        <View style={{flexDirection: 'row'}}>
           <View style={{width: '15%', alignItems: 'flex-start'}}>
             <Text style={styles.headingtext}>Room </Text>
           </View>
@@ -45,9 +48,14 @@ const AllRoomBooking = () => {
           </View>
         </View>
         <View style={styles.line} />
-        {rooms.map(item => (
+        {rooms?.result?.map(item => (
           <View key={item._id}>
-            <View style={{flexDirection: 'row', alignItems: 'center', paddingVertical:4}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingVertical: 4,
+              }}>
               <View style={{width: '15%', alignItems: 'flex-start'}}>
                 <Text style={{color: 'purple', fontWeight: '800'}}>
                   {item.roomNumber}
@@ -81,7 +89,8 @@ const AllRoomBooking = () => {
                 }}>
                 <TouchableOpacity
                   style={{
-                    backgroundColor: item.roomStatus=="Vacant"? 'orange':'green',
+                    backgroundColor:
+                      item.roomStatus == 'Vacant' ? 'orange' : 'green',
                     width: '70%',
                     height: 32,
                     borderRadius: 3,

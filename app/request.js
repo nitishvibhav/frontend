@@ -5,10 +5,6 @@ const accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0M2ZhNGExMT
 const url = {
       base: 
       "http://97.74.86.231:3001/api/v1/en/",
-      // "https://guidance-alb-22456192.us-east-1.elb.amazonaws.com/api/v1/en/"
-      // "http://54.198.50.249:3001/api/v1/en/",
-      // "http://18.234.85.85:3001/api/v1/en/",
-      // "https://apis.guidanceeducation.com.np/api/v1/en/",
 };
 
 

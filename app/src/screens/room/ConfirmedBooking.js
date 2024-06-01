@@ -6,24 +6,31 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import React , {useState, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import axios from 'axios';
+import {useDispatch, useSelector} from 'react-redux';
+import {getRooms} from '../../redux/rooms/action';
 
 const ConfirmedBooking = () => {
+  const dispatch = useDispatch();
   const navigation = useNavigation();
+  const {roomsState, rooms} = useSelector(state => state.roomReducer);
+  const [bookedRooms, setBookedRooms] = useState([]);
 
-  const [rooms, setRooms] = useState([]);
   useEffect(() => {
-    axios.get('http://97.74.86.231:3001/api/v1/en/rooms').then(res => {
-      console.log(res.data);
-      const result = res.data.result;
-      setRooms(rooms);
-      setRooms(result);
-    });
+    dispatch(getRooms());
   }, []);
 
-  const bookedRooms = rooms.filter(item => item.roomStatus === 'Booked');
+  useEffect(() => {
+    if (rooms && rooms.result) {
+      const filteredRooms = rooms.result.filter(
+        room => room.roomStatus === 'Booked',
+      );
+      setBookedRooms(filteredRooms);
+    }
+  }, [rooms]);
+
+  console.log(bookedRooms, 'booked rooms data');
 
   return (
     <ScrollView>
