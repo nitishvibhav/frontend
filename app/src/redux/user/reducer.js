@@ -7,7 +7,7 @@ const initialState = {
     loginState: 0,
     addState: 0,
     loginError: {},
-    googleUser: {}
+  
 }
 
 const reducer = (state = initialState, action) => {
@@ -25,26 +25,10 @@ const reducer = (state = initialState, action) => {
             return { ...state, loginState: 2, user }
             case `${LOGIN_USER}_REJECTED`:
             return { ...state, loginState: 3, loginError: action.payload.response.data }
-            console.log(action.payload, "action.payload")
+           
 
 
-            case `SIGN_IN_WITH_GOOGLE_PENDING`:
-            return { ...state, loginState: 1 }
-            case `SIGN_IN_WITH_GOOGLE_FULFILLED`:
-            const googleuser = action.payload.data
-            setUser(googleuser);
-            AsyncStorage.setItem("token", googleuser.token);
-            return { ...state, loginState: 2, googleuser }
-            case `SIGN_IN_WITH_GOOGLE_REJECTED`:
-            return { ...state, loginState: 3, loginError: action.payload.response.data }
-
-
-            case "SIGN_UP_PENDING":
-                return { ...state, loginState: 1 };
-              case "SIGN_UP_FULFILLED":
-                return { ...state, loginState: 2, user: action.payload.data };
-              case "SIGN_UP_REJECTED":
-                return { ...state, loginState: 3 };
+           
 
 
         default:

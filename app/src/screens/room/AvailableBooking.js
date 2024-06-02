@@ -24,7 +24,7 @@ const AvailableBooking = () => {
   useEffect(() => {
     if (rooms && rooms.result) {
       const filteredRooms = rooms.result.filter(
-        room => room.roomStatus === 'Booked',
+        room => room.roomStatus === 'Vacant',
       );
       setBookedRooms(filteredRooms);
     }
@@ -81,7 +81,7 @@ const AvailableBooking = () => {
               </View>
               <View style={{width: '20%', alignItems: 'flex-start'}}>
                 <Text style={{color: 'black', fontWeight: '500'}}>
-                  {item.description}
+                  {item.price}
                 </Text>
               </View>
               <View

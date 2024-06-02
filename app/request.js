@@ -57,4 +57,4 @@ const request = {
   },
 };
 
-export { request, updateToken };
+export { request, updateToken, getConfig };

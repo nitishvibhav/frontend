@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import axios from 'axios';
 
 import {useDispatch, useSelector} from 'react-redux';
 
@@ -77,7 +76,7 @@ const AllRoomBooking = () => {
               </View>
               <View style={{width: '20%', alignItems: 'flex-start'}}>
                 <Text style={{color: 'black', fontWeight: '500'}}>
-                  {item.description}
+                  {item.price}
                 </Text>
               </View>
 

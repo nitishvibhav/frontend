@@ -7,13 +7,45 @@ import {
   ScrollView,
   TextInput,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import CustomButton from '../../components/CustomButton';
 import {useNavigation} from '@react-navigation/native';
 import TopMiniCard from '../../components/homepage/TopMiniCard';
+import {getRooms} from '../../redux/rooms/action';
+import {useDispatch, useSelector} from 'react-redux';
 
 const Home = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const {rooms} = useSelector(state => state.roomReducer);
+  const [totalRooms, setTotalRooms] = useState(0);
+  const [bookedRooms, setBookedRooms] = useState(0);
+  const [VacantRoomCount, setVacantRoomCount] = useState(0);
+
+  useEffect(() => {
+    dispatch(getRooms());
+    setTotalRooms(rooms.count);
+  }, []);
+
+  useEffect(() => {
+    if (rooms && rooms.result) {
+      const filteredRooms = rooms.result.filter(
+        room => room.roomStatus === 'Vacant',
+      );
+      setVacantRoomCount(filteredRooms.length);
+    }
+  }, [rooms]);
+
+  useEffect(() => {
+    if (rooms && rooms.result) {
+      const filteredRooms = rooms.result.filter(
+        room => room.roomStatus === 'Booked',
+      );
+      setBookedRooms(filteredRooms.length);
+    }
+  }, [rooms]);
+
+  console.log(rooms.count, 'room data count');
   return (
     <ScrollView>
       <View
@@ -22,7 +54,7 @@ const Home = () => {
           width: '100%',
           flexDirection: 'row',
           padding: 20,
-          alignItems:'center'
+          alignItems: 'center',
         }}>
         <TouchableOpacity
           onPress={() => {
@@ -36,17 +68,45 @@ const Home = () => {
             }}
           />
         </TouchableOpacity>
-        <Text style = {{marginLeft:20, fontSize:18, color:'black', fontWeight:'700'}}>Dashboard</Text>
+        <Text
+          style={{
+            marginLeft: 20,
+            fontSize: 18,
+            color: 'black',
+            fontWeight: '700',
+          }}>
+          Dashboard
+        </Text>
       </View>
       <View style={{marginTop: 10}}>
-      <View style={styles.mainView}>
-      <TopMiniCard title="Total Rooms : 30" width="49%" color1 ="#3f5efb" color2="#fc466b"/>
-      <TopMiniCard title="Vacant Rooms : 15" width="49%" color1 ="#090979" color2="#00d4ff"/>
-      </View>
-      <View style={styles.mainView}>
-      <TopMiniCard title="Checked-in : 15" width="49%" color2 ="#A5CC82" color1="#00467F"/>
-      <TopMiniCard title="Pending Checked-in:0" width="49%" color2 ="#6FB1FC" color1="#0052D4"/>
-      </View>
+        <View style={styles.mainView}>
+          <TopMiniCard
+            title={`Total Rooms : ${totalRooms}`}
+            width="49%"
+            color1="#3f5efb"
+            color2="#fc466b"
+          />
+          <TopMiniCard
+            title={`Vacant Rooms : ${VacantRoomCount}`}
+            width="49%"
+            color1="#090979"
+            color2="#00d4ff"
+          />
+        </View>
+        <View style={styles.mainView}>
+          <TopMiniCard
+            title={`Booked Rooms : ${bookedRooms}`}
+            width="49%"
+            color2="#A5CC82"
+            color1="#00467F"
+          />
+          <TopMiniCard
+            title="Pending Checked-in:0"
+            width="49%"
+            color2="#6FB1FC"
+            color1="#0052D4"
+          />
+        </View>
       </View>
       <View
         style={{
@@ -64,7 +124,9 @@ const Home = () => {
           Recent Booking
         </Text>
         <TouchableOpacity
-          onPress={() => navigation.navigate('Booking', {screen: 'All Booking'})}
+          onPress={() =>
+            navigation.navigate('Booking', {screen: 'All Booking'})
+          }
           style={{flexDirection: 'row', alignItems: 'flex-end'}}>
           <Text
             style={{
@@ -213,7 +275,7 @@ const Home = () => {
           Recent Room Booking
         </Text>
         <TouchableOpacity
-        onPress={()=>navigation.navigate("Room", {screen:'All Room'})}
+          onPress={() => navigation.navigate('Room', {screen: 'All Room'})}
           style={{flexDirection: 'row', alignItems: 'flex-end'}}>
           <Text
             style={{
@@ -331,7 +393,11 @@ const Home = () => {
           </View>
         </View>
       </View>
-      <CustomButton title="+ add new Room booking" width="95%" onPress={()=>navigation.navigate('Booking',{screen:'Add Booking'})} />
+      <CustomButton
+        title="+ add new Room booking"
+        width="95%"
+        onPress={() => navigation.navigate('Booking', {screen: 'Add Booking'})}
+      />
     </ScrollView>
   );
 };
@@ -372,7 +438,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
     borderRadius: 6,
-
   },
   mainView: {
     width: '95%',

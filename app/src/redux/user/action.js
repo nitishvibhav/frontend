@@ -18,18 +18,3 @@ export function setUser (user) {
         })
     }
 }
-export function signUp(body) {
-    console.log(body, "body");
-    return {
-      type: "SIGN_UP",
-      payload: source.signUp(body),
-    };
-  }
-
-export function googleLoginRequest(data) {
-    console.log(data, "body");
-    return {
-      type: "SIGN_IN_WITH_GOOGLE",
-      payload: source.googleLoginRequest(data),
-    };
-  }

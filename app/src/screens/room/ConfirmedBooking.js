@@ -39,10 +39,10 @@ const ConfirmedBooking = () => {
           <View style={{width: '15%', alignItems: 'flex-start'}}>
             <Text style={styles.headingtext}>Room </Text>
           </View>
-          <View style={{width: '20%', alignItems: 'flex-start'}}>
+          <View style={{width: '25%', alignItems: 'flex-start'}}>
             <Text style={styles.headingtext}>Type</Text>
           </View>
-          <View style={{width: '25%', alignItems: 'flex-start'}}>
+          <View style={{width: '20%', alignItems: 'flex-start'}}>
             <Text style={styles.headingtext}>Status</Text>
           </View>
           <View style={{width: '20%', alignItems: 'flex-start'}}>
@@ -67,12 +67,12 @@ const ConfirmedBooking = () => {
                   {item.roomNumber}
                 </Text>
               </View>
-              <View style={{width: '20%', alignItems: 'flex-start'}}>
+              <View style={{width: '25%', alignItems: 'flex-start'}}>
                 <Text style={{color: 'black', fontWeight: '500'}}>
                   {item.roomCategory}
                 </Text>
               </View>
-              <View style={{width: '25%', alignItems: 'flex-start'}}>
+              <View style={{width: '20%', alignItems: 'flex-start'}}>
                 <Text
                   style={{
                     color: 'green',
@@ -83,7 +83,7 @@ const ConfirmedBooking = () => {
               </View>
               <View style={{width: '20%', alignItems: 'flex-start'}}>
                 <Text style={{color: 'black', fontWeight: '500'}}>
-                  {item.description}
+                  {item.price}
                 </Text>
               </View>
 

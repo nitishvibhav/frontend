@@ -7,14 +7,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import CustomButton from '../components/CustomButton';
-import { Picker } from '@react-native-picker/picker';
+import {Picker} from '@react-native-picker/picker';
 import DocumentPicker from 'react-native-document-picker';
 import CalendarComponent from '../components/CalendarComponent';
 import CalendarComponent1 from '../components/CalendarComponent1';
 import PriceBreakupCard from '../components/PriceBreakupCard';
 import axios from 'axios';
+import * as request from '../../request';
+import {useDispatch, useSelector} from 'react-redux';
+import {postBooking} from '../redux/booking/bookingAction';
 
 const RoomBooking = () => {
   const [selectedGender, setSelectedGender] = useState('');
@@ -29,6 +32,14 @@ const RoomBooking = () => {
   const [titles, setTitles] = useState([]);
   const [selectedTitle, setSelectedTitle] = useState('');
   const [rooms, setRooms] = useState([]);
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+  const [arrivalDate, setArrivalDate] = useState('');
+  const [departureDate, setDepartureDate] = useState('');
+  const [note, setNote] = useState('');
+  const {success} = useSelector(state => state.bookingReducer);
+  const dispatch = useDispatch();
 
   const pickFile = async () => {
     try {
@@ -59,7 +70,9 @@ const RoomBooking = () => {
         setTitles(titles);
         setSelectedTitle(titles[0]);
 
-        const rooms = roomsRes.data.result.filter(item => item.roomStatus === 'Vacant');
+        const rooms = roomsRes.data.result.filter(
+          item => item.roomStatus === 'Vacant',
+        );
         setRooms(rooms);
         setSelectedRoom(rooms[0]?.roomNumber || '');
       } catch (error) {
@@ -79,15 +92,7 @@ const RoomBooking = () => {
     }
   };
 
-  const handleSubmit = () => {
-    setSubmitted(true);
-    if (!name.trim()) {
-      setNameError('Name is required');
-    } else {
-      // Perform submission logic
-      alert('Form submitted successfully');
-    }
-  };
+ 
 
   return (
     <ScrollView>
@@ -95,7 +100,9 @@ const RoomBooking = () => {
         <View style={styles.labelview}>
           <Text style={styles.label}>Full Name</Text>
           {submitted && !name.trim() && (
-            <Text style={{ color: 'red', fontWeight: '700' }}>Name is required</Text>
+            <Text style={{color: 'red', fontWeight: '700'}}>
+              Name is required
+            </Text>
           )}
         </View>
         <TextInput
@@ -112,6 +119,8 @@ const RoomBooking = () => {
           style={styles.textinput}
           placeholder="Email"
           placeholderTextColor="gray"
+          value={email}
+          onChangeText={setEmail}
         />
         <View style={styles.labelview}>
           <Text style={styles.label}>Phone No.</Text>
@@ -120,6 +129,8 @@ const RoomBooking = () => {
           style={styles.textinput}
           placeholder="Mobile No."
           placeholderTextColor="gray"
+          value={phone}
+          onChangeText={setPhone}
         />
         <View style={styles.labelview}>
           <Text style={styles.label}>Address</Text>
@@ -128,32 +139,33 @@ const RoomBooking = () => {
           style={styles.textinput}
           placeholder="Address"
           placeholderTextColor="gray"
+          value={address}
+          onChangeText={setAddress}
         />
 
         <View style={styles.containerhalf}>
-          <View style={{ width: '50%' }}>
+          <View style={{width: '50%'}}>
             <View style={styles.labelview}>
               <Text style={styles.label}>Arrival Date</Text>
             </View>
-            <CalendarComponent1 />
+            <CalendarComponent1 onChange={setArrivalDate} />
           </View>
-          <View style={{ width: '50%' }}>
+          <View style={{width: '50%'}}>
             <View style={styles.labelview}>
               <Text style={styles.label}>Departure Date</Text>
             </View>
-            <CalendarComponent />
+            <CalendarComponent onChange={setDepartureDate} />
           </View>
         </View>
         <View style={styles.containerhalf}>
-          <View style={{ width: '50%' }}>
+          <View style={{width: '50%'}}>
             <View style={styles.labelview}>
               <Text style={styles.label}>Total Person</Text>
             </View>
             <View style={styles.textinput}>
               <Picker
                 selectedValue={person}
-                onValueChange={itemValue => setPerson(itemValue)}
-              >
+                onValueChange={itemValue => setPerson(itemValue)}>
                 <Picker.Item label="Total Person" value="" />
                 <Picker.Item label="1" value="1" />
                 <Picker.Item label="2" value="2" />
@@ -163,15 +175,14 @@ const RoomBooking = () => {
               </Picker>
             </View>
           </View>
-          <View style={{ width: '50%' }}>
+          <View style={{width: '50%'}}>
             <View style={styles.labelview}>
               <Text style={styles.label}>Select Room Type</Text>
             </View>
             <View style={styles.textinput}>
               <Picker
                 selectedValue={selectedTitle}
-                onValueChange={itemValue => setSelectedTitle(itemValue)}
-              >
+                onValueChange={itemValue => setSelectedTitle(itemValue)}>
                 {titles.map((title, index) => (
                   <Picker.Item key={index} label={title} value={title} />
                 ))}
@@ -180,30 +191,32 @@ const RoomBooking = () => {
           </View>
         </View>
         <View style={styles.containerhalf}>
-          <View style={{ width: '50%' }}>
+          <View style={{width: '50%'}}>
             <View style={styles.labelview}>
               <Text style={styles.label}>Select Room No.</Text>
             </View>
             <View style={styles.textinput}>
               <Picker
                 selectedValue={selectedRoom}
-                onValueChange={itemValue => setSelectedRoom(itemValue)}
-              >
+                onValueChange={itemValue => setSelectedRoom(itemValue)}>
                 {rooms.map(room => (
-                  <Picker.Item key={room._id} label={room.roomNumber.toString()} value={room.roomNumber} />
+                  <Picker.Item
+                    key={room._id}
+                    label={room.roomNumber.toString()}
+                    value={room.roomNumber}
+                  />
                 ))}
               </Picker>
             </View>
           </View>
-          <View style={{ width: '50%' }}>
+          <View style={{width: '50%'}}>
             <View style={styles.labelview}>
               <Text style={styles.label}>Select Gender</Text>
             </View>
             <View style={styles.textinput}>
               <Picker
                 selectedValue={selectedGender}
-                onValueChange={itemValue => setSelectedGender(itemValue)}
-              >
+                onValueChange={itemValue => setSelectedGender(itemValue)}>
                 <Picker.Item label="Select Gender" value="" />
                 <Picker.Item label="Male" value="male" />
                 <Picker.Item label="Female" value="female" />
@@ -231,8 +244,10 @@ const RoomBooking = () => {
           numberOfLines={1}
           placeholder="Note"
           placeholderTextColor="gray"
+          value={note}
+          onChangeText={setNote}
         />
-        <CustomButton title="Add Booking" width="95%" onPress={handleSubmit} />
+        <CustomButton title="Add Booking" width="95%"  />
       </View>
       <PriceBreakupCard />
     </ScrollView>

@@ -4,7 +4,6 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Splash from './screens/Splash';
 import Login from './screens/auth/Login';
 import SignUp from './screens/auth/SignUp';
-import HomePage from './screens/HomePage';
 import RoomDetails from './screens/RoomDetails';
 import RoomBooking from './screens/RoomBooking';
 import MainScreen from './screens/MainScreen';
@@ -30,11 +29,7 @@ const AppNavigator = () => {
         component={MainScreen}
         options={{headerShown: false, title: 'Book Your Room'}}
       />
-      <Stack.Screen
-        name="HomePage"
-        component={HomePage}
-        options={{headerShown: true, title: 'Booking Details'}}
-      />
+     
       <Stack.Screen
         name="RoomDetails"
         component={RoomDetails}
