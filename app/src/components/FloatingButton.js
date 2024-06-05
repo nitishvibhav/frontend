@@ -1,15 +1,20 @@
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import {TouchableOpacity, View, StyleSheet, Image} from 'react-native';
+import imagePath from '../assets/images/imagePath';
 
 const FloatingButton = () => {
-  const navigation = useNavigation()
+  const phoneNumber = '8210023654';
+const handleCall = () => {
+  Linking.openURL(`tel:${phoneNumber}`);
+};
+  
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate("RoomBooking")}>
+      <TouchableOpacity style={styles.button} onPress={handleCall}>
         <Image
-          source={require('../../assets/images/pencil.png')}
-          style={{height: 20, width: 20}}
+          source={imagePath.callIcon}
+          style={{height: 25, width: 25}}
         />
       </TouchableOpacity>
     </View>

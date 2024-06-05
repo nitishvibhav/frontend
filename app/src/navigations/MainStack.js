@@ -4,12 +4,10 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {TouchableOpacity, Image} from 'react-native';
 
 const Stack = createNativeStackNavigator();
-const phoneNumber = '8210023654';
-const handleCall = () => {
-  Linking.openURL(`tel:${phoneNumber}`);
-};
+
 
 export default MainStack = () => (
+  
   <Stack.Navigator>
     <Stack.Screen
       name="MainScreen"
@@ -30,14 +28,13 @@ export default MainStack = () => (
               justifyContent: 'center',
               alignItems: 'center',
             }}
-            onPress={handleCall}>
+            >
             <Image
-              source={imagePath.callImage}
+              source={imagePath.editIcon}
               style={{
-                height: 30,
-                width: 30,
+                height: 26,
+                width: 26,
                 marginRight: 10,
-                tintColor: 'blue',
               }}
             />
           </TouchableOpacity>

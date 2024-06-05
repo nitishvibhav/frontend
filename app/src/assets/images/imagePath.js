@@ -17,5 +17,10 @@ export default {
   totalRooms: require('../images/total_rooms.png'),
   bookedRooms : require('../images/booked_rooms.png'),
   vacantRooms :require('../images/vacant_rooms.png'),
-  pendindRooms :require('../images/pending_rooms.png')
+  pendindRooms :require('../images/pending_rooms.png'),
+  nextIcon : require('../images/next_icon.png'),
+  callIcon : require('../images/call_icon.png'),
+  alarmIcon : require('../images/alarm_icon.png'),
+  editIcon : require ('../images/edit.png'),
+  view_icon : require('../images/view_icon.png')
 };
