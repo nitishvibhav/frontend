@@ -7,9 +7,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React, {useState} from 'react';
-import FloatingButton from '../components/FloatingButton';
+import FloatingButton from '../../components/FloatingButton';
 import {useNavigation} from '@react-navigation/native';
-import CustomButton from '../components/CustomButton';
+import CustomButton from '../../components/CustomButton';
+import imagePath from '../../assets/images/imagePath';
 
 const RoomDetails = () => {
   const navigation = useNavigation();
@@ -216,7 +217,7 @@ const RoomDetails = () => {
             </Text>
           </View>
           <Image
-            source={require('../../assets/images/adhar.jpeg')}
+            source={imagePath.idCard}
             style={{
               width: '100%',
               height: 200,
@@ -236,7 +237,7 @@ const RoomDetails = () => {
             Front Side
           </Text>
           <Image
-            source={require('../../assets/images/back.jpeg')}
+            source={imagePath.idCardBack}
             style={{
               width: '100%',
               height: 200,

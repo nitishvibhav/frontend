@@ -8,11 +8,11 @@ import {
   TextInput,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import CustomButton from '../../components/CustomButton';
 import {useNavigation} from '@react-navigation/native';
 import TopMiniCard from '../../components/homepage/TopMiniCard';
 import {getRooms} from '../../redux/rooms/action';
 import {useDispatch, useSelector} from 'react-redux';
+import imagePath from '../../assets/images/imagePath';
 
 const Home = () => {
   const navigation = useNavigation();
@@ -81,30 +81,26 @@ const Home = () => {
       <View style={{marginTop: 10}}>
         <View style={styles.mainView}>
           <TopMiniCard
-            title={`Total Rooms : ${totalRooms}`}
-            width="49%"
-            color1="#3f5efb"
-            color2="#fc466b"
+            title="Total Rooms"
+            data={totalRooms}
+            icon={imagePath.totalRooms}
           />
           <TopMiniCard
-            title={`Vacant Rooms : ${VacantRoomCount}`}
-            width="49%"
-            color1="#090979"
-            color2="#00d4ff"
+            title="Vacant Rooms"
+            data={VacantRoomCount}
+            icon={imagePath.vacantRooms}
           />
         </View>
         <View style={styles.mainView}>
           <TopMiniCard
-            title={`Booked Rooms : ${bookedRooms}`}
-            width="49%"
-            color2="#A5CC82"
-            color1="#00467F"
+            title="Booked Rooms"
+            data={bookedRooms}
+            icon={imagePath.bookedRooms}
           />
           <TopMiniCard
-            title="Pending Checked-in:0"
-            width="49%"
-            color2="#6FB1FC"
-            color1="#0052D4"
+            title="Pending Room"
+            data={totalRooms}
+            icon={imagePath.pendindRooms}
           />
         </View>
       </View>
@@ -254,11 +250,6 @@ const Home = () => {
           </View>
         </View>
       </View>
-      <CustomButton
-        title="+ add new booking"
-        width="95%"
-        onPress={() => navigation.navigate('Booking', {screen: 'Add Booking'})}
-      />
       <View
         style={{
           justifyContent: 'space-between',
@@ -393,11 +384,6 @@ const Home = () => {
           </View>
         </View>
       </View>
-      <CustomButton
-        title="+ add new Room booking"
-        width="95%"
-        onPress={() => navigation.navigate('Booking', {screen: 'Add Booking'})}
-      />
     </ScrollView>
   );
 };
@@ -430,6 +416,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 6,
     paddingBottom: 20,
+    marginBottom: 10,
   },
   totalRoomView: {
     flexDirection: 'row',

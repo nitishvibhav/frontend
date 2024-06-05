@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native'
 import React from 'react'
-import DrawerNavigator from './drawer/DrawerNavigator'
+import DrawerNavigator from '../drawer/DrawerNavigator'
 
 const MainScreen = () => {
   return (

@@ -1,8 +1,8 @@
 const initialState = {
   bookingState: 0,
   booking: {},
-  createBooking: [],
   createState: 0,
+  createBooking:{}
 };
 
 const reducer = (state = initialState, action) => {

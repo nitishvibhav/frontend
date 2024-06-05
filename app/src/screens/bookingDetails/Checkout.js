@@ -8,9 +8,10 @@ import {
   ScrollView,
 } from 'react-native';
 import React from 'react';
-import PriceBreakupCard from '../components/PriceBreakupCard';
-import CustomButton from '../components/CustomButton';
-import CheckoutCalendar from '../components/CheckoutCalendar';
+import PriceBreakupCard from '../../components/PriceBreakupCard';
+import CustomButton from '../../components/CustomButton';
+import CheckoutCalendar from '../../components/CheckoutCalendar';
+import imagePath from '../../assets/images/imagePath';
 
 const Checkout = () => {
   return (
@@ -29,7 +30,7 @@ const Checkout = () => {
               Checkout Time
             </Text>
             <Image
-              source={require('../../assets/images/alarm-clock.png')}
+              source={imagePath.alarmClock}
               style={{height: 16, width: 16}}
             />
           </TouchableOpacity>

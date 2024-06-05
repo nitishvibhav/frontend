@@ -1,13 +1,13 @@
 import React from 'react';
-import AppNavigator from './src/AppNavigator';
 import {Provider} from 'react-redux';
 import store from './store'
+import Routes from './src/navigations/Routes';
 
 
 const App = () => {
   return (
     <Provider store={store}>
-      <AppNavigator />
+      <Routes />
     </Provider>
   );
 };

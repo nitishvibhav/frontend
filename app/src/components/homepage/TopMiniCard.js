@@ -1,38 +1,55 @@
-import { Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {Text, StyleSheet, TouchableOpacity, Image, View} from 'react-native';
 import React from 'react';
-import LinearGradient from 'react-native-linear-gradient';
 
-const TopMiniCard = ({title, width,color1,color2}) => {
+const TopMiniCard = ({title, icon, data,}) => {
   return (
-    <LinearGradient
-      start={{x: 0, y: 0}}
-      end={{x: 1, y: 0}}
-      colors={[color1, color2]}
-      style={[styles.container, {width: width}]}>
-      
+    <TouchableOpacity style={styles.container}>
+      <View
+        style={{
+          height: 36,
+          width: 36,
+          backgroundColor: 'white',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: 4,
+          marginRight: 5,
+        }}>
+        <Image source={icon} style={{height: 24, width: 24}} />
+      </View>
+      <View>
+      <Text style={styles.dataText}>{data}</Text>
         <Text style={styles.buttonText}>{title}</Text>
-      
-    </LinearGradient>
-  )
-}
+       
+      </View>
+    </TouchableOpacity>
+  );
+};
 
-export default TopMiniCard
+export default TopMiniCard;
 
 const styles = StyleSheet.create({
-    container: {
-      marginTop: 10,
-      paddingVertical: 8,
-      flexDirection: 'row',
-      alignSelf: 'center',
-      borderColor: 'white',
-      borderWidth: 1,
-      borderRadius: 6,
-      paddingHorizontal:8
-    },
-    buttonText: {
-      fontSize: 15,
-      color: '#fafafa',
-      fontWeight: '700',
-      fontFamily: 'Quicksand-Regular',
-    },
-  });
+  container: {
+    backgroundColor: 'orange',
+    marginTop: 5,
+    paddingVertical: 8,
+    flexDirection: 'row',
+    alignSelf: 'center',
+    borderColor: 'white',
+    borderWidth: 1,
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    width: '49%',
+    alignItems: 'center',
+  },
+  buttonText: {
+    fontSize: 12,
+    color: '#fafafa',
+    fontWeight: '900',
+    fontFamily: 'Quicksand-Regular',
+  },
+  dataText: {
+    fontSize: 18,
+    color: 'white',
+    fontWeight: '800',
+  },
+});

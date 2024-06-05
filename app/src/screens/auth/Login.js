@@ -7,7 +7,7 @@ import {
   Pressable,
   StyleSheet,
 } from 'react-native';
-import {React, useState }  from 'react';
+import {React, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import CustomButton from '../../components/CustomButton';
 import {useDispatch, useSelector} from 'react-redux';
@@ -16,12 +16,10 @@ import {login} from '../../redux/user/action';
 
 const Login = () => {
   const navigation = useNavigation();
-
   const dispatch = useDispatch();
-
   const [data, setData] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
 
   const handleChange = (name, value) => {
@@ -31,20 +29,20 @@ const Login = () => {
     }));
   };
 
- console.log(data, "data")
- 
+  console.log(data, 'data');
+
   const loginHandler = async () => {
-    const res = await dispatch(login(data))
-    const status = get(res, 'value.status')
-    console.log('status', status)
+    const res = await dispatch(login(data));
+    const status = get(res, 'value.status');
+    console.log('status', status);
     if (status === 200) {
-      alert('Login Successfully')
-      navigation.navigate('MainScreen')
+      alert('Login Successfully');
+      navigation.navigate('MainScreen');
     } else {
-      console.log('res', res)
-      alert("Invalied username or password...")
+      console.log('res', res);
+      alert('Invalied username or password...');
     }
-  }
+  };
   return (
     <View style={styles.mainContainer}>
       <Image
@@ -55,13 +53,13 @@ const Login = () => {
       <TextInput
         placeholder="Enter Your Email"
         style={styles.textinput}
-        onChangeText={(value) => handleChange('email', value)}
+        onChangeText={value => handleChange('email', value)}
         value={data.email}
       />
       <TextInput
         placeholder="Password"
         style={styles.textinput2}
-        onChangeText={(value) => handleChange('password', value)}
+        onChangeText={value => handleChange('password', value)}
         value={data.password}
         secureTextEntry={true}
       />
@@ -72,7 +70,7 @@ const Login = () => {
           <Text style={{fontSize: 12, color: '#000'}}>Forgotten Password?</Text>
         </Pressable>
       </View>
-      <CustomButton title="Login" width="90%" onPress={loginHandler}/>
+      <CustomButton title="Login" width="90%" onPress={loginHandler} />
     </View>
   );
 };

@@ -1,60 +1,65 @@
-import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
-// const accessToken = localStorage.getItem("token");
-const accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0M2ZhNGExMTZiYjk3NWQzZWU3ZTZhNiIsImVtYWlsIjoiYWRtaW5AY29uc3VsdGFuY3kuY29tIiwiaWF0IjoxNjgxODk3Mzc0fQ.vEhxinEnJD4vRUrMC_eRjbLKWpRCCXo5HXcKeVbe6gM"
 const url = {
-      base: 
-      "http://97.74.86.231:3001/api/v1/en/",
+  base: 'http://97.74.86.231:3001/api/v1/en/',
 };
 
-
-
-console.log(accessToken, "accessToken")
 const headers = {
   headers: {
-    "Content-Type": "application/json;charset=UTF-8",
-    "Access-Control-Allow-Origin": "*",
-    Authorization:`Bearer ${accessToken}`,
-    token: accessToken,
+    'Content-Type': 'application/json;charset=UTF-8',
+    'Access-Control-Allow-Origin': '*',
+    Authorization: '',
+    token: '',
   },
 };
- 
+
 const axiosFormDataConfig = {
   headers: {
-    "Content-Type": "multipart/form-data",
-    "Access-Control-Allow-Origin": "*",
-    Authorization:`Bearer ${accessToken}`,
-    token: accessToken,
+    'Content-Type': 'multipart/form-data',
+    'Access-Control-Allow-Origin': '*',
+    Authorization: '',
+    token: '',
   },
 };
 
-const updateToken = (token) => (headers.headers.token = token); 
-console.log(headers.headers.token, "token");
+const updateToken = async () => {
+  try {
+    const token = await AsyncStorage.getItem('token');
+    headers.headers.Authorization = `Bearer ${token}`;
+    headers.headers.token = token;
+    axiosFormDataConfig.headers.Authorization = `Bearer ${token}`;
+    axiosFormDataConfig.headers.token = token;
+    console.log(token, 'Updated token in headers');
+  } catch (error) {
+    console.error('Error updating token:', error);
+  }
+};
+
+// Call updateToken initially to set headers
+updateToken();
 
 function getConfig(header = {}) {
-  // To add custom header for some request
-  const config = { ...headers }; //:TODO when redo check file upload also
-  config.headers = { ...config.headers, ...header };
-  console.log(headers, "header under the function")
+  // To add custom header for some requests
+  const config = {...headers};
+  config.headers = {...config.headers, ...header};
+  console.log(config.headers, 'headers under the function');
   return config;
 }
 
 const request = {
-  get: (path, header = {}) => axios.get(url.base + path, getConfig(header)),
-  delete: (path, header = {}) =>
+  get: async (path, header = {}) =>
+    axios.get(url.base + path, getConfig(header)),
+  delete: async (path, header = {}) =>
     axios.delete(url.base + path, getConfig(header)),
-  post: (path, data, header = {}) =>
+  post: async (path, data, header = {}) =>
     axios.post(url.base + path, data, getConfig(header)),
-    
-  put: (path, data, header = {}) =>
+  put: async (path, data, header = {}) =>
     axios.put(url.base + path, data, getConfig(header)),
-
-  patch: (path, data, header = {}) =>
+  patch: async (path, data, header = {}) =>
     axios.patch(url.base + path, data, getConfig(header)),
-  // postFormData: function (url, data) { return axios.post(`${config.apiEndpoint + url}`, data, axiosFormDataConfig)},
-  putFormData: function (path, data) {
-    return axios.put(url.base + path, data, axiosFormDataConfig);
-  },
+  putFormData: async (path, data) =>
+    axios.put(url.base + path, data, axiosFormDataConfig),
 };
 
-export { request, updateToken, getConfig };
+export {request, updateToken, getConfig};
