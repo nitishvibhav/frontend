@@ -1,6 +1,5 @@
 export default {
-  callImage: require('../images/phone-call.png'),
-  alarmClock: require('../images/alarm-clock.png'),
+  menuImage: require('../images/menu.png'),
   idCard: require('../images/adhar.jpeg'),
   idCardBack: require('../images/adharback.jpeg'),
   logo: require('../images/logo.png'),
@@ -22,5 +21,6 @@ export default {
   callIcon : require('../images/call_icon.png'),
   alarmIcon : require('../images/alarm_icon.png'),
   editIcon : require ('../images/edit.png'),
-  view_icon : require('../images/view_icon.png')
+  view_icon : require('../images/view_icon.png'),
+  loginPageImage : require ('../images/login_app.png')
 };

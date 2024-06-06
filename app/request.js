@@ -5,12 +5,14 @@ const url = {
   base: 'http://97.74.86.231:3001/api/v1/en/',
 };
 
+const accessToken = AsyncStorage.getItem("token")
+
 const headers = {
   headers: {
     'Content-Type': 'application/json;charset=UTF-8',
     'Access-Control-Allow-Origin': '*',
-    Authorization: '',
-    token: '',
+    "Authorization": `Bearer ${accessToken}`,
+    
   },
 };
 
@@ -18,8 +20,7 @@ const axiosFormDataConfig = {
   headers: {
     'Content-Type': 'multipart/form-data',
     'Access-Control-Allow-Origin': '*',
-    Authorization: '',
-    token: '',
+    "Authorization": `Bearer ${accessToken}`,
   },
 };
 

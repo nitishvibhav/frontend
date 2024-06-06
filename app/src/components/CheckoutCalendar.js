@@ -9,6 +9,7 @@ import {
   Image
 } from 'react-native';
 import {Calendar, CalendarList} from 'react-native-calendars';
+import imagePath from '../assets/images/imagePath';
 
 const CheckoutCalendar = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -28,7 +29,7 @@ const CheckoutCalendar = () => {
           style={styles.textinput1}>
           <Text style={{color:'gray', fontSize:14, fontWeight:"500"}}>{selectedDate}</Text>
           <Image
-          source={require('../../assets/images/calendaroutline.png')}
+          source={imagePath.alarmClock}
           style={{height: 16, width: 16}}
         />
         </TouchableOpacity>

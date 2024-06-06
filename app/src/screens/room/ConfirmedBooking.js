@@ -10,6 +10,7 @@ import React, {useState, useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {getRooms} from '../../redux/rooms/action';
+import imagePath from '../../assets/images/imagePath';
 
 const ConfirmedBooking = () => {
   const dispatch = useDispatch();
@@ -104,7 +105,7 @@ const ConfirmedBooking = () => {
                   }}
                   onPress={() => navigation.navigate('RoomDetails')}>
                   <Image
-                    source={require('../../../assets/images/view.png')}
+                    source={imagePath.view_icon}
                     style={{height: 16, width: 16, tintColor: 'white'}}
                   />
                 </TouchableOpacity>

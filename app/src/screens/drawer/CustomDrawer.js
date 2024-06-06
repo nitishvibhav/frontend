@@ -1,6 +1,7 @@
 import {View, Text, Image, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
+import imagePath from '../../assets/images/imagePath';
 
 const CustomDrawer = () => {
   const navigation = useNavigation()
@@ -26,7 +27,7 @@ const CustomDrawer = () => {
             justifyContent: 'center',
           }}>
           <Image
-            source={require('../../../assets/images/hotel.jpg')}
+            source={imagePath.bookedRooms}
             style={{height: 40, width: 40, borderRadius: 6}}
           />
         </View>
@@ -53,7 +54,7 @@ const CustomDrawer = () => {
           </View>
           <TouchableOpacity onPress={()=>navigation.navigate('Booking', {screen:'All Booking'})}>
           <Image
-            source={require('../../../assets/images/next.png')}
+            source={imagePath.nextIcon}
             style={styles.nextImage}
           />
           </TouchableOpacity>
@@ -67,7 +68,7 @@ const CustomDrawer = () => {
           </View>
           <TouchableOpacity onPress={()=>navigation.navigate('Booking', {screen:'Add Booking'})}>
           <Image
-            source={require('../../../assets/images/next.png')}
+            source={imagePath.nextIcon}
             style={styles.nextImage}
           />
           </TouchableOpacity>
@@ -88,7 +89,7 @@ const CustomDrawer = () => {
           </View>
           <TouchableOpacity onPress={()=>navigation.navigate('Room', {screen:'All Room'})}>
           <Image
-            source={require('../../../assets/images/next.png')}
+            source={imagePath.nextIcon}
             style={styles.nextImage}
           />
           </TouchableOpacity>
@@ -102,7 +103,7 @@ const CustomDrawer = () => {
           </View>
           <TouchableOpacity onPress={()=>navigation.navigate('Room', {screen:'Confirmed Room'})}>
           <Image
-            source={require('../../../assets/images/next.png')}
+            source={imagePath.nextIcon}
             style={styles.nextImage}
           />
           </TouchableOpacity>
@@ -116,7 +117,7 @@ const CustomDrawer = () => {
           </View>
           <TouchableOpacity onPress={()=>navigation.navigate('Room', {screen:'Available Room'})}>
           <Image
-            source={require('../../../assets/images/next.png')}
+            source={imagePath.nextIcon}
             style={styles.nextImage}
           />
           </TouchableOpacity>
@@ -130,7 +131,7 @@ const CustomDrawer = () => {
           </View>
           <TouchableOpacity onPress={()=>navigation.navigate('Profile')}>
           <Image
-            source={require('../../../assets/images/next.png')}
+            source={imagePath.nextIcon}
             style={styles.nextImage}
           />
           </TouchableOpacity>
@@ -140,7 +141,7 @@ const CustomDrawer = () => {
             <Text style={styles.text}>Edit Profile</Text>
           </View>
           <Image
-            source={require('../../../assets/images/next.png')}
+            source={imagePath.nextIcon}
             style={styles.nextImage}
           />
         </View>

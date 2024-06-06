@@ -10,6 +10,7 @@ import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {getRooms} from '../../redux/rooms/action';
+import imagePath from '../../assets/images/imagePath';
 
 const AvailableBooking = () => {
   const dispatch = useDispatch();
@@ -101,7 +102,7 @@ const AvailableBooking = () => {
                   }}
                   onPress={() => navigation.navigate('Add Booking')}>
                   <Image
-                    source={require('../../../assets/images/add-group.png')}
+                    source={imagePath.view_icon}
                     style={{height: 16, width: 16, tintColor: 'white'}}
                   />
                 </TouchableOpacity>

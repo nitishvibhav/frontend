@@ -30,7 +30,7 @@ const Home = () => {
   useEffect(() => {
     if (rooms && rooms.result) {
       const filteredRooms = rooms.result.filter(
-        room => room.roomStatus === 'Vacant',
+        room => room.roomStatus === 'VACANT',
       );
       setVacantRoomCount(filteredRooms.length);
     }
@@ -61,7 +61,7 @@ const Home = () => {
             navigation.openDrawer();
           }}>
           <Image
-            source={require('../../../assets/images/menu.png')}
+            source={imagePath.menuImage}
             style={{
               height: 20,
               width: 20,
@@ -134,7 +134,7 @@ const Home = () => {
             View All
           </Text>
           <Image
-            source={require('../../../assets/images/next.png')}
+            source={imagePath.nextIcon}
             style={{height: 16, width: 16, marginRight: 10}}
           />
         </TouchableOpacity>
@@ -278,7 +278,7 @@ const Home = () => {
             View All
           </Text>
           <Image
-            source={require('../../../assets/images/next.png')}
+            source={imagePath.nextIcon}
             style={{height: 16, width: 16, marginRight: 10}}
           />
         </TouchableOpacity>

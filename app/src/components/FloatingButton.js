@@ -1,4 +1,3 @@
-import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import {TouchableOpacity, View, StyleSheet, Image} from 'react-native';
 import imagePath from '../assets/images/imagePath';
@@ -29,13 +28,13 @@ const styles = StyleSheet.create({
     flex:1
   },
   button: {
-    backgroundColor: 'white', // Change this to your preferred color
+    backgroundColor: 'white',
     borderRadius: 30,
     width: 50,
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 3, // Android elevation for shadow
+    elevation: 3, 
   },
 });
 

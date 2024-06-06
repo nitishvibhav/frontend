@@ -13,6 +13,7 @@ import CustomButton from '../../components/CustomButton';
 import {useDispatch, useSelector} from 'react-redux';
 import {get} from 'lodash';
 import {login} from '../../redux/user/action';
+import imagePath from '../../assets/images/imagePath';
 
 const Login = () => {
   const navigation = useNavigation();
@@ -46,7 +47,7 @@ const Login = () => {
   return (
     <View style={styles.mainContainer}>
       <Image
-        source={require('../../../assets/images/login_app.png')}
+        source={imagePath.loginPageImage}
         style={styles.loginImage}
       />
       <Text style={styles.innerContainer}>Log in to your account</Text>
