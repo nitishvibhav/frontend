@@ -1,11 +1,10 @@
 import React from 'react';
-import {TouchableOpacity, View, StyleSheet, Image} from 'react-native';
+import {TouchableOpacity, View, StyleSheet, Image,Linking} from 'react-native';
 import imagePath from '../assets/images/imagePath';
 
-const FloatingButton = () => {
-  const phoneNumber = '8210023654';
+const FloatingButton = ({phone}) => {
 const handleCall = () => {
-  Linking.openURL(`tel:${phoneNumber}`);
+  Linking.openURL(`tel:${phone}`);
 };
   
   return (

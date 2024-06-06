@@ -8,18 +8,18 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import FloatingButton from '../../components/FloatingButton';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import CustomButton from '../../components/CustomButton';
 import imagePath from '../../assets/images/imagePath';
 
 const RoomDetails = () => {
   const navigation = useNavigation();
-  const [status, setStatus] = useState('Pending');
+  const route = useRoute()
 
-  const Confirm = () => {
-    setStatus("Booked");
-    console.log(status);
-  };
+
+  const item = route.params?.item
+  console.log(item, "item line no.26")
+
   return (
     <View style={{flex: 1}}>
       <ScrollView>
@@ -29,7 +29,7 @@ const RoomDetails = () => {
               Status
             </Text>
             <Text style={{color: 'green', fontSize: 16, fontWeight: '700'}}>
-              {status}
+              {item.status}
             </Text>
           </View>
           <View
@@ -42,7 +42,7 @@ const RoomDetails = () => {
               Check-in Date
             </Text>
             <Text style={{color: 'gray', fontSize: 14, fontWeight: '500'}}>
-              24-04-2024, FRIDAY
+            {item.checkIn}
             </Text>
           </View>
           <View
@@ -68,7 +68,7 @@ const RoomDetails = () => {
               Check-out Date
             </Text>
             <Text style={{color: 'gray', fontSize: 14, fontWeight: '500'}}>
-              26-04-2024, SUNDAY
+            {item.checkOut}
             </Text>
           </View>
           <View
@@ -141,7 +141,7 @@ const RoomDetails = () => {
               Name
             </Text>
             <Text style={{color: 'gray', fontSize: 14, fontWeight: '500'}}>
-              Sounak Kumar
+              {item.fullName}
             </Text>
           </View>
           <View
@@ -180,7 +180,7 @@ const RoomDetails = () => {
               Email
             </Text>
             <Text style={{color: 'gray', fontSize: 14, fontWeight: '500'}}>
-              nitishvibhav@gmail.com
+              {item.email}
             </Text>
           </View>
           <View
@@ -193,7 +193,7 @@ const RoomDetails = () => {
               Arrival Time
             </Text>
             <Text style={{color: 'gray', fontSize: 14, fontWeight: '500'}}>
-              9:30 PM
+              {item.checkIn}
             </Text>
           </View>
           <View
@@ -206,7 +206,7 @@ const RoomDetails = () => {
               Address
             </Text>
             <Text style={{color: 'gray', fontSize: 14, fontWeight: '500'}}>
-              Burra Bazar, Kolkata, 700007
+              {item.address.district}
             </Text>
           </View>
         </View>
@@ -258,7 +258,7 @@ const RoomDetails = () => {
           </Text>
         </View>
       </ScrollView>
-      <FloatingButton/>
+      <FloatingButton phone = {item.phoneNumber}/>
       <View
         style={{
           bottom: 0,
@@ -281,10 +281,9 @@ const RoomDetails = () => {
         </View>
         <View>
           <CustomButton
-            title={status == 'Booked' ? 'Checkout' : 'Confirmed'}
+            title="CheckOut"
             width="80%"
-            onPress={() =>
-              status == 'Booked' ? navigation.navigate('Checkout') : Confirm()
+            onPress={() => navigation.navigate('Checkout') 
             }
           />
         </View>

@@ -22,8 +22,6 @@
 //   const [bookedRooms, setBookedRooms] = useState([]);
 //   const [roomMap, setRoomMap] = useState({});
 //   const [selectedValue, setSelectedValue] = useState('');
-//   const [aminities, setAminities] = useState([]);
-//   const [isSelected, setSelection] = useState(false);
 
 //   const [booking, setBooking] = useState({
 //     fullName: '',
@@ -81,9 +79,6 @@
 //   console.log(booking, address, numberOfGuest, 'booking');
 
 //   const {rooms} = useSelector(state => state.roomReducer);
-//   const {amenitiesCategory} = useSelector(
-//     state => state.amenitiesCategoryReducer,
-//   );
 //   const {roomCategory} = useSelector(state=>state.roomCategoryReducer)
 //   console.log(roomCategory, "roomCategory details")
 
@@ -106,18 +101,6 @@
 //       setRoomMap(roomMapping);
 //     }
 //   }, [rooms]);
-
-//   const [amenitiesTitles, setAmenitiesTitles] = useState([]);
-
-//   useEffect(() => {
-//     if (amenitiesCategory && amenitiesCategory.result) {
-//       const amenitiesItem = amenitiesCategory.result;
-//       const titles = amenitiesItem.map(item => item.title);
-//       setAmenitiesTitles(titles)
-//     }
-//   }, [amenitiesCategory]);
-
-//   console.log(bookedRooms, 'booked rooms data');
 
 //   const handleBooking =  () => {
 //     const roomID = roomMap[selectedRoom];
@@ -535,140 +518,58 @@
 //   },
 // });
 
-
-
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import React from 'react';
 import {useDispatch} from 'react-redux';
-import {
-  getRoomCategoryDetails,
-  postRoomCategory,
-  updateRoomCategory,
-} from '../../redux/roomcategory/action';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {getBookingDetails, postBooking} from '../../redux/booking/action';
 
 const AddBooking = () => {
-  const route = useRoute();
-  const item = route.params?.item || null; // Get item from route params if available
-  const isEditMode = !!item;
-
-  console.log(item, "items")
-  const [data, setData] = useState({
-    title: '',
-    description: '',
-    hotelId: '',
-    bedCapacity: '',
-    price: '',
-    bedType: '',
-  });
-
-  useEffect(() => {
-    if (isEditMode) {
-      setData({
-        title: item.title,
-        description: item.description,
-        hotelId: item.hotelId,
-        bedCapacity: item.bedCapacity,
-        price: item.price,
-        bedType: item.bedType,
-      });
-    }
-  }, [isEditMode, item]);
-
-  const handleChange = (name, value) => {
-    setData({
-      ...data,
-      [name]: value,
-    });
-  };
-
   const dispatch = useDispatch();
-  const navigation = useNavigation();
 
-  const handlePost = async () => {
+  const handlePost = () => {
+    const req = {
+      fullName: 'nitish Kumar',
+      email: 'nitisraj@gmail.com',
+      phoneNumber: '8420557642',
+      nationality: 'Nepal',
+      hotelId: '123456',
+      roomId: '123456',
+      checkIn: '12-04-2024',
+      checkOut: '16-04-2024',
+      totalPrice: '299',
+      extraCharges: '100',
+      grandTotal: '100',
+      chargesRemark: 'vat Charges',
+      status: 'CHECKED-OUT',
+      paymentStatus: 'SUCCESS',
+      aminities: ['bar', 'pub'],
+      discount: '99',
+      address: {
+        province: 'province',
+        district: 'district',
+        city: 'city',
+        street: 'street',
+      },
+      numberOfGuest: {
+        adult: '1',
+        child: '1',
+        total: '1',
+      },
+    };
+
     try {
-      const res = await dispatch(postRoomCategory(data));
-      console.log('res', res);
-      alert('Added Successfully');
-      dispatch(getRoomCategoryDetails());
-      navigation.navigate('Booking', {screen: 'All Booking'});
+      dispatch(postBooking(req));
+      alert('Booking successful');
+      dispatch(getBookingDetails());
     } catch (error) {
-      console.error('Error occurred while posting:', error);
-      alert('Failed to add room category. Please try again.');
+      console.error('Error occurred while booking:', error);
     }
   };
-
-  const handleEdit = async () => {
-    try {
-      const res = await dispatch(updateRoomCategory(item._id, data));
-      console.log('res', res);
-      alert('Updated Successfully');
-      dispatch(getRoomCategoryDetails());
-      navigation.navigate('Booking', {screen: 'All Booking'});
-    } catch (error) {
-      console.error('Error occurred while updating:', error);
-      alert('Failed to update room category. Please try again.');
-    }
-  };
-
   return (
     <View>
-      <Text>RoomCategory</Text>
-      <TextInput
-        style={styles.textinput}
-        placeholder="Title"
-        placeholderTextColor="gray"
-        value={data.title}
-        onChangeText={value => handleChange('title', value)}
-      />
-      <TextInput
-        style={styles.textinput}
-        placeholder="Description"
-        placeholderTextColor="gray"
-        value={data.description}
-        onChangeText={value => handleChange('description', value)}
-      />
-      <TextInput
-        style={styles.textinput}
-        placeholder="Hotel ID"
-        placeholderTextColor="gray"
-        value={data.hotelId}
-        onChangeText={value => handleChange('hotelId', value)}
-      />
-      <TextInput
-        style={styles.textinput}
-        placeholder="Bed Capacity"
-        placeholderTextColor="gray"
-        value={data.bedCapacity}
-        onChangeText={value => handleChange('bedCapacity', value)}
-      />
-      <TextInput
-        style={styles.textinput}
-        placeholder="Price"
-        placeholderTextColor="gray"
-        value={data.price}
-        onChangeText={value => handleChange('price', value)}
-      />
-      <TextInput
-        style={styles.textinput}
-        placeholder="Bed Type"
-        placeholderTextColor="gray"
-        value={data.bedType}
-        onChangeText={value => handleChange('bedType', value)}
-      />
-
-      <TouchableOpacity
-        onPress={isEditMode ? handleEdit : handlePost}
-        style={styles.button}>
-        <Text style={styles.buttonText}>
-          {isEditMode ? 'Update' : 'Add'}
-        </Text>
+      <Text>AddBooking</Text>
+      <TouchableOpacity style={styles.touch} onPress={handlePost}>
+        <Text style={{color: 'white', textAlign: 'center'}}>Submit Form</Text>
       </TouchableOpacity>
     </View>
   );
@@ -677,12 +578,12 @@ const AddBooking = () => {
 export default AddBooking;
 
 const styles = StyleSheet.create({
-  textinput: {
-    borderColor: 'black',
-    borderWidth: 1,
-    width: '95%',
+  touch: {
+    backgroundColor: 'black',
+    width: '85%',
     alignSelf: 'center',
+    paddingVertical: 10,
     marginTop: 10,
-    borderRadius: 6,
+    borderRadius: 10,
   },
 });
