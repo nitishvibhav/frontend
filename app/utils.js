@@ -48,7 +48,7 @@ const updateAccessToken = async () => {
 // Store user data in AsyncStorage
 const setUser = async (data) => {
   try {
-    await AsyncStorage.setItem('result', JSON.stringify(data));
+    await AsyncStorage.setItem('result', data);
   } catch (error) {
     console.error('Error setting user data:', error);
   }

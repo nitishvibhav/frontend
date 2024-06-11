@@ -1,530 +1,48 @@
-// import {
-//   Button,
-//   ScrollView,
-//   StyleSheet,
-//   Text,
-//   TextInput,
-//   View,
-// } from 'react-native';
-// import React, {useState, useEffect} from 'react';
-// import CustomButton from '../../components/CustomButton';
-// import {Picker} from '@react-native-picker/picker';
-// import {useDispatch, useSelector} from 'react-redux';
-// import {getRooms} from '../../redux/rooms/action';
-// import {getBookingDetails, postBooking} from '../../redux/booking/action';
-// import CheckBox from '@react-native-community/checkbox';
-// import {getAminitiesCategoryDetails} from '../../redux/amenitiesCategory/action';
-// import { getRoomCategoryDetails } from '../../redux/roomcategory/action';
 
-// const AddBooking = () => {
-//   const dispatch = useDispatch();
-//   const [selectedRoom, setSelectedRoom] = useState('');
-//   const [bookedRooms, setBookedRooms] = useState([]);
-//   const [roomMap, setRoomMap] = useState({});
-//   const [selectedValue, setSelectedValue] = useState('');
-
-//   const [booking, setBooking] = useState({
-//     fullName: '',
-//     email: '',
-//     phoneNumber: '',
-//     nationality: '',
-//     hotelId: '66605c955de743a9e506451f',
-//     roomId: '',
-//     checkIn: '',
-//     checkOut: '',
-//     totalPrice: '',
-//     extraCharges: '',
-//     grandTotal: '',
-//     chargesRemark: '',
-//     status: '',
-//     paymentStatus: '',
-//     aminities: ['bar','pub'],
-//     discount: '',
-//   });
-
-//   const [address, setAddress] = useState({
-//     province: '',
-//     district: '',
-//     city: '',
-//     street: '',
-//   });
-
-//   const [numberOfGuest, setnumberOfGuest] = useState({
-//     adult: '',
-//     child: '',
-//     total: '',
-//   });
-
-//   const handleChange = (name, value) => {
-//     setBooking({
-//       ...booking,
-//       [name]: value,
-//     });
-//   };
-
-//   const handleAddressDetails = (name, value) => {
-//     setAddress({
-//       ...address,
-//       [name]: value,
-//     });
-//   };
-
-//   const handleGuestNumber = (name, value) => {
-//     setnumberOfGuest({
-//       ...numberOfGuest,
-//       [name]: value,
-//     });
-//   };
-
-//   console.log(booking, address, numberOfGuest, 'booking');
-
-//   const {rooms} = useSelector(state => state.roomReducer);
-//   const {roomCategory} = useSelector(state=>state.roomCategoryReducer)
-//   console.log(roomCategory, "roomCategory details")
-
-//   useEffect(() => {
-//     dispatch(getRooms());
-//     dispatch(getRoomCategoryDetails())
-//     dispatch(getAminitiesCategoryDetails());
-//   }, [dispatch]);
-
-//   useEffect(() => {
-//     if (rooms && rooms.result) {
-//       const filteredRooms = rooms.result.filter(
-//         room => room.roomStatus === 'VACANT',
-//       );
-//       setBookedRooms(filteredRooms);
-//       const roomMapping = {};
-//       filteredRooms.forEach(room => {
-//         roomMapping[room.roomNumber] = room._id;
-//       });
-//       setRoomMap(roomMapping);
-//     }
-//   }, [rooms]);
-
-//   const handleBooking =  () => {
-//     const roomID = roomMap[selectedRoom];
-//     const updatedBooking = {
-//       ...booking,
-//       roomId: roomID,
-
-//     };
-
-//     const req = {
-//       booking: updatedBooking,
-//       address,
-//       numberOfGuest,
-//     };
-//     console.log(req, 'console inside the function');
-//     try {
-//       const res = dispatch(postBooking(req));
-//       if (res && res.value && res.value.status === 200) {
-//         alert('Booking successful');
-//         // dispatch(getRooms())
-//         dispatch(getBookingDetails());
-//       } else {
-//         alert('Failed to book room. Please try again.');
-//         if (res && res.value && res.value.status) {
-//           switch (res.value.status) {
-//             case 400:
-//               alert('Bad request. Please check your input.');
-//               break;
-//             case 401:
-//               alert('Unauthorized. Please log in and try again.');
-//               break;
-//             case 500:
-//               alert('Server error. Please try again later.');
-//               break;
-//             default:
-//               alert('Failed to book room. Please try again.');
-//           }
-//         } else {
-//           alert('Failed to book room. Please try again.');
-//         }
-//       }
-//     } catch (error) {
-//       console.error('Error occurred while booking:', error);
-
-//     }
-//   };
-
-//   return (
-//     <ScrollView>
-//       <View style={styles.container}>
-//         <View style={styles.labelview}>
-//           <Text style={styles.label}>Full Name</Text>
-//         </View>
-//         <TextInput
-//           style={styles.textinput}
-//           placeholder="Full Name"
-//           placeholderTextColor="gray"
-//           value={booking.fullName}
-//           onChangeText={value => handleChange('fullName', value)}
-//         />
-//         <View style={styles.labelview}>
-//           <Text style={styles.label}>Amenities</Text>
-//         </View>
-
-//         <View style={styles.labelview}>
-//           <Text style={styles.label}>Email</Text>
-//         </View>
-//         <TextInput
-//           style={styles.textinput}
-//           placeholder="Email"
-//           placeholderTextColor="gray"
-//           value={booking.email}
-//           onChangeText={value => handleChange('email', value)}
-//         />
-//         <View style={styles.labelview}>
-//           <Text style={styles.label}>Phone No.</Text>
-//         </View>
-//         <TextInput
-//           style={styles.textinput}
-//           placeholder="Mobile No."
-//           placeholderTextColor="gray"
-//           value={booking.phoneNumber}
-//           onChangeText={value => handleChange('phoneNumber', value)}
-//         />
-//         <View style={styles.labelview}>
-//           <Text style={styles.label}>Nationality</Text>
-//         </View>
-//         <TextInput
-//           style={styles.textinput}
-//           placeholder="Nationality"
-//           placeholderTextColor="gray"
-//           value={booking.nationality}
-//           onChangeText={value => handleChange('nationality', value)}
-//         />
-//         <View style={styles.labelview}>
-//           <Text style={styles.label}>Total Price</Text>
-//         </View>
-//         <TextInput
-//           style={styles.textinput}
-//           placeholder="Total price"
-//           placeholderTextColor="gray"
-//           value={booking.totalPrice}
-//           onChangeText={value => handleChange('totalPrice', value)}
-//         />
-//         <View style={styles.labelview}>
-//           <Text style={styles.label}>Extra Charges</Text>
-//         </View>
-//         <TextInput
-//           style={styles.textinput}
-//           placeholder="Extra Charges"
-//           placeholderTextColor="gray"
-//           value={booking.extraCharges}
-//           onChangeText={value => handleChange('extraCharges', value)}
-//         />
-//         <View style={styles.labelview}>
-//           <Text style={styles.label}>Grand Total</Text>
-//         </View>
-//         <TextInput
-//           style={styles.textinput}
-//           placeholder="Grand Total"
-//           placeholderTextColor="gray"
-//           value={booking.grandTotal}
-//           onChangeText={value => handleChange('grandTotal', value)}
-//         />
-//         <View style={styles.labelview}>
-//           <Text style={styles.label}>Charges Remark</Text>
-//         </View>
-//         <TextInput
-//           style={styles.textinput}
-//           placeholder="Charges Remark"
-//           placeholderTextColor="gray"
-//           value={booking.chargesRemark}
-//           onChangeText={value => handleChange('chargesRemark', value)}
-//         />
-//         <View style={styles.labelview}>
-//           <Text style={styles.label}>Booking Status</Text>
-//         </View>
-//         <TextInput
-//           style={styles.textinput}
-//           placeholder="Booking Status"
-//           placeholderTextColor="gray"
-//           value={booking.status}
-//           onChangeText={value => handleChange('status', value)}
-//         />
-//         <View style={styles.labelview}>
-//           <Text style={styles.label}>Payment Status</Text>
-//         </View>
-//         <TextInput
-//           style={styles.textinput}
-//           placeholder="Payment Status"
-//           placeholderTextColor="gray"
-//           value={booking.paymentStatus}
-//           onChangeText={value => handleChange('paymentStatus', value)}
-//         />
-
-//         <View style={styles.labelview}>
-//           <Text style={styles.label}>Discount</Text>
-//         </View>
-//         <TextInput
-//           style={styles.textinput}
-//           placeholder="Discount"
-//           placeholderTextColor="gray"
-//           value={booking.discount}
-//           onChangeText={value => handleChange('discount', value)}
-//         />
-//         <View style={styles.labelview}>
-//           <Text style={styles.label}>Check-in Date</Text>
-//         </View>
-//         <TextInput
-//           style={styles.textinput}
-//           placeholder="Check-in Date"
-//           placeholderTextColor="gray"
-//           value={booking.checkIn}
-//           onChangeText={value => handleChange('checkIn', value)}
-//         />
-//         <View style={styles.labelview}>
-//           <Text style={styles.label}>Check-out Date</Text>
-//         </View>
-//         <TextInput
-//           style={styles.textinput}
-//           placeholder="Check-out Date"
-//           placeholderTextColor="gray"
-//           value={booking.checkOut}
-//           onChangeText={value => handleChange('checkOut', value)}
-//         />
-
-//         <View style={styles.labelview}>
-//           <Text style={styles.label}>Number of Guests</Text>
-//         </View>
-
-//         <View style={styles.containerhalf}>
-//           <View style={{width: '50%'}}>
-//             <View style={styles.labelview}>
-//               <Text style={styles.label}>Adult</Text>
-//             </View>
-//             <TextInput
-//               style={styles.textinput}
-//               placeholder="Adult"
-//               placeholderTextColor="gray"
-//               value={numberOfGuest.adult}
-//               onChangeText={value => handleGuestNumber('adult', value)}
-//             />
-//           </View>
-//           <View style={{width: '50%'}}>
-//             <View style={styles.labelview}>
-//               <Text style={styles.label}>Child</Text>
-//             </View>
-//             <TextInput
-//               style={styles.textinput}
-//               placeholder="Child"
-//               placeholderTextColor="gray"
-//               value={numberOfGuest.child}
-//               onChangeText={value => handleGuestNumber('child', value)}
-//             />
-//           </View>
-//         </View>
-//         <View style={styles.containerhalf}>
-//           <View style={{width: '50%'}}>
-//             <View style={styles.labelview}>
-//               <Text style={styles.label}>Total Guest</Text>
-//             </View>
-//             <TextInput
-//               style={styles.textinput}
-//               placeholder="Total Guest"
-//               placeholderTextColor="gray"
-//               value={numberOfGuest.total}
-//               onChangeText={value => handleGuestNumber('total', value)}
-//             />
-//           </View>
-//         </View>
-
-//         <View style={styles.labelview}>
-//           <Text style={styles.label}>Address</Text>
-//         </View>
-
-//         <View style={styles.containerhalf}>
-//           <View style={{width: '50%'}}>
-//             <View style={styles.labelview}>
-//               <Text style={styles.label}>Province</Text>
-//             </View>
-//             <TextInput
-//               style={styles.textinput}
-//               placeholder="Province"
-//               placeholderTextColor="gray"
-//               value={address.province}
-//               onChangeText={value => handleAddressDetails('province', value)}
-//             />
-//           </View>
-//           <View style={{width: '50%'}}>
-//             <View style={styles.labelview}>
-//               <Text style={styles.label}>District</Text>
-//             </View>
-//             <TextInput
-//               style={styles.textinput}
-//               placeholder="District"
-//               placeholderTextColor="gray"
-//               value={address.district}
-//               onChangeText={value => handleAddressDetails('district', value)}
-//             />
-//           </View>
-//         </View>
-//         <View style={styles.containerhalf}>
-//           <View style={{width: '50%'}}>
-//             <View style={styles.labelview}>
-//               <Text style={styles.label}>City</Text>
-//             </View>
-//             <TextInput
-//               style={styles.textinput}
-//               placeholder="City"
-//               placeholderTextColor="gray"
-//               value={address.city}
-//               onChangeText={value => handleAddressDetails('city', value)}
-//             />
-//           </View>
-//           <View style={{width: '50%'}}>
-//             <View style={styles.labelview}>
-//               <Text style={styles.label}>Street</Text>
-//             </View>
-//             <TextInput
-//               style={styles.textinput}
-//               placeholder="Street "
-//               placeholderTextColor="gray"
-//               value={address.street}
-//               onChangeText={value => handleAddressDetails('street', value)}
-//             />
-//           </View>
-//         </View>
-//         <View style={styles.containerhalf}>
-//           <View style={{width: '50%'}}>
-//             <View style={styles.labelview}>
-//               <Text style={styles.label}>Select Room No.</Text>
-//             </View>
-//             <View style={styles.textinput}>
-//               <Picker
-//                 selectedValue={selectedValue}
-//                 style={styles.picker}
-//                 onValueChange={itemValue => setSelectedValue(itemValue)}>
-//                 {bookedRooms.map(room => (
-//                   <Picker.Item
-//                     key={room._id}
-//                     label={room.roomNumber.toString()}
-//                     value={room.roomNumber}
-//                   />
-//                 ))}
-//               </Picker>
-//             </View>
-//           </View>
-//         </View>
-//         <CustomButton title="Add Booking" width="95%" onPress={handleBooking} />
-//       </View>
-//     </ScrollView>
-//   );
-// };
-
-// export default AddBooking;
-
-// const styles = StyleSheet.create({
-//   container: {
-//     width: '100%',
-//     backgroundColor: 'white',
-//     elevation: 5,
-//     alignSelf: 'center',
-//     marginTop: 10,
-//     padding: 10,
-//     marginBottom: 10,
-//   },
-//   textheading: {
-//     fontSize: 16,
-//     fontWeight: '700',
-//     color: 'black',
-//   },
-//   textinput: {
-//     borderColor: 'gray',
-//     borderWidth: 1,
-//     width: '95%',
-//     alignSelf: 'center',
-//     borderRadius: 6,
-//     paddingHorizontal: 10,
-//     fontSize: 14,
-//     marginTop: 2,
-//   },
-//   genderContainer: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     width: '95%',
-//     alignSelf: 'center',
-//     marginTop: 10,
-//   },
-//   genderText: {
-//     marginRight: 10,
-//     color: 'black',
-//     fontWeight: '500',
-//   },
-//   label: {
-//     fontSize: 14,
-//     color: 'black',
-//     fontWeight: '700',
-//   },
-//   labelview: {
-//     marginTop: 10,
-//     width: '95%',
-//     alignSelf: 'center',
-//     justifyContent: 'space-between',
-//     flexDirection: 'row',
-//   },
-//   textinput2: {
-//     borderColor: 'gray',
-//     borderWidth: 1,
-//     width: '95%',
-//     alignSelf: 'center',
-//     borderRadius: 6,
-//     paddingHorizontal: 10,
-//     fontSize: 14,
-//     marginTop: 2,
-//     justifyContent: 'space-between',
-//     flexDirection: 'row',
-//   },
-//   textinput3: {
-//     borderColor: 'gray',
-//     borderWidth: 1,
-//     borderRadius: 6,
-//     paddingHorizontal: 10,
-//     fontSize: 14,
-//     marginTop: 2,
-//   },
-//   containerhalf: {
-//     justifyContent: 'space-between',
-//     flexDirection: 'row',
-//     width: '95%',
-//     alignSelf: 'center',
-//   },
-//   button: {
-//     marginVertical: 5,
-//     width: '95%',
-//     alignSelf: 'center',
-//     borderRadius: 6,
-//   },
-//   textinput1: {
-//     borderColor: 'gray',
-//     borderWidth: 1,
-//     width: '95%',
-//     alignSelf: 'center',
-//     borderRadius: 6,
-//     paddingHorizontal: 10,
-//     fontSize: 14,
-//     marginTop: 2,
-//     paddingVertical: 15,
-//   },
-//   touchableopacity: {
-//     borderColor: 'gray',
-//     borderWidth: 1,
-//     borderRadius: 6,
-//     padding: 15,
-//     marginBottom: 15,
-//   },
-// });
-
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React from 'react';
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  Modal,
+  ScrollView,
+  Image,
+} from 'react-native';
+import React, {useState} from 'react';
 import {useDispatch} from 'react-redux';
 import {getBookingDetails, postBooking} from '../../redux/booking/action';
+import {Formik} from 'formik';
+import {object, string} from 'yup';
+import {useNavigation} from '@react-navigation/native';
+import CustomButton from '../../components/CustomButton';
+import imagePath from '../../assets/images/imagePath';
+import CustomTouchableOpacity from '../../components/CustomTouchableOpacity';
+import CustomModal from '../../components/CustomModal';
+import PriceBreakupCard from '../../components/PriceBreakupCard';
+import {CalendarList} from 'react-native-calendars';
+import {Dropdown} from 'react-native-element-dropdown';
+import {MultiSelect} from 'react-native-element-dropdown';
+
+let validationSchema = object({
+  name: string().required(),
+});
 
 const AddBooking = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible2, setModalVisible2] = useState(false);
+   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisible1, setIsModalVisible1] = useState(false);
+  const [CheckIn, setCheckIn] = useState('Check-in Date');
+  const [CheckOut, setCheckOut] = useState('Check-Out Date');
   const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const [modalData, setModalData] = useState({});
+
+  const handleModalSave = data => {
+    setModalData(data);
+    console.log(data, 'line no.217');
+  };
 
   const handlePost = () => {
     const req = {
@@ -565,12 +83,274 @@ const AddBooking = () => {
       console.error('Error occurred while booking:', error);
     }
   };
+  const handlePressCheckin = day => {
+    setCheckIn(day.dateString);
+    setIsModalVisible(false);
+  };
+  const handlePressCheckOut = day => {
+    setCheckOut(day.dateString);
+    setIsModalVisible1(false);
+  };
+
+  const currentDate = new Date();
+  const [amenities, setAmenities] = useState([]);
+  const currentDateString = currentDate.toISOString().split('T')[0];
+  const data = [
+    {label: 'Item 1', value: '1'},
+    {label: 'Item 2', value: '2'},
+    {label: 'Item 3', value: '3'},
+  ];
+
+  const paymentOption = [
+    {label: 'Paid', value: 'SUCCESS'},
+    {label: 'Due', value: 'PENDING'},
+  ];
+
+  const statusOption = [
+    {label: 'Check-in', value: 'CHECK-IN'},
+    {label: ' Check-out', value: 'CHECKED-OUT'},
+    {label: 'Reserved', value: 'RESERVED'},
+  ];
+  const [Room, setRooms] = useState('Select Room');
+  const [status, setStatus] = useState(null);
+  const [paymentStatus, setPaymentStatus] = useState(null);
+
   return (
-    <View>
-      <Text>AddBooking</Text>
-      <TouchableOpacity style={styles.touch} onPress={handlePost}>
-        <Text style={{color: 'white', textAlign: 'center'}}>Submit Form</Text>
-      </TouchableOpacity>
+    <View style={{flex: 1}}>
+      <ScrollView>
+        <Formik
+          initialValues={{
+            fullName: '',
+            email: '',
+            phoneNumber: '',
+            nationality: '',
+          }}
+          validationSchema={validationSchema}
+          onSubmit={values => {
+            console.log(values);
+          }}>
+          {({handleChange, values, errors}) => (
+            <View>
+              <View style={styles.miniContainer}>
+                <Text>Booking Info</Text>
+                <TouchableOpacity
+                  onPress={() => setIsModalVisible(true)}
+                  style={styles.textinput1}>
+                  <Image source={imagePath.alarmIcon} style={styles.icon} />
+                  <Text
+                    style={{fontSize: 14, color: 'gray', fontWeight: '500'}}>
+                    {CheckIn}
+                  </Text>
+                </TouchableOpacity>
+                <Modal
+                  visible={isModalVisible}
+                  animationType="slide"
+                  transparent={true}
+                  onRequestClose={() => setIsModalVisible(false)}>
+                  <View style={{flex: 1}}>
+                    <CalendarList
+                      onDayPress={handlePressCheckin}
+                      markedDates={{[CheckIn]: {selected: true}}}
+                      pastScrollRange={0}
+                      minDate={currentDateString}
+                      futureScrollRange={2}
+                    />
+                  </View>
+                </Modal>
+                <TouchableOpacity
+                  onPress={() => setIsModalVisible1(true)}
+                  style={styles.textinput1}>
+                  <Image source={imagePath.alarmIcon} style={styles.icon} />
+                  <Text style={{fontSize: 14, color: 'gray'}}>{CheckOut}</Text>
+                </TouchableOpacity>
+                <Modal
+                  visible={isModalVisible1}
+                  animationType="slide"
+                  transparent={true}
+                  onRequestClose={() => setIsModalVisible1(false)}>
+                  <View style={{flex: 1}}>
+                    <CalendarList
+                      onDayPress={handlePressCheckOut}
+                      markedDates={{[CheckOut]: {selected: true}}}
+                      pastScrollRange={0}
+                      minDate={currentDateString}
+                      futureScrollRange={2}
+                    />
+                  </View>
+                </Modal>
+                <CustomTouchableOpacity
+                  text="Guests"
+                  width="95%"
+                  icon={imagePath.alarmIcon}
+                  onPress={() => setModalVisible(true)}
+                />
+                <CustomModal
+                  visible={modalVisible}
+                  onClose={() => setModalVisible(false)}
+                  onSave={handleModalSave}
+                  fields={[
+                    {name: 'adult', placeholder: 'Adult'},
+                    {name: 'child', placeholder: 'Child'},
+                    {name: 'totalGuests', placeholder: 'Total no. of Guests'},
+                  ]}
+                  title="Add No. of Guests"
+                />
+                <Dropdown
+                  style={styles.dropdown}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  iconStyle={styles.iconStyle}
+                  data={data}
+                  placeholder="Select Room"
+                  maxHeight={300}
+                  labelField="label"
+                  valueField="value"
+                  value={Room}
+                  onChange={item => {
+                    setRooms(item.value);
+                  }}
+                  renderLeftIcon={() => (
+                    <Image source={imagePath.alarmIcon} style={styles.icon} />
+                  )}
+                />
+              </View>
+              <View style={styles.miniContainer}>
+                <Text>Personal Info</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Name"
+                  onChangeText={handleChange('fullName')}
+                  value={values.fullName}
+                />
+                {errors.name && <Text style={styles.error}>{errors.name}</Text>}
+
+                <TextInput
+                  style={styles.input}
+                  placeholder="Email"
+                  keyboardType="email-address"
+                  onChangeText={handleChange('email')}
+                  value={values.email}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Contact No."
+                  keyboardType="numeric"
+                  onChangeText={handleChange('phoneNumber')}
+                  value={values.phoneNumber}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Nationality"
+                  onChangeText={handleChange('nationality')}
+                  value={values.nationality}
+                />
+                <CustomTouchableOpacity
+                  text="Address Details"
+                  width="95%"
+                  icon={imagePath.alarmIcon}
+                  onPress={() => setModalVisible2(true)}
+                />
+                <CustomModal
+                  visible={modalVisible2}
+                  onClose={() => setModalVisible2(false)}
+                  onSave={handleModalSave}
+                  fields={[
+                    {
+                      name: 'proviance',
+                      placeholder: 'Proviance',
+                    },
+                    {name: 'district', placeholder: 'District'},
+                    {name: 'street', placeholder: 'Street'},
+                  ]}
+                  title="Address Details"
+                />
+              </View>
+
+              <View style={styles.miniContainer}>
+                <MultiSelect
+                  style={styles.dropdown}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  inputSearchStyle={styles.inputSearchStyle}
+                  iconStyle={styles.iconStyle}
+                  data={data}
+                  labelField="label"
+                  valueField="value"
+                  placeholder="Select Amenities"
+                  value={amenities}
+                  onChange={item => {
+                    setAmenities(item);
+                  }}
+                  renderLeftIcon={() => (
+                    <Image source={imagePath.alarmIcon} style={styles.icon} />
+                  )}
+                  selectedStyle={styles.selectedStyle}
+                />
+                <Dropdown
+                  style={styles.dropdown}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  iconStyle={styles.iconStyle}
+                  data={paymentOption}
+                  maxHeight={300}
+                  placeholder="Select Payment Status"
+                  labelField="label"
+                  valueField="value"
+                  value={paymentStatus}
+                  onChange={item => {
+                    setPaymentStatus(item.value);
+                  }}
+                  renderLeftIcon={() => (
+                    <Image source={imagePath.alarmIcon} style={styles.icon} />
+                  )}
+                />
+                <Dropdown
+                  style={styles.dropdown}
+                  placeholderStyle={styles.placeholderStyle}
+                  selectedTextStyle={styles.selectedTextStyle}
+                  iconStyle={styles.iconStyle}
+                  data={statusOption}
+                  maxHeight={300}
+                  placeholder="Select Booking Status"
+                  labelField="label"
+                  valueField="value"
+                  value={status}
+                  onChange={item => {
+                    setStatus(item.value);
+                  }}
+                  renderLeftIcon={() => (
+                    <Image source={imagePath.alarmIcon} style={styles.icon} />
+                  )}
+                />
+              </View>
+              <PriceBreakupCard />
+            </View>
+          )}
+        </Formik>
+      </ScrollView>
+      <View style={styles.bottomMainView}>
+        <View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Text style={{color: 'white', fontSize: 14, fontWeight: '800'}}>
+              $ 5,785
+            </Text>
+            <TouchableOpacity>
+              <Image
+                source={imagePath.infoImage}
+                style={{
+                  height: 14,
+                  width: 14,
+                  tintColor: 'white',
+                  marginLeft: 7,
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+          <Text style={{color: 'white', fontSize: 9}}>including VAT</Text>
+          <Text style={{color: 'white', fontSize: 9}}>For 2 person</Text>
+        </View>
+        <CustomButton title="Submit" width="50%" />
+      </View>
     </View>
   );
 };
@@ -579,11 +359,103 @@ export default AddBooking;
 
 const styles = StyleSheet.create({
   touch: {
-    backgroundColor: 'black',
-    width: '85%',
+    width: '95%',
     alignSelf: 'center',
-    paddingVertical: 10,
     marginTop: 10,
     borderRadius: 10,
+  },
+  guestinput: {
+    flexDirection: 'row',
+    width: '90%',
+    alignSelf: 'center',
+    justifyContent: 'space-between',
+  },
+  input: {
+    paddingHorizontal: 16,
+    marginVertical: 7,
+    width: '95%',
+    alignSelf: 'center',
+    paddingVertical: 8,
+    borderRadius: 6,
+    backgroundColor: '#eef3ef',
+    borderWidth: 1,
+    borderColor: '#dadada',
+  },
+  selectedStyle: {
+    borderRadius: 6,
+    marginLeft: 5,
+  },
+  error: {
+    color: 'red',
+    marginBottom: 10,
+    marginTop: -5,
+    width: '95%',
+    alignSelf: 'center',
+  },
+  miniContainer: {
+    width: '100%',
+    alignSelf: 'center',
+    paddingHorizontal: 10,
+    backgroundColor: 'white',
+    marginTop: 10,
+    paddingVertical: 10,
+  },
+  bottomMainView: {
+    bottom: 0,
+    position: 'relative',
+    backgroundColor: 'black',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingRight: 15,
+  },
+  textinput1: {
+    paddingHorizontal: 10,
+    marginVertical: 7,
+    width: '95%',
+    alignSelf: 'center',
+    paddingVertical: 12,
+    borderRadius: 6,
+    backgroundColor: '#eef3ef',
+    elevation: 1,
+    borderWidth: 0.5,
+    borderColor: '#dadada',
+    flexDirection: 'row',
+  },
+  dropdown: {
+    paddingHorizontal: 10,
+    marginVertical: 7,
+    width: '95%',
+    alignSelf: 'center',
+    paddingVertical: 4,
+    borderRadius: 6,
+    backgroundColor: '#eef3ef',
+    borderWidth: 1,
+    borderColor: '#dadada',
+  },
+  icon: {
+    marginRight: 10,
+    height: 18,
+    width: 18,
+  },
+  label: {
+    position: 'absolute',
+    backgroundColor: 'white',
+    left: 22,
+    top: 8,
+    zIndex: 999,
+    paddingHorizontal: 8,
+    fontSize: 14,
+  },
+  placeholderStyle: {
+    fontSize: 14,
+  },
+  selectedTextStyle: {
+    fontSize: 14,
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
   },
 });

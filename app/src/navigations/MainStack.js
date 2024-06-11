@@ -1,21 +1,31 @@
-import {MainScreen, RoomDetails, Checkout, CategoryDetails, AddBooking} from '../screens';
+import {
+  MainScreen,
+  RoomDetails,
+  Checkout,
+  CategoryDetails,
+  AddBooking,
+} from '../screens';
 import imagePath from '../assets/images/imagePath';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {TouchableOpacity, Image} from 'react-native';
-
+import BottomNavigator from '../screens/bottom/BottomNavigator';
+import LostAndFound from '../screens/lostandfound/LostAndFound';
+import DetailsLostItem from '../screens/lostandfound/DetailsLostItem';
 
 const Stack = createNativeStackNavigator();
 
-
 export default MainStack = () => (
-  
   <Stack.Navigator>
     <Stack.Screen
       name="MainScreen"
       component={MainScreen}
       options={{headerShown: false, title: 'Book Your Room'}}
     />
-
+    <Stack.Screen
+      name="Main"
+      component={BottomNavigator}
+      options={{headerShown: false, title: 'Book Your Room'}}
+    />
     <Stack.Screen
       name="RoomDetails"
       component={RoomDetails}
@@ -28,8 +38,7 @@ export default MainStack = () => (
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
-            }}
-            >
+            }}>
             <Image
               source={imagePath.editIcon}
               style={{
@@ -49,10 +58,20 @@ export default MainStack = () => (
       options={{headerShown: true, title: 'Checkout'}}
     />
     <Stack.Screen
-    name="AddBooking"
-    component={AddBooking}
-    options={{headerShown: true, title: ' Add booking'}}
-  />
+      name="AddBooking"
+      component={AddBooking}
+      options={{headerShown: true, title: ' Add booking'}}
+    />
 
+    <Stack.Screen
+      name="LostAndFound"
+      component={LostAndFound}
+      options={{headerShown: true, title: ' Lost & Found'}}
+    />
+    <Stack.Screen
+      name="DetailsLostItem"
+      component={DetailsLostItem}
+      options={{headerShown: true, title: ' Details '}}
+    />
   </Stack.Navigator>
 );

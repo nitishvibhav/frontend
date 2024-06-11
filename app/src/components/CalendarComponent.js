@@ -11,7 +11,7 @@ import {Calendar, CalendarList} from 'react-native-calendars';
 
 const CalendarComponent = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedDate, setSelectedDate] = useState('Departure Date');
+  const [selectedDate, setSelectedDate] = useState('Check-Out Date');
 
   const onDayPress = day => {
     setSelectedDate(day.dateString);
@@ -25,7 +25,7 @@ const CalendarComponent = () => {
       <TouchableOpacity
         onPress={() => setIsModalVisible(true)}
         style={styles.textinput1}>
-        <Text style={{color:'black', fontSize:14, fontWeight:"500"}}>{selectedDate}</Text>
+        <Text style={{color:'gray', fontSize:14, fontWeight:"500"}}>{selectedDate}</Text>
       </TouchableOpacity>
       <Modal
         visible={isModalVisible}
@@ -52,15 +52,15 @@ export default CalendarComponent;
 
 const styles = StyleSheet.create({
   textinput1: {
-    borderColor: 'gray',
-    borderWidth: 1,
+    paddingHorizontal: 16,
     width: '95%',
     alignSelf: 'center',
+    marginVertical:7,
+    paddingVertical: 12,
     borderRadius: 6,
-    paddingHorizontal: 10,
-    fontSize: 12,
-    color: 'black',
-    marginTop: 2,
-    paddingVertical: 15,
+    backgroundColor: '#eef3ef',
+    elevation: 1,
+    borderWidth: 0.5,
+    borderColor: '#dadada',
   },
 });

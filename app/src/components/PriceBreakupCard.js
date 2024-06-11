@@ -10,8 +10,9 @@ const PriceBreakupCard = () => {
         alignSelf: 'center',
         elevation: 5,
         shadowColor: 'grey',
-        marginBottom: 90,
+        marginBottom: 10,
         paddingBottom: 20,
+        marginTop:10
       }}>
       <Text
         style={{marginLeft: 20, fontSize: 18, fontWeight: 700, marginTop: 10}}>
@@ -24,7 +25,7 @@ const PriceBreakupCard = () => {
           marginHorizontal: 20,
           marginTop: 10,
         }}>
-        <Text style={{color: '#4b4b4b'}}>1 Rooms x 2 night Base Price</Text>
+        <Text style={{color: '#4b4b4b'}}>1 Room Base Price</Text>
         <Text style={{color: '#4b4b4b'}}>₹ 4,000</Text>
       </View>
       <View
@@ -40,24 +41,8 @@ const PriceBreakupCard = () => {
           justifyContent: 'space-between',
           marginHorizontal: 20,
         }}>
-        <Text style={{color: '#0a8374'}}>Additional Discount </Text>
+        <Text style={{color: '#0a8374'}}>Discount </Text>
         <Text style={{color: '#0a8374'}}>- ₹ 500</Text>
-      </View>
-      <View
-        style={{
-          borderBottomColor: '#d6d6d6',
-          borderBottomWidth: 1,
-          margin: 10,
-        }}
-      />
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          marginHorizontal: 20,
-        }}>
-        <Text style={{color: '#0a8374'}}>Coupon Discount </Text>
-        <Text style={{color: '#0a8374'}}>- ₹ 1,000</Text>
       </View>
       <View
         style={{
@@ -104,8 +89,8 @@ const PriceBreakupCard = () => {
           justifyContent: 'space-between',
           marginHorizontal: 20,
         }}>
-        <Text style={{color: '#4b4b4b'}}>Service fees</Text>
-        <Text style={{color: '#4b4b4b'}}>₹ 1600</Text>
+        <Text style={{color: '#4b4b4b'}}>Extra Charges Remark</Text>
+        <Text style={{color: '#4b4b4b'}}>Vat</Text>
       </View>
       <View
         style={{

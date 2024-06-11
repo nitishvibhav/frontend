@@ -124,12 +124,12 @@ const CustomDrawer = () => {
         </View>
       </View>
       <View style={styles.container}>
-        <Text style={styles.heading}>Settings</Text>
+        <Text style={styles.heading}>Lost & Found</Text>
         <View style={styles.textView}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Text style={styles.text}>View Profile</Text>
+            <Text style={styles.text}>Lost & Found</Text>
           </View>
-          <TouchableOpacity onPress={()=>navigation.navigate('Profile')}>
+          <TouchableOpacity onPress={()=>navigation.navigate('LostAndFound')}>
           <Image
             source={imagePath.nextIcon}
             style={styles.nextImage}

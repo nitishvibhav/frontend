@@ -7,10 +7,12 @@ import {
   StyleSheet,
 } from 'react-native';
 import React from 'react';
-import {useState} from 'react';
+import { setUser } from '../../redux/user/action';
 
 const Profile = () => {
-  const [firstName, setFirstName] = useState('');
+   
+
+
   return (
     <ScrollView>
       <View

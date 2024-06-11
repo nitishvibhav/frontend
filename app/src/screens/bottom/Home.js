@@ -13,6 +13,7 @@ import TopMiniCard from '../../components/homepage/TopMiniCard';
 import {getRooms} from '../../redux/rooms/action';
 import {useDispatch, useSelector} from 'react-redux';
 import imagePath from '../../assets/images/imagePath';
+import CustomButton from '../../components/CustomButton';
 
 const Home = () => {
   const navigation = useNavigation();
@@ -27,6 +28,7 @@ const Home = () => {
     setTotalRooms(rooms.count);
   }, []);
 
+  
   useEffect(() => {
     if (rooms && rooms.result) {
       const filteredRooms = rooms.result.filter(
@@ -250,6 +252,11 @@ const Home = () => {
           </View>
         </View>
       </View>
+      <CustomButton
+        title="Add Booking"
+        onPress={() => navigation.navigate('AddBooking')}
+        width="95%"
+      />
       <View
         style={{
           justifyContent: 'space-between',

@@ -11,13 +11,13 @@ import {Calendar, CalendarList} from 'react-native-calendars';
 
 const CalendarComponent1 = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedDate, setSelectedDate] = useState('Arrival Date');
+  const [CheckIn, setCheckIn] = useState('Check-in Date');
 
   const onDayPress = day => {
-    setSelectedDate(day.dateString);
+    setCheckIn(day.dateString);
     setIsModalVisible(false);
   };
-
+  console.log(CheckIn, "selected date")
   const currentDate = new Date();
   const currentDateString = currentDate.toISOString().split('T')[0];
   return (
@@ -25,8 +25,8 @@ const CalendarComponent1 = () => {
       <TouchableOpacity
         onPress={() => setIsModalVisible(true)}
         style={styles.textinput1}>
-        <Text style={{fontSize: 14, color: 'black', fontWeight: '500'}}>
-          {selectedDate}
+        <Text style={{fontSize: 14, color: 'gray', fontWeight: '500'}}>
+          {CheckIn}
         </Text>
       </TouchableOpacity>
       <Modal
@@ -37,7 +37,7 @@ const CalendarComponent1 = () => {
         <View style={{flex: 1}}>
           <CalendarList
             onDayPress={onDayPress}
-            markedDates={{[selectedDate]: {selected: true}}}
+            markedDates={{[CheckIn]: {selected: true}}}
             pastScrollRange={0}
             minDate={currentDateString}
             futureScrollRange={2}
@@ -52,14 +52,15 @@ export default CalendarComponent1;
 
 const styles = StyleSheet.create({
   textinput1: {
-    borderColor: 'gray',
-    borderWidth: 1,
+    paddingHorizontal: 16,
+    marginVertical:7,
     width: '95%',
     alignSelf: 'center',
+    paddingVertical: 12,
     borderRadius: 6,
-    paddingHorizontal: 10,
-    fontSize: 14,
-    marginTop: 2,
-    paddingVertical: 15,
+    backgroundColor: '#eef3ef',
+    elevation: 1,
+    borderWidth: 0.5,
+    borderColor: '#dadada',
   },
 });

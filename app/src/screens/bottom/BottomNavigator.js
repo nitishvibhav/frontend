@@ -7,12 +7,14 @@ import Home from './Home';
 import Profile from './Profile';
 import imagePath from '../../assets/images/imagePath';
 import AddBooking from '../booking/AddBooking';
+import { useNavigation } from '@react-navigation/native';
 
 const Bottom = createBottomTabNavigator();
 
 const BottomNavigator = () => {
+  const navigation = useNavigation()
   return (
-    <Bottom.Navigator screenOptions={{tabBarShowLabel:false}}>
+    <Bottom.Navigator screenOptions={{tabBarShowLabel: false}}>
       <Bottom.Screen
         name="Home"
         component={Home}
@@ -52,24 +54,23 @@ const BottomNavigator = () => {
         }}
       />
       <Bottom.Screen
-      name="Add Booking"
-      component={AddBooking}
-      options={{
-        headerShown: false,
-        tabBarIcon: ({focused}) => (
-          <Image
-            source={
-              focused ? imagePath.bottomAddFocus : imagePath.bottomAdd
-            }
-            style={{
-              width: 24,
-              height: 24,
-            }}
-          />
-        ),
-        tabBarActiveTintColor: 'black',
-      }}
-    />
+        name="Add Booking"
+        component={AddBooking}
+        onPress={() => navigation.navigate('AddBooking')}
+        options={{
+          headerShown: true,
+          tabBarIcon: ({focused}) => (
+            <Image
+              source={focused ? imagePath.bottomAddFocus : imagePath.bottomAdd}
+              style={{
+                width: 24,
+                height: 24,
+              }}
+            />
+          ),
+          tabBarActiveTintColor: 'black',
+        }}
+      />
       <Bottom.Screen
         name="Room"
         component={RoomType}
@@ -105,7 +106,6 @@ const BottomNavigator = () => {
               }}
             />
           ),
-        
         }}
       />
     </Bottom.Navigator>

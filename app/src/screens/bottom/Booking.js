@@ -11,7 +11,6 @@ const Booking = () => {
   return (
     <Tab.Navigator>
     <Tab.Screen name="All Booking" component={AllBooking} />
-      <Tab.Screen name="Add Booking" component={AddBooking} />
     </Tab.Navigator>
   );
 };
