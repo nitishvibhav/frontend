@@ -1,12 +1,13 @@
 import { loginUser,} from './source'
 import * as source from "./source";
+import { LOGOUT_USER } from './konstant';
 
 import { LOGIN_USER } from './konstant'
 
-export function login (auth) {
+export function login (data) {
     return {
         type: LOGIN_USER,
-        payload: loginUser(auth)
+        payload: loginUser(data)
     }
 }
 
@@ -18,3 +19,9 @@ export function setUser (user) {
         })
     }
 }
+
+export const logoutUser = () => {
+    return {
+      type: LOGOUT_USER,
+    };
+  };

@@ -1,16 +1,16 @@
-import {NavigationContainer} from '@react-navigation/native';
-import {getUser} from '../../utils';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
 import MainStack from './MainStack';
 import AuthStack from './AuthStack';
+import { getUser } from '../../utils';
 
-
-
-
-export default Routes = () => {
-  console.log(getUser(), "inside main Routes")
+const Routes = () => {
+  console.log(getUser())
   return (
     <NavigationContainer>
       {getUser ? <MainStack /> : <AuthStack />}
     </NavigationContainer>
   );
 };
+
+export default Routes;

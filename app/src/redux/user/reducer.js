@@ -1,8 +1,8 @@
-import {LOGIN_USER} from './konstant';
+import {LOGIN_USER, LOGOUT_USER} from './konstant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {setUser} from '../../../utils';
 const initialState = {
-  user: [],
+  user: null,
   createState: 0,
   loginState: 0,
   addState: 0,
@@ -19,7 +19,7 @@ const reducer = (state = initialState, action) => {
     case `${LOGIN_USER}_FULFILLED`:
       const user = action.payload.data;
       setUser(user);
-      AsyncStorage.setItem('result', JSON.stringify(user))
+      AsyncStorage.setItem('result', JSON.stringify(user));
       return {...state, loginState: 2, user};
     case `${LOGIN_USER}_REJECTED`:
       return {
@@ -28,10 +28,12 @@ const reducer = (state = initialState, action) => {
         loginError: action.payload.response.data,
       };
 
+    case LOGOUT_USER:
+      AsyncStorage.removeItem('result');
+      return {...state, user: null};
     default:
       return state;
   }
 };
 
 export default reducer;
-                  

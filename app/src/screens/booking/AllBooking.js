@@ -10,11 +10,9 @@ import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {getBookingDetails} from '../../redux/booking/action';
 import {useDispatch, useSelector} from 'react-redux';
-import imagePath from '../../assets/images/imagePath';
 
 const AllBooking = () => {
   const navigation = useNavigation();
-  const [bookingData, setBookingData] = useState([]);
   const dispatch = useDispatch();
   const {booking} = useSelector(state => state.bookingReducer);
 
@@ -26,34 +24,38 @@ const AllBooking = () => {
     <ScrollView>
       <View style={styles.topContainer2}>
         <View style={{flexDirection: 'row'}}>
-          <View style={{width: '25%', alignItems: 'flex-start'}}>
+          <View style={{width: '35%', alignItems: 'flex-start'}}>
             <Text style={{color: 'black', fontWeight: '800'}}>Customer</Text>
           </View>
           <View style={{width: '25%', alignItems: 'flex-start'}}>
-            <Text style={{color: 'black', fontWeight: '800'}}>
-              Booking Status
-            </Text>
+            <Text style={{color: 'black', fontWeight: '800'}}>Status</Text>
           </View>
-          <View style={{width: '25%', alignItems: 'flex-start'}}>
+          <View style={{width: '20%', alignItems: 'flex-end'}}>
             <Text style={{color: 'black', fontWeight: '800'}}>Nationality</Text>
           </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
+          <View style={{width: '20%', alignItems: 'flex-end'}}>
             <Text style={{color: 'black', fontWeight: '800'}}>Price</Text>
           </View>
         </View>
         <View
-          style={{borderBottomWidth: 1, borderColor: 'gray', marginVertical: 5}}
+          style={{
+            borderBottomWidth: 1,
+            borderColor: 'gray',
+            marginVertical: 15,
+          }}
         />
 
         {booking?.result?.map(item => (
-          <TouchableOpacity key={item._id} onPress={()=> navigation.navigate('RoomDetails', {item})}>
+          <TouchableOpacity
+            key={item._id}
+            onPress={() => navigation.navigate('RoomDetails', {item})}>
             <View
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
                 paddingVertical: 4,
               }}>
-              <View style={{width: '25%', alignItems: 'flex-start'}}>
+              <View style={{width: '35%', alignItems: 'flex-start'}}>
                 <Text style={{color: 'black', fontWeight: '500'}}>
                   {item.fullName}
                 </Text>
@@ -73,13 +75,13 @@ const AllBooking = () => {
                   {item.status}
                 </Text>
               </View>
-              <View style={{width: '25%', alignItems: 'center'}}>
+              <View style={{width: '20%', alignItems: 'flex-end'}}>
                 <Text style={{color: 'black', fontWeight: '500'}}>
                   {item.nationality}
                 </Text>
               </View>
 
-              <View style={{width: '25%', alignItems: 'center'}}>
+              <View style={{width: '20%', alignItems: 'flex-end'}}>
                 <Text style={{color: 'black', fontWeight: '500'}}>
                   {item.grandTotal}
                 </Text>
@@ -87,9 +89,9 @@ const AllBooking = () => {
             </View>
             <View
               style={{
-                borderBottomWidth: 1,
+                borderBottomWidth: 0.5,
                 borderColor: 'gray',
-                marginVertical: 5,
+                marginVertical: 10,
               }}
             />
           </TouchableOpacity>

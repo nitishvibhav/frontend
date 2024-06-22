@@ -2,7 +2,7 @@ const initialState = {
   bookingState: 0,
   booking: {},
   createState: 0,
-  createBooking:{}
+
 };
 
 const reducer = (state = initialState, action) => {
@@ -17,7 +17,7 @@ const reducer = (state = initialState, action) => {
     case 'POST_BOOKING_PENDING':
       return {...state, createState: 1};
     case 'POST_BOOKING_FULFILLED':
-      return {...state, createState: 2, createBooking: action.payload.data};
+      return {...state, createState: 2, booking: action.payload.data};
     case 'POST_BOOKING_REJECTED':
       return {...state, createState: 3};
 

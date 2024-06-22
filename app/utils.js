@@ -1,42 +1,34 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {get} from 'lodash';
-import {updateToken} from './request';
-
-// Utility to get array from object
-const getArr = (obj, ltr) => get(obj, ltr) || [];
+import { get } from "lodash";
+import { updateToken } from "./request";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Fetch and parse user data from AsyncStorage
 const getUser = async () => {
   try {
-    const storedUser = await AsyncStorage.getItem('result');
-    const result = storedUser != null ? JSON.parse(storedUser) : null;
-    if (result && result.token) {
-      await AsyncStorage.setItem('token', result.token);
-      return result;
-    }
-    return null;
+    const storedUser = await AsyncStorage.getItem("user");
+    if (!storedUser) return null;
+    const data = JSON.parse(storedUser);
+    return data;
   } catch (error) {
-    console.error('Error retrieving user data:', error);
+    console.error('Error getting user data:', error);
     return null;
   }
 };
 
-// Get access token from AsyncStorage
+// Fetch access token from AsyncStorage
 const getAccessToken = async () => {
   try {
-    const token = await AsyncStorage.getItem('token');
-    return token;
+    return await AsyncStorage.getItem("token");
   } catch (error) {
-    console.error('Error retrieving token:', error);
+    console.error('Error getting access token:', error);
     return null;
   }
 };
 
-// Update access token by getting the current user token and calling updateToken
+// Update access token in request headers
 const updateAccessToken = async () => {
   try {
-    const user = await getUser();
-    const token = get(user, 'token');
+    const token = await getAccessToken();
     if (token) {
       updateToken(token);
     }
@@ -45,13 +37,22 @@ const updateAccessToken = async () => {
   }
 };
 
-// Store user data in AsyncStorage
+// Store user data in AsyncStorage as JSON string
 const setUser = async (data) => {
   try {
-    await AsyncStorage.setItem('result', data);
+    const userData = JSON.stringify(data);
+    await AsyncStorage.setItem("user", userData);
+    if (data.token) {
+      await AsyncStorage.setItem("token", data.token);
+    }
   } catch (error) {
     console.error('Error setting user data:', error);
   }
 };
 
-export {getArr, getAccessToken, getUser, updateAccessToken, setUser};
+export {
+  getAccessToken,
+  getUser,
+  updateAccessToken,
+  setUser,
+};

@@ -5,13 +5,20 @@ import {
   TextInput,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
 } from 'react-native';
 import React from 'react';
-import { setUser } from '../../redux/user/action';
+import { logoutUser } from '../../redux/user/action';
+import { useDispatch } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 
 const Profile = () => {
+  const dispatch = useDispatch();
+  const navigation = useNavigation()
    
-
+  const handleLogout = () => {
+    dispatch(logoutUser());
+  };
 
   return (
     <ScrollView>
@@ -126,7 +133,7 @@ const Profile = () => {
         </View>
       </View>
 
-      <View
+      <TouchableOpacity
         style={{
           backgroundColor: 'white',
           marginTop: 20,
@@ -134,7 +141,8 @@ const Profile = () => {
           flexDirection: 'row',
           padding: 20,
           alignItems: 'center',
-        }}>
+        }}
+        onPress={handleLogout}>
         <Text
           style={{
             color: '#2275df',
@@ -144,7 +152,7 @@ const Profile = () => {
           }}>
           Log Out
         </Text>
-      </View>
+      </TouchableOpacity>
     </ScrollView>
   );
 };

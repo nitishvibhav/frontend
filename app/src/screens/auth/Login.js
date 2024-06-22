@@ -24,8 +24,7 @@ const Login = () => {
   });
 
   const handleChange = (name, value) => {
-    setData(prevData => ({
-      ...prevData,
+    setData(() => ({
       [name]: value,
     }));
   };
@@ -33,7 +32,10 @@ const Login = () => {
   console.log(data, 'data');
 
   const loginHandler = async () => {
-    const res = await dispatch(login(data));
+    const res = await dispatch(login({
+      email:"reception1@gmail.com",
+      password:"Singh@5696"
+    }));
     const status = get(res, 'value.status');
     console.log('status', status);
     if (status === 200) {

@@ -25,5 +25,19 @@ export default {
   loginPageImage: require('../images/login_app.png'),
   infoImage: require('../images/info.png'),
   closeIcon: require('../images/cross.png'),
-  LostItem : require('../images/chager.jpg')
+  LostItem : require('../images/chager.jpg'),
+  checkIn: require('../images/check_in.png'),
+  checkOut: require('../images/check_out.png'),
+  Increment : require('../images/plus.png'),
+  Decrement : require('../images/minus.png'),
+  Dropdown : require('../images/down.png'),
+  BookingStatus : require('../images/booking_statas.png'),
+  BookingOption : require('../images/booking_option.png'),
+  contactDetails : require('../images/contact_deatails.png'),
+  tarvellarDetails : require('../images/traveller_details.png'),
+  roomType : require ('../images/room_type.png'),
+  paymentStatus: require('../images/peyment-statas.png'),
+  paymentDetails: require('../images/peyment_details.png'),
+  addressDetails: require('../images/address.png'),
+  guests: require('../images/gusts.png')
 };
