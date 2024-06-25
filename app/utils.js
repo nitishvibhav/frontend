@@ -1,20 +1,26 @@
-import { get } from "lodash";
+
 import { updateToken } from "./request";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Fetch and parse user data from AsyncStorage
 const getUser = async () => {
   try {
-    const storedUser = await AsyncStorage.getItem("user");
+    const storedUser = await AsyncStorage.getItem('user');
     if (!storedUser) return null;
-    const data = JSON.parse(storedUser);
-    return data;
+    return JSON.parse(storedUser);
   } catch (error) {
     console.error('Error getting user data:', error);
     return null;
   }
 };
+ console.log(getUser(), "getUser under utills")
 
+ const logUser = async () => {
+  const user = await getUser();
+  console.log(user, "getUser under utils");
+};
+
+logUser();
 // Fetch access token from AsyncStorage
 const getAccessToken = async () => {
   try {
@@ -55,4 +61,5 @@ export {
   getUser,
   updateAccessToken,
   setUser,
+  logUser
 };

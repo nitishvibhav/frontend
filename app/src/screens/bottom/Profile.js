@@ -8,16 +8,20 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import React from 'react';
-import { logoutUser } from '../../redux/user/action';
-import { useDispatch } from 'react-redux';
-import { useNavigation } from '@react-navigation/native';
+import {logoutUser} from '../../redux/user/action';
+import {useDispatch, useSelector} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
+import imagePath from '../../assets/images/imagePath';
 
 const Profile = () => {
   const dispatch = useDispatch();
-  const navigation = useNavigation()
-   
+  const navigation = useNavigation();
+  const {user} = useSelector(state => state.loginReducer);
+  console.log(user, 'dfghj.........');
+
   const handleLogout = () => {
     dispatch(logoutUser());
+    navigation.navigate('Login');
   };
 
   return (
@@ -29,6 +33,7 @@ const Profile = () => {
           backgroundColor: 'white',
           justifyContent: 'space-between',
         }}>
+        <Image source={imagePath.nextIcon} style={{height: 16, width: 16}} />
         <View style={{flexDirection: 'row'}}>
           <Text style={{fontSize: 16, fontWeight: 800}}>My Profile</Text>
         </View>
@@ -52,10 +57,10 @@ const Profile = () => {
           color: '#2a74d7',
           fontWeight: 700,
           alignSelf: 'center',
-          marginTop: 5,
+          marginVertical: 15,
           fontSize: 16,
         }}>
-        Add Profile Photo
+        {user.result.fullName}
       </Text>
       <View
         style={{backgroundColor: 'white', marginTop: 10, paddingBottom: 10}}>
@@ -68,24 +73,20 @@ const Profile = () => {
           }}>
           PERSONAL INFORMATION
         </Text>
-
-        <View
-        style={styles.textinputView}>
-          <TextInput placeholder="Full Name" placeholderTextColor={'#505152'} />
+        <View style={styles.textinputView}>
+          <Image source={imagePath.alarmIcon} style={{height: 20, width: 20}} />
+          <Text>Email</Text>
         </View>
-        <View
-        style={styles.textinputView}>
+        <View style={styles.textinputView}>
           <TextInput placeholder="Email" placeholderTextColor={'#505152'} />
         </View>
-        <View
-        style={styles.textinputView}>
+        <View style={styles.textinputView}>
           <TextInput
             placeholder="Mobile No."
             placeholderTextColor={'#505152'}
           />
         </View>
-        <View
-        style={styles.textinputView}>
+        <View style={styles.textinputView}>
           <TextInput
             placeholder="Designation"
             placeholderTextColor={'#505152'}
@@ -103,15 +104,13 @@ const Profile = () => {
           }}>
           HOTEL INFORMATION
         </Text>
-        <View
-        style={styles.textinputView}>
+        <View style={styles.textinputView}>
           <TextInput
             placeholder="Hotel Name"
             placeholderTextColor={'#505152'}
           />
         </View>
-        <View
-        style={styles.textinputView}>
+        <View style={styles.textinputView}>
           <TextInput placeholder="Address" placeholderTextColor={'#505152'} />
         </View>
         <View style={styles.textinputView}>
@@ -120,15 +119,13 @@ const Profile = () => {
             placeholderTextColor={'#505152'}
           />
         </View>
-        <View
-        style={styles.textinputView}>
+        <View style={styles.textinputView}>
           <TextInput
             placeholder="Land Line Number"
             placeholderTextColor={'#505152'}
           />
         </View>
-        <View
-        style={styles.textinputView}>
+        <View style={styles.textinputView}>
           <TextInput placeholder="City" placeholderTextColor={'#505152'} />
         </View>
       </View>
@@ -168,6 +165,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 20,
     marginTop: 20,
-    backgroundColor: 'white',
+    backgroundColor: '#eef3ef',
   },
 });

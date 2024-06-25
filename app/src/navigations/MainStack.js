@@ -6,23 +6,18 @@ import {
   AddBooking,
 } from '../screens';
 import imagePath from '../assets/images/imagePath';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {TouchableOpacity, Image} from 'react-native';
 import BottomNavigator from '../screens/bottom/BottomNavigator';
 import LostAndFound from '../screens/lostandfound/LostAndFound';
 import DetailsLostItem from '../screens/lostandfound/DetailsLostItem';
+import {createStackNavigator} from '@react-navigation/stack';
 
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
 
 export default MainStack = () => (
   <Stack.Navigator>
     <Stack.Screen
-      name="MainScreen"
-      component={MainScreen}
-      options={{headerShown: false, title: 'Book Your Room'}}
-    />
-    <Stack.Screen
-      name="Main"
+      name="bottomnavigator"
       component={BottomNavigator}
       options={{headerShown: false, title: 'Book Your Room'}}
     />

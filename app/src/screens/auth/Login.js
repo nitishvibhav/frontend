@@ -14,6 +14,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {get} from 'lodash';
 import {login} from '../../redux/user/action';
 import imagePath from '../../assets/images/imagePath';
+import MainStack from '../../navigations/MainStack';
 
 const Login = () => {
   const navigation = useNavigation();
@@ -24,7 +25,8 @@ const Login = () => {
   });
 
   const handleChange = (name, value) => {
-    setData(() => ({
+    setData(prevData => ({
+      ...prevData,
       [name]: value,
     }));
   };
@@ -32,15 +34,12 @@ const Login = () => {
   console.log(data, 'data');
 
   const loginHandler = async () => {
-    const res = await dispatch(login({
-      email:"reception1@gmail.com",
-      password:"Singh@5696"
-    }));
+    const res = await dispatch(login(data));
     const status = get(res, 'value.status');
     console.log('status', status);
     if (status === 200) {
       alert('Login Successfully');
-      navigation.navigate('MainScreen');
+    navigation.navigate('bottomnavigator')
     } else {
       console.log('res', res);
       alert('Invalied username or password...');
@@ -48,10 +47,7 @@ const Login = () => {
   };
   return (
     <View style={styles.mainContainer}>
-      <Image
-        source={imagePath.loginPageImage}
-        style={styles.loginImage}
-      />
+      <Image source={imagePath.loginPageImage} style={styles.loginImage} />
       <Text style={styles.innerContainer}>Log in to your account</Text>
       <TextInput
         placeholder="Enter Your Email"

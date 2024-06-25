@@ -2,7 +2,7 @@ import {LOGIN_USER, LOGOUT_USER} from './konstant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {setUser} from '../../../utils';
 const initialState = {
-  user: null,
+  user: {},
   createState: 0,
   loginState: 0,
   addState: 0,
@@ -29,7 +29,12 @@ const reducer = (state = initialState, action) => {
       };
 
     case LOGOUT_USER:
-      AsyncStorage.removeItem('result');
+      console.log('LOGOUT_USER action dispatched');
+      AsyncStorage.removeItem('result')
+        .then(() => console.log('result removed from AsyncStorage'))
+        .catch(error =>
+          console.error('Error removing result from AsyncStorage:', error),
+        );
       return {...state, user: null};
     default:
       return state;
