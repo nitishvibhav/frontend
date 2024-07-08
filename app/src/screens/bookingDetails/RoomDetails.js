@@ -1,11 +1,4 @@
-import {
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
+import {Image, StyleSheet, Text, View, ScrollView} from 'react-native';
 import React, {useState} from 'react';
 import FloatingButton from '../../components/FloatingButton';
 import {useNavigation, useRoute} from '@react-navigation/native';
@@ -14,277 +7,111 @@ import imagePath from '../../assets/images/imagePath';
 
 const RoomDetails = () => {
   const navigation = useNavigation();
-  const route = useRoute()
+  const route = useRoute();
 
-
-  const item = route.params?.item
-  console.log(item, "item line no.26")
+  const item = route.params?.item;
+  console.log(item, 'item line no.26');
 
   return (
-    <View style={{flex: 1}}>
+    <View style={styles.flexContainer}>
       <ScrollView>
         <View style={styles.container}>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <Text style={{color: 'black', fontSize: 16, fontWeight: '700'}}>
-              Status
-            </Text>
-            <Text style={{color: 'green', fontSize: 16, fontWeight: '700'}}>
-              {item.status}
-            </Text>
+          <View style={styles.rowSpaceBetween}>
+            <Text style={styles.statusText}>Status</Text>
+            <Text style={styles.statusValue}>{item.status}</Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginTop: 10,
-            }}>
-            <Text style={{color: 'black', fontSize: 14, fontWeight: '600'}}>
-              Check-in Date
-            </Text>
-            <Text style={{color: 'gray', fontSize: 14, fontWeight: '500'}}>
-            {item.checkIn}
-            </Text>
+          <View style={[styles.rowSpaceBetween, styles.marginTop10]}>
+            <Text style={styles.labelText}>Check-in Date</Text>
+            <Text style={styles.valueText}>{item.checkIn}</Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginTop: 10,
-            }}>
-            <Text style={{color: 'black', fontSize: 14, fontWeight: '600'}}>
-              Check-in Time
-            </Text>
-            <Text style={{color: 'gray', fontSize: 14, fontWeight: '500'}}>
-              10:30 PM
-            </Text>
+          <View style={[styles.rowSpaceBetween, styles.marginTop10]}>
+            <Text style={styles.labelText}>Purpose</Text>
+            <Text style={styles.valueText}>{item.purpoes}</Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginTop: 10,
-            }}>
-            <Text style={{color: 'black', fontSize: 14, fontWeight: '600'}}>
-              Check-out Date
-            </Text>
-            <Text style={{color: 'gray', fontSize: 14, fontWeight: '500'}}>
-            {item.checkOut}
-            </Text>
+          <View style={[styles.rowSpaceBetween, styles.marginTop10]}>
+            <Text style={styles.labelText}>Check-out Date</Text>
+            <Text style={styles.valueText}>{item.checkOut}</Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginTop: 10,
-            }}>
-            <Text style={{color: 'black', fontSize: 14, fontWeight: '600'}}>
-              Check-out Time
-            </Text>
-            <Text style={{color: 'gray', fontSize: 14, fontWeight: '500'}}>
-              9:30 AM
-            </Text>
+          <View style={[styles.rowSpaceBetween, styles.marginTop10]}>
+            <Text style={styles.labelText}>Relation</Text>
+            <Text style={styles.valueText}>{item.relation}</Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginTop: 10,
-            }}>
-            <Text style={{color: 'black', fontSize: 14, fontWeight: '600'}}>
-              Booked For
-            </Text>
-            <Text style={{color: 'gray', fontSize: 14, fontWeight: '500'}}>
-              2D/3N
-            </Text>
+          <View style={[styles.rowSpaceBetween, styles.marginTop10]}>
+            <Text style={styles.labelText}>Booked For</Text>
+            <Text style={styles.valueText}>2D/3N</Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginTop: 10,
-            }}>
-            <Text style={{color: 'black', fontSize: 14, fontWeight: '600'}}>
-              No. of Guests
-            </Text>
-            <Text style={{color: 'gray', fontSize: 14, fontWeight: '500'}}>
-              2
-            </Text>
+          <View style={[styles.rowSpaceBetween, styles.marginTop10]}>
+            <Text style={styles.labelText}>No. of Guests</Text>
+            <Text style={styles.valueText}>{item.numberOfGuest.total}</Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginTop: 10,
-            }}>
-            <Text style={{color: 'black', fontSize: 14, fontWeight: '600'}}>
-              Total Amount
-            </Text>
-            <Text style={{color: 'gray', fontSize: 14, fontWeight: '500'}}>
-              ₹ 6,000
-            </Text>
+          <View style={[styles.rowSpaceBetween, styles.marginTop10]}>
+            <Text style={styles.labelText}>No. of Rooms</Text>
+            <Text style={styles.valueText}>{item.numberOfRooms}</Text>
+          </View>
+          <View style={[styles.rowSpaceBetween, styles.marginTop10]}>
+            <Text style={styles.labelText}>paymentStatus</Text>
+            <Text style={styles.valueText}>{item.paymentStatus}</Text>
+          </View>
+          <View style={[styles.rowSpaceBetween, styles.marginTop10]}>
+            <Text style={styles.labelText}>bookingMethod</Text>
+            <Text style={styles.valueText}>{item.bookingMethod}</Text>
+          </View>
+          <View style={[styles.rowSpaceBetween, styles.marginTop10]}>
+            <Text style={styles.labelText}>roomNumber</Text>
+            <Text style={styles.valueText}>{item.rooms.roomNumber}</Text>
           </View>
         </View>
         <View style={styles.container}>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <Text style={{color: 'black', fontSize: 18, fontWeight: '700'}}>
-              Traveller Details
-            </Text>
+          <View style={styles.rowSpaceBetween}>
+            <Text style={styles.travellerTitle}>Traveller Details</Text>
           </View>
 
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginTop: 10,
-            }}>
-            <Text style={{color: 'black', fontSize: 14, fontWeight: '600'}}>
-              Name
-            </Text>
-            <Text style={{color: 'gray', fontSize: 14, fontWeight: '500'}}>
-              {item.fullName}
-            </Text>
+          <View style={[styles.rowSpaceBetween, styles.marginTop10]}>
+            <Text style={styles.labelText}>Name</Text>
+            <Text style={styles.valueText}>{item.fullName}</Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginTop: 10,
-            }}>
-            <Text style={{color: 'black', fontSize: 14, fontWeight: '600'}}>
-              Gender
-            </Text>
-            <Text style={{color: 'gray', fontSize: 14, fontWeight: '500'}}>
-              Male
-            </Text>
+          <View style={[styles.rowSpaceBetween, styles.marginTop10]}>
+            <Text style={styles.labelText}>Contact Number</Text>
+            <Text style={styles.valueText}>{item.phoneNumber}</Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginTop: 10,
-            }}>
-            <Text style={{color: 'black', fontSize: 14, fontWeight: '600'}}>
-              Age
-            </Text>
-            <Text style={{color: 'gray', fontSize: 14, fontWeight: '500'}}>
-              26
-            </Text>
+          <View style={[styles.rowSpaceBetween, styles.marginTop10]}>
+            <Text style={styles.labelText}>date Of Birth</Text>
+            <Text style={styles.valueText}>{item.dateOfBirth}</Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginTop: 10,
-            }}>
-            <Text style={{color: 'black', fontSize: 14, fontWeight: '600'}}>
-              Email
-            </Text>
-            <Text style={{color: 'gray', fontSize: 14, fontWeight: '500'}}>
-              {item.email}
-            </Text>
+          <View style={[styles.rowSpaceBetween, styles.marginTop10]}>
+            <Text style={styles.labelText}>Email</Text>
+            <Text style={styles.valueText}>{item.email}</Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginTop: 10,
-            }}>
-            <Text style={{color: 'black', fontSize: 14, fontWeight: '600'}}>
-              Arrival Time
-            </Text>
-            <Text style={{color: 'gray', fontSize: 14, fontWeight: '500'}}>
-              {item.checkIn}
-            </Text>
+          <View style={[styles.rowSpaceBetween, styles.marginTop10]}>
+            <Text style={styles.labelText}>Nationality</Text>
+            <Text style={styles.valueText}>{item.nationality}</Text>
           </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              marginTop: 10,
-            }}>
-            <Text style={{color: 'black', fontSize: 14, fontWeight: '600'}}>
-              Address
-            </Text>
-            <Text style={{color: 'gray', fontSize: 14, fontWeight: '500'}}>
-              {item.address.district}
-            </Text>
+          <View style={[styles.rowSpaceBetween, styles.marginTop10]}>
+            <Text style={styles.labelText}>Room Category</Text>
+            <Text style={styles.valueText}>{item.roomCategory}</Text>
           </View>
         </View>
         <View style={styles.container}>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-            <Text style={{color: 'black', fontSize: 18, fontWeight: '700'}}>
-              Traveller Documents
-            </Text>
+          <View style={styles.rowSpaceBetween}>
+            <Text style={styles.travellerTitle}>Traveller Documents</Text>
           </View>
-          <Image
-            source={imagePath.idCard}
-            style={{
-              width: '100%',
-              height: 200,
-              resizeMode: 'contain',
-              marginTop: 10,
-              borderRadius: 6,
-            }}
-          />
-          <Text
-            style={{
-              alignSelf: 'center',
-              marginBottom: 15,
-              fontSize: 16,
-              color: 'black',
-              fontWeight: '500',
-            }}>
-            Front Side
-          </Text>
-          <Image
-            source={imagePath.idCardBack}
-            style={{
-              width: '100%',
-              height: 200,
-              resizeMode: 'contain',
-              marginTop: 10,
-              borderRadius: 6,
-            }}
-          />
-          <Text
-            style={{
-              alignSelf: 'center',
-              marginBottom: 15,
-              fontSize: 16,
-              color: 'black',
-              fontWeight: '500',
-            }}>
-            Back Side
-          </Text>
+          <Image source={imagePath.idCard} style={styles.documentIcon} />
+          <Text style={styles.documentFont}>Front Side</Text>
+          <Image source={imagePath.idCardBack} style={styles.documentIcon} />
+          <Text style={styles.documentFont}>Back Side</Text>
         </View>
       </ScrollView>
-      <FloatingButton phone = {item.phoneNumber}/>
-      <View
-        style={{
-          bottom: 0,
-          position: 'absolute',
-          width: '100%',
-          backgroundColor: 'black',
-          paddingVertical: 5,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          paddingLeft: 20,
-        }}>
+      <FloatingButton phone={item.phoneNumber} />
+      <View style={styles.bottomContainer}>
         <View>
-          <Text style={{color: '#fff', fontSize: 18, fontWeight: '700'}}>
-            ₹ 4,500
-          </Text>
-          <Text style={{color: 'gray', fontSize: 10, fontWeight: '400'}}>
-            Including Taxes
-          </Text>
+          <Text style={styles.totalAmount}>₹ 4,500</Text>
+          <Text style={styles.includingTaxes}>Including Taxes</Text>
         </View>
         <View>
           <CustomButton
             title="CheckOut"
             width="80%"
-            onPress={() => navigation.navigate('Checkout') 
-            }
+            onPress={() => navigation.navigate('Checkout')}
           />
         </View>
       </View>
@@ -295,8 +122,11 @@ const RoomDetails = () => {
 export default RoomDetails;
 
 const styles = StyleSheet.create({
+  flexContainer: {
+    flex: 1,
+  },
   container: {
-    width: '95%',
+    width: '90%',
     backgroundColor: 'white',
     elevation: 5,
     alignSelf: 'center',
@@ -306,5 +136,72 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 20,
     paddingBottom: 20,
+  },
+  rowSpaceBetween: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  marginTop10: {
+    marginTop: 10,
+  },
+  statusText: {
+    color: 'black',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  statusValue: {
+    color: 'green',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  labelText: {
+    color: 'black',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  valueText: {
+    color: 'gray',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  travellerTitle: {
+    color: 'black',
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  documentIcon: {
+    width: '100%',
+    height: 200,
+    resizeMode: 'contain',
+    marginTop: 10,
+    borderRadius: 6,
+  },
+  documentFont: {
+    alignSelf: 'center',
+    marginBottom: 15,
+    fontSize: 16,
+    color: 'black',
+    fontWeight: '500',
+  },
+  bottomContainer: {
+    bottom: 0,
+    position: 'absolute',
+    width: '100%',
+    backgroundColor: 'black',
+    paddingVertical: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingLeft: 20,
+  },
+  totalAmount: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  includingTaxes: {
+    color: 'gray',
+    fontSize: 10,
+    fontWeight: '400',
   },
 });

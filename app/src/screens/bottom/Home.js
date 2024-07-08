@@ -19,14 +19,13 @@ const Home = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const {rooms} = useSelector(state => state.roomReducer);
-  const [totalRooms, setTotalRooms] = useState(0);
-  const [bookedRooms, setBookedRooms] = useState(0);
-  const [VacantRoomCount, setVacantRoomCount] = useState(0);
+  const [totalRooms, setTotalRooms] = useState('');
+  const [bookedRooms, setBookedRooms] = useState('');
+  const [VacantRoomCount, setVacantRoomCount] = useState('');
 
   useEffect(() => {
     dispatch(getRooms());
-    setTotalRooms(rooms.count);
-  }, []);
+  }, [dispatch]);
 
   
   useEffect(() => {
@@ -35,6 +34,7 @@ const Home = () => {
         room => room.roomStatus === 'VACANT',
       );
       setVacantRoomCount(filteredRooms.length);
+      setTotalRooms(rooms.count);
     }
   }, [rooms]);
 
@@ -86,6 +86,7 @@ const Home = () => {
             title="Total Rooms"
             data={totalRooms}
             icon={imagePath.totalRooms}
+            onPress={()=>navigation.navigate('RoomType')}
           />
           <TopMiniCard
             title="Vacant Rooms"
@@ -254,7 +255,7 @@ const Home = () => {
       </View>
       <CustomButton
         title="Add Booking"
-        onPress={() => navigation.navigate('AddBooking')}
+        onPress={() => navigation.navigate('stepone')}
         width="95%"
       />
       <View

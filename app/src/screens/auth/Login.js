@@ -14,7 +14,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import {get} from 'lodash';
 import {login} from '../../redux/user/action';
 import imagePath from '../../assets/images/imagePath';
-import MainStack from '../../navigations/MainStack';
 
 const Login = () => {
   const navigation = useNavigation();
@@ -39,7 +38,6 @@ const Login = () => {
     console.log('status', status);
     if (status === 200) {
       alert('Login Successfully');
-    navigation.navigate('bottomnavigator')
     } else {
       console.log('res', res);
       alert('Invalied username or password...');

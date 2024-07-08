@@ -7,7 +7,7 @@ import {setUser} from '../redux/user/action';
 import {getUser} from '../../utils';
 
 const Routes = () => {
-  const user = useSelector(state => state.user);
+  const {user} = useSelector(state => state.loginReducer);
   const dispatch = useDispatch();
 
   useEffect(() => {

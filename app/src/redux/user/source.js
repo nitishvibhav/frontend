@@ -5,3 +5,6 @@ export const loginUser = data => {
   return request.post('user/login', data);
 };
 
+export const updateUser = (id, data) => {
+  return request.patch(`user/approve/${id}`, data);
+};

@@ -19,6 +19,12 @@ export function setUser (user) {
         })
     }
 }
+export function updateUserDetails (data, id) {
+    return {
+      type: 'UPDATE_USER',
+      payload: source.updateUser(data,id),
+    };
+  };
 
 export const logoutUser = () => {
     return {

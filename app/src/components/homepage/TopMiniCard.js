@@ -1,9 +1,9 @@
 import {Text, StyleSheet, TouchableOpacity, Image, View} from 'react-native';
 import React from 'react';
 
-const TopMiniCard = ({title, icon, data,}) => {
+const TopMiniCard = ({title, icon, data,onPress}) => {
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={onPress}>
       <View
         style={{
           height: 36,

@@ -72,7 +72,7 @@ const BottomNavigator = () => {
         }}
       />
       <Bottom.Screen
-        name="Room"
+        name="RoomType"
         component={RoomType}
         options={{
           headerShown: false,

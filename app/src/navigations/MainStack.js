@@ -7,18 +7,22 @@ import {
 } from '../screens';
 import imagePath from '../assets/images/imagePath';
 import {TouchableOpacity, Image} from 'react-native';
-import BottomNavigator from '../screens/bottom/BottomNavigator';
 import LostAndFound from '../screens/lostandfound/LostAndFound';
 import DetailsLostItem from '../screens/lostandfound/DetailsLostItem';
 import {createStackNavigator} from '@react-navigation/stack';
+import DrawerNavigator from '../screens/drawer/DrawerNavigator';
+import BookingReview from '../screens/stepper/BookingReview';
+import BookingStepThree from '../screens/stepper/BookingStepThree';
+import BookingStepTwo from '../screens/stepper/BookingStepTwo';
+import BookingStepOne from '../screens/stepper/BookingStepOne';
 
 const Stack = createStackNavigator();
 
 export default MainStack = () => (
   <Stack.Navigator>
     <Stack.Screen
-      name="bottomnavigator"
-      component={BottomNavigator}
+      name="drawerNavigator"
+      component={DrawerNavigator}
       options={{headerShown: false, title: 'Book Your Room'}}
     />
     <Stack.Screen
@@ -67,6 +71,26 @@ export default MainStack = () => (
       name="DetailsLostItem"
       component={DetailsLostItem}
       options={{headerShown: true, title: ' Details '}}
+    />
+    <Stack.Screen
+      name="stepone"
+      component={BookingStepOne}
+      options={{headerShown: true, title: ' Step 1 '}}
+    />
+    <Stack.Screen
+      name="steptwo"
+      component={BookingStepTwo}
+      options={{headerShown: true, title: ' Step 2 '}}
+    />
+    <Stack.Screen
+      name="stepthree"
+      component={BookingStepThree}
+      options={{headerShown: true, title: ' Step 3 '}}
+    />
+    <Stack.Screen
+      name="review"
+      component={BookingReview}
+      options={{headerShown: true, title: ' review '}}
     />
   </Stack.Navigator>
 );

@@ -11,9 +11,9 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {
+    // POST METHOD
     case 'SET_USER':
       return {...state, user: action.payload};
-
     case `${LOGIN_USER}_PENDING`:
       return {...state, loginState: 1};
     case `${LOGIN_USER}_FULFILLED`:
@@ -28,6 +28,7 @@ const reducer = (state = initialState, action) => {
         loginError: action.payload.response.data,
       };
 
+    // LOGOUT METHOD
     case LOGOUT_USER:
       console.log('LOGOUT_USER action dispatched');
       AsyncStorage.removeItem('result')
@@ -36,6 +37,18 @@ const reducer = (state = initialState, action) => {
           console.error('Error removing result from AsyncStorage:', error),
         );
       return {...state, user: null};
+
+    // UPDATE METHOD
+    case 'UPDATE_USER_PENDING':
+      return {...state, updateState: 1};
+    case 'UPDATE_USER_FULLFILLED':
+      return {
+        ...state,
+        updateState: 2,
+        user: action.payload.data,
+      };
+    case 'UPDATE_USER_REJECTED':
+      return {...state, updateState: 3};
     default:
       return state;
   }

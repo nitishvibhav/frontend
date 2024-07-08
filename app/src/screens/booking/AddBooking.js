@@ -6,6 +6,7 @@ import {
   Modal,
   ScrollView,
   Image,
+  TextInput,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
@@ -24,10 +25,6 @@ import {getRoomCategoryDetails} from '../../redux/roomcategory/action';
 import {get} from 'lodash';
 import {getAminitiesCategoryDetails} from '../../redux/amenitiesCategory/action';
 
-let validationSchema = object({
-  name: string(),
-});
-
 const AddBooking = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -40,9 +37,8 @@ const AddBooking = () => {
   const [childrenCount, setChildrenCount] = useState(0);
   const [adultCount, setAdultCount] = useState(1);
   const [modalVisibleGuest, setModalVisibleGuest] = useState(false);
-  const [status, setStatus] = useState(null);
-  const [paymentStatus, setPaymentStatus] = useState(null);
-  const [bookingStatus, setBookingStatus] = useState(null);
+  const [noofrooms, setNoofrooms] = useState('1');
+
 
   const handleInfantIncrement = () => {
     setInfantCount(infantCount + 1);
@@ -128,31 +124,11 @@ const AddBooking = () => {
         alternatePhoneNumber: data.alternatePhoneNumber,
         nationality: data.nationality,
       });
-    } else if (modalType === 'payment') {
-      setPayment({
-        totalPrice: data.totalPrice,
-        tax: data.tax,
-        extraCharges: data.extraCharges,
-        chargesRemark: data.chargesRemark,
-        discountType: data.discountType,
-        discount: data.discount,
-        grandTotal: data.grandTotal,
-      });
     }
     setModalVisible(false);
   };
   const getFields = () => {
     switch (modalType) {
-      case 'payment':
-        return [
-          {name: 'totalPrice', placeholder: 'Base Price'},
-          {name: 'tax', placeholder: 'Tax Amount'},
-          {name: 'extraCharges', placeholder: 'Extra Charges'},
-          {name: 'chargesRemark', placeholder: 'Charges Remark'},
-          {name: 'discountType', placeholder: 'Discount Type'},
-          {name: 'discount', placeholder: 'Discount'},
-          {name: 'grandTotal', placeholder: 'Grand Total'},
-        ];
       case 'address':
         return [
           {name: 'country', placeholder: 'Country'},
@@ -179,8 +155,6 @@ const AddBooking = () => {
 
   const getTitle = () => {
     switch (modalType) {
-      case 'payment':
-        return 'Payment Details';
       case 'address':
         return 'Address Details';
       case 'traveller':
@@ -219,43 +193,36 @@ const AddBooking = () => {
     }
   }, [amenitiesCategory, roomCategory]);
 
-  const req = {
-    fullName: traveller.fullName,
-    email: contact.email,
-    phoneNumber: contact.phoneNumber,
-    nationality: contact.nationality,
-    hotelId: '123456',
-    roomId: '1234',
-    roomCategory: 'single room',
-    checkIn: CheckIn,
-    checkOut: CheckOut,
-    totalPrice: payment.totalPrice,
-    tax: payment.tax,
-    extraCharges: payment.extraCharges,
-    chargesRemark: payment.chargesRemark,
-    discountType: payment.discountType,
-    discount: payment.discount,
-    grandTotal: payment.grandTotal,
-    status: status,
-    paymentStatus: paymentStatus,
-    aminities: ["spa", "bar"],
-    bookingMethod: bookingStatus,
-    address: {
-      country: address.country,
-      city: address.city,
-      location: address.location,
-    },
-    numberOfGuest: {
-      adult: adultCount.toString(),
-      child: childrenCount.toString(),
-      total: (infantCount + childrenCount + adultCount).toString(),
-    },
-  };
-
-  console.log(req, 'reqs');
-
-  const handlePost = () => {
-    const res = dispatch(postBooking(req));
+  const handlePost = async () => {
+    const req = {
+      fullName: traveller.fullName,
+      email: contact.email,
+      phoneNumber: contact.phoneNumber,
+      nationality: contact.nationality,
+      hotelId: '123456',
+      status: 'PENDING',
+      paymentStatus: 'PENDING',
+      bookingMethod: 'OFFLINE',
+      checkIn: CheckIn,
+      checkOut: CheckOut,
+      aminities: ['spa', 'bar'],
+      roomCategory: 'single room',
+      relation: 'siblings',
+      numberOfRooms: noofrooms.toString(),
+      dateOfBirth: '19/09/2014',
+      purpoes: 'meeting',
+      address: {
+        country: address.country,
+        city: address.city,
+        location: address.location,
+      },
+      numberOfGuest: {
+        adult: adultCount.toString(),
+        child: childrenCount.toString(),
+        total: (infantCount + childrenCount + adultCount).toString(),
+      },
+    };
+    const res = await dispatch(postBooking(req));
     console.log(res, 'response');
     const status = get(res, 'value.status');
     if (status === 200) {
@@ -278,170 +245,80 @@ const AddBooking = () => {
   const currentDate = new Date();
   const currentDateString = currentDate.toISOString().split('T')[0];
 
-  const paymentOption = [
-    {label: 'Paid', value: 'SUCCESS'},
-    {label: 'Due', value: 'PENDING'},
-  ];
-
-  const data = [
-    {label: 'item1', value: 'item1'},
-    {label: 'item2', value: 'item2'},
-  ];
-
-  const bookingOption = [
-    {label: 'Offline', value: 'OFFLINE'},
-    {label: 'Online', value: 'ONLINE'},
-  ];
-
-  const statusOption = [
-    {label: 'Check-in', value: 'CHECK-IN'},
-    {label: 'Check-out', value: 'CHECKED-OUT'},
-    {label: 'Reserved', value: 'RESERVED'},
-  ];
   const [roomTypeStatus, setRoomTypeStatus] = useState('');
+  const {user} = useSelector(state => state.loginReducer);
+  console.log(user, 'user Data');
 
-  const [amenitie, setAmenitie] = useState([]);
   return (
     <View style={{flex: 1}}>
       <ScrollView>
-            <View>
-              <View style={styles.miniContainer}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    width: '95%',
-                    alignSelf: 'center',
-                  }}>
-                  <CustomTouchableOpacity
-                    icon={imagePath.checkIn}
-                    text="CHECK-IN DATE"
-                    text2={CheckIn}
-                    width="49%"
-                    onPress={() => setIsModalVisible(true)}
-                  />
-                  <CustomTouchableOpacity
-                    icon={imagePath.checkOut}
-                    text="CHECK-OUT DATE"
-                    text2={CheckOut}
-                    width="49%"
-                    onPress={() => setIsModalVisible1(true)}
-                  />
-                </View>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    width: '95%',
-                    alignSelf: 'center',
-                  }}>
-                  <CustomDropdown
-                    icon={imagePath.BookingStatus}
-                    text="Booking Status"
-                    text2="Check-in"
-                    data={statusOption}
-                    value={status}
-                    onChange={item => setStatus(item.value)}
-                  />
-                  <CustomDropdown
-                    icon={imagePath.paymentStatus}
-                    text="Payment Status"
-                    text2="Due"
-                    data={paymentOption}
-                    value={paymentStatus}
-                    onChange={item => setPaymentStatus(item.value)}
-                  />
-                </View>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    width: '95%',
-                    alignSelf: 'center',
-                  }}>
-                  <CustomDropdown
-                    icon={imagePath.roomType}
-                    text="Room Type"
-                    text2="Select Type"
-                    data={roomType}
-                    value={roomTypeStatus}
-                    onChange={item => setRoomTypeStatus(item.value)}
-                  />
-                  <CustomDropdown
-                    icon={imagePath.BookingOption}
-                    text="Booking Option"
-                    text2="Offline"
-                    data={bookingOption}
-                    value={bookingStatus}
-                    onChange={item => setBookingStatus(item.value)}
-                  />
-                </View>
-                <CustomTouchableOpacity
-                  icon={imagePath.checkOut}
-                  text="Amenities"
-                  text2="Spa, Bar, Meals"
-                  width="95%"
-                />
-                <MultiSelect
-                  style={styles.dropdown}
-                  placeholderStyle={styles.placeholderStyle}
-                  selectedTextStyle={styles.selectedTextStyle}
-                  inputSearchStyle={styles.inputSearchStyle}
-                  iconStyle={styles.iconStyle}
-                  data={amenitiesType}
-                  labelField="label"
-                  valueField="value"
-                  placeholder="Select Amenities"
-                  value={amenitie}
-                  onChange={item => {
-                    setAmenitie(item);
-                  }}
-                  renderLeftIcon={() => (
-                    <Image source={imagePath.alarmIcon} style={styles.icon} />
-                  )}
-                  selectedStyle={styles.selectedStyle}
-                />
-                <CustomTouchableOpacity
-                  icon={imagePath.guests}
-                  text="Guests"
-                  text2={`${adultCount} Adult | ${childrenCount} Child | ${infantCount} infant | Total: ${
-                    infantCount + childrenCount + adultCount
-                  }`}
-                  width="95%"
-                  onPress={() => setModalVisibleGuest(true)}
-                />
-                <CustomTouchableOpacity
-                  icon={imagePath.addressDetails}
-                  text="Address Details"
-                  text2={`${address.country} | ${address.city} | ${address.location}`}
-                  width="95%"
-                  onPress={() => toggleModal('address')}
-                />
-                <CustomTouchableOpacity
-                  icon={imagePath.tarvellarDetails}
-                  text="Traveller Details"
-                  text2={`${traveller.fullName} | ${traveller.age} | ${traveller.gender}`}
-                  width="95%"
-                  onPress={() => toggleModal('traveller')}
-                />
-                <CustomTouchableOpacity
-                  icon={imagePath.contactDetails}
-                  text="Contact Details"
-                  text2={`${contact.phoneNumber} | ${contact.email}`}
-                  width="95%"
-                  onPress={() => toggleModal('contact')}
-                />
-                <CustomTouchableOpacity
-                  icon={imagePath.paymentDetails}
-                  text="Payment Details"
-                  text2={`Total : ${payment.grandTotal} | Discount : ${payment.discount}`}
-                  width="95%"
-                  onPress={() => toggleModal('payment')}
-                />
-              </View>
-
-              <View style={styles.miniContainer}></View>
+        <View>
+          <View style={styles.miniContainer}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                width: '95%',
+                alignSelf: 'center',
+              }}>
+              <CustomTouchableOpacity
+                icon={imagePath.checkIn}
+                text="CHECK-IN DATE"
+                text2={CheckIn}
+                width="49%"
+                onPress={() => setIsModalVisible(true)}
+              />
+              <CustomTouchableOpacity
+                icon={imagePath.checkOut}
+                text="CHECK-OUT DATE"
+                text2={CheckOut}
+                width="49%"
+                onPress={() => setIsModalVisible1(true)}
+              />
             </View>
+
+            <CustomDropdown
+              icon={imagePath.roomType}
+              text="Room Type"
+              text2="Select Type"
+              data={roomType}
+              value={roomTypeStatus}
+              onChange={item => setRoomTypeStatus(item.value)}
+            />
+
+            <CustomTouchableOpacity
+              icon={imagePath.guests}
+              text="Rooms & Guests"
+              text2={` Guests: ${
+                infantCount + childrenCount + adultCount
+              } & Rooms: ${noofrooms}`}
+              width="95%"
+              onPress={() => setModalVisibleGuest(true)}
+            />
+            <CustomTouchableOpacity
+              icon={imagePath.addressDetails}
+              text="Address Details"
+              text2={`${address.country} | ${address.city} | ${address.location}`}
+              width="95%"
+              onPress={() => toggleModal('address')}
+            />
+            <CustomTouchableOpacity
+              icon={imagePath.tarvellarDetails}
+              text="Traveller Details"
+              text2={`${traveller.fullName} | ${traveller.age} | ${traveller.gender}`}
+              width="95%"
+              onPress={() => toggleModal('traveller')}
+            />
+            <CustomTouchableOpacity
+              icon={imagePath.contactDetails}
+              text="Contact Details"
+              text2={`${contact.phoneNumber} | ${contact.email}`}
+              width="95%"
+              onPress={() => toggleModal('contact')}
+            />
+            <TextInput placeholder="Purpose" />
+          </View>
+        </View>
       </ScrollView>
       <View style={styles.bottomMainView}>
         <View>
@@ -452,12 +329,7 @@ const AddBooking = () => {
             <TouchableOpacity>
               <Image
                 source={imagePath.infoImage}
-                style={{
-                  height: 14,
-                  width: 14,
-                  tintColor: 'white',
-                  marginLeft: 7,
-                }}
+                style={styles.bottomIconStyle}
               />
             </TouchableOpacity>
           </View>
@@ -512,6 +384,16 @@ const AddBooking = () => {
         }}>
         <View style={styles.modalBackground}>
           <View style={styles.modalview}>
+            <View style={styles.numberofroomscontainer}>
+              <Text style={styles.headingText}>Number of rooms</Text>
+              <TextInput
+                placeholder="No. of Rooms"
+                style={styles.noofroomsplaceholder}
+                keyboardType='numeric'
+                value={noofrooms}
+                onChangeText={(text) => setNoofrooms(text)}
+              />
+            </View>
             <View>
               <Text style={styles.headingText}>Number of Guests</Text>
             </View>
@@ -642,6 +524,20 @@ const styles = StyleSheet.create({
     margin: 20,
     marginBottom: 20,
     width: '90%',
+  },
+  noofroomsplaceholder: {
+    borderWidth: 0.5,
+    borderColor: 'gray',
+    borderRadius: 6,
+    width: '20%',
+    marginTop: 10,
+    paddingHorizontal: 15,
+  },
+  bottomIconStyle: {
+    height: 14,
+    width: 14,
+    tintColor: 'white',
+    marginLeft: 7,
   },
   smallText: {
     fontSize: 12,
@@ -792,5 +688,12 @@ const styles = StyleSheet.create({
   iconStyle: {
     width: 20,
     height: 20,
+  },
+  numberofroomscontainer: {
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    marginRight: 20,
+    alignItems: 'center',
+    marginTop: 20,
   },
 });
