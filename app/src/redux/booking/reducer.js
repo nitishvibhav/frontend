@@ -2,7 +2,7 @@ const initialState = {
   bookingState: 0,
   booking: {},
   createState: 0,
-
+  deleteState: 0,
 };
 
 const reducer = (state = initialState, action) => {
@@ -20,6 +20,17 @@ const reducer = (state = initialState, action) => {
       return {...state, createState: 2, booking: action.payload.data};
     case 'POST_BOOKING_REJECTED':
       return {...state, createState: 3};
+
+    case 'DELETE_BOOKING_PENDING':
+      return {...state, deleteState: 1};
+    case 'DELETE_BOOKING_FULLFILLED':
+      return {
+        ...state,
+        deleteState: 2,
+        booking: action.payload.data,
+      };
+    case 'DELETE_BOOKING_REJECTED':
+      return {...state, deleteState: 3};
 
     default:
       return state;

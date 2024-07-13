@@ -1,24 +1,39 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   ScrollView,
+  TextInput,
   TouchableOpacity,
   Image,
   Button as RNButton,
 } from 'react-native';
 import * as ImagePicker from 'react-native-image-picker';
 import CustomButton from '../../components/CustomButton';
+import MultiSelectPicker from '../../components/MultiSelectPicker';
+import {useDispatch, useSelector} from 'react-redux';
+import {getAminitiesCategoryDetails} from '../../redux/amenitiesCategory/action';
 
-const BookingStepThree = ({ navigation, route }) => {
-  const { data } = route.params; 
+const BookingStepThree = ({navigation, route}) => {
+  const {data} = route.params;
   const [purpose, setPurpose] = useState('');
   const [relation, setRelation] = useState('');
-  const [amenities, setAmenities] = useState('');
+  const [amenities, setAmenities] = useState([]);
   const [documents, setDocuments] = useState([]);
+  const {amenitiesCategory} = useSelector(
+    state => state.amenitiesCategoryReducer,
+  );
+  const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(getAminitiesCategoryDetails());
+  }, [dispatch]);
+  const amenitiesOptions =
+    amenitiesCategory?.result?.map(item => ({
+      label: item.title,
+      value: item.title,
+    })) || [];
 
   const handleImagePicker = () => {
     const options = {
@@ -35,14 +50,12 @@ const BookingStepThree = ({ navigation, route }) => {
       } else if (response.error) {
         console.log('ImagePicker Error: ', response.error);
       } else {
-        const source = { uri: response.uri };
-        // Add selected image to documents array
+        const source = {uri: response.uri};
         setDocuments([...documents, source]);
       }
     });
   };
 
- 
   const renderDocuments = () => {
     return documents.map((document, index) => (
       <View key={index} style={styles.documentItem}>
@@ -54,7 +67,6 @@ const BookingStepThree = ({ navigation, route }) => {
     ));
   };
 
-  // Function to remove selected document
   const handleRemoveDocument = index => {
     const updatedDocuments = [...documents];
     updatedDocuments.splice(index, 1);
@@ -72,54 +84,47 @@ const BookingStepThree = ({ navigation, route }) => {
     });
   };
 
-  // Console log data when component renders
-  console.log(data, "Data from previous page");
+  // Transform amenitiesCategory to the format required by MultiSelectPicker
+
+  console.log(data, 'Data from previous page');
 
   return (
     <ScrollView style={styles.container}>
-      {/* Purpose Section */}
-      <View style={styles.sectionContainer}>
-        <Text style={styles.sectionTitle}>Purpose</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Purpose"
-          onChangeText={setPurpose}
-          value={purpose}
-          multiline
-        />
-      </View>
+      <View style={styles.containerTwo}>
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Purpose</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Purpose"
+            onChangeText={setPurpose}
+            value={purpose}
+          />
+        </View>
 
-      {/* Relation Section */}
-      <View style={styles.sectionContainer}>
-        <Text style={styles.sectionTitle}>Relation</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Relation"
-          onChangeText={setRelation}
-          value={relation}
-          multiline
-        />
-      </View>
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Relation</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Relation"
+            onChangeText={setRelation}
+            value={relation}
+          />
+        </View>
 
-      {/* Amenities Section */}
-      <View style={styles.sectionContainer}>
-        <Text style={styles.sectionTitle}>Amenities</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Amenities"
-          onChangeText={setAmenities}
-          value={amenities}
-          multiline
-        />
-      </View>
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Amenities</Text>
+          <MultiSelectPicker
+            options={amenitiesOptions}
+            selectedValues={amenities}
+            onValueChange={setAmenities}
+          />
+        </View>
 
-      {/* Documents Section */}
-      <View style={styles.sectionContainer}>
-        <Text style={styles.sectionTitle}>Documents</Text>
-        {/* Display selected documents */}
-        <View style={styles.documentsContainer}>{renderDocuments()}</View>
-        {/* Button to add documents */}
-        <RNButton title="Add Document" onPress={handleImagePicker} />
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Documents</Text>
+          <View style={styles.documentsContainer}>{renderDocuments()}</View>
+          <RNButton title="Add Document" onPress={handleImagePicker} />
+        </View>
       </View>
 
       <CustomButton
@@ -143,44 +148,48 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 5,
     color: '#333',
   },
   input: {
-    height: 100,
+    height: 56,
     borderColor: 'gray',
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
-    backgroundColor: 'white',
-    textAlignVertical: 'top', 
+    backgroundColor: '#eef3ef',
+    borderColor: '#dadada',
   },
   buttonStyle: {
     marginTop: 20,
     backgroundColor: '#4CAF50',
     borderRadius: 8,
   },
+  containerTwo: {
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    backgroundColor: 'white',
+    borderRadius: 5,
+    paddingVertical: 10,
+  },
   documentsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginTop: 10,
   },
   documentItem: {
     marginRight: 10,
     marginBottom: 10,
+    alignItems: 'center',
   },
   documentImage: {
     width: 100,
     height: 100,
-    resizeMode: 'cover',
-    borderRadius: 5,
   },
   removeText: {
     color: 'red',
     marginTop: 5,
-    textAlign: 'center',
   },
 });
 

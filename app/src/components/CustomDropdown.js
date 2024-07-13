@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#eef3ef',
     padding: 10,
     width: '100%',
-    height:44
+    height:56
   },
   icon: {
     width: 20,
@@ -71,17 +71,17 @@ const styles = StyleSheet.create({
     height: 28,
   },
   placeholderStyle: {
-    fontSize: 14,
+    fontSize: 13,
     color: 'black',
     fontWeight: '800',
   },
   selectedTextStyle: {
-    fontSize: 14,
+    fontSize: 13,
     color: 'black',
     fontWeight: '700',
   },
   itemTextStyle: {
-    fontSize: 14,
+    fontSize: 13,
     color: 'black',
   },
   arrowIcon: {

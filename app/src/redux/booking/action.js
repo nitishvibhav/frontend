@@ -13,3 +13,10 @@ export const postBooking = (req) => {
     payload: source.postBooking(req),
   };
 };
+
+export function deleteBookingDetails (row, id) {
+  return {
+    type: 'DELETE_BOOKING',
+    payload: source.deleteBooking(row,id),
+  };
+};

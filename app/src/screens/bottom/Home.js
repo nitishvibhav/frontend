@@ -5,12 +5,11 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
-  TextInput,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import TopMiniCard from '../../components/homepage/TopMiniCard';
-import {getRooms} from '../../redux/rooms/action';
+import {getRooms, getRoomsDetails} from '../../redux/rooms/action';
 import {useDispatch, useSelector} from 'react-redux';
 import imagePath from '../../assets/images/imagePath';
 import CustomButton from '../../components/CustomButton';
@@ -22,32 +21,40 @@ const Home = () => {
   const [totalRooms, setTotalRooms] = useState('');
   const [bookedRooms, setBookedRooms] = useState('');
   const [VacantRoomCount, setVacantRoomCount] = useState('');
+  const [reservedRooms, setReservedRooms] = useState('');
 
   useEffect(() => {
-    dispatch(getRooms());
+    dispatch(getRoomsDetails());
   }, [dispatch]);
 
-  
   useEffect(() => {
     if (rooms && rooms.result) {
-      const filteredRooms = rooms.result.filter(
+      const filteredRoomsVacant = rooms.result.filter(
         room => room.roomStatus === 'VACANT',
       );
-      setVacantRoomCount(filteredRooms.length);
+      setVacantRoomCount(filteredRoomsVacant.length);
       setTotalRooms(rooms.count);
     }
   }, [rooms]);
 
   useEffect(() => {
     if (rooms && rooms.result) {
-      const filteredRooms = rooms.result.filter(
-        room => room.roomStatus === 'Booked',
+      const filteredBookedRooms = rooms.result.filter(
+        room => (room.roomStatus = 'BOOKED'),
       );
-      setBookedRooms(filteredRooms.length);
+      setBookedRooms(filteredBookedRooms.length);
     }
   }, [rooms]);
 
-  console.log(rooms.count, 'room data count');
+  useEffect(() => {
+    if (rooms && rooms.result) {
+      const filteredReservedRooms = rooms.result.filter(
+        room => (room.roomStatus = 'RESERVED'),
+      );
+      setReservedRooms(filteredReservedRooms.length);
+    }
+  }, [rooms]);
+
   return (
     <ScrollView>
       <View
@@ -86,12 +93,15 @@ const Home = () => {
             title="Total Rooms"
             data={totalRooms}
             icon={imagePath.totalRooms}
-            onPress={()=>navigation.navigate('RoomType')}
+            onPress={() => navigation.navigate('RoomType', {screen: 'All Room'})}
           />
           <TopMiniCard
             title="Vacant Rooms"
             data={VacantRoomCount}
             icon={imagePath.vacantRooms}
+            onPress={() =>
+              navigation.navigate('RoomType', {screen: 'Available Room'})
+            }
           />
         </View>
         <View style={styles.mainView}>
@@ -99,10 +109,13 @@ const Home = () => {
             title="Booked Rooms"
             data={bookedRooms}
             icon={imagePath.bookedRooms}
+            onPress={() =>
+              navigation.navigate('RoomType', {screen: 'Confirmed Room'})
+            }
           />
           <TopMiniCard
-            title="Pending Room"
-            data={totalRooms}
+            title="Reserved Room"
+            data={reservedRooms}
             icon={imagePath.pendindRooms}
           />
         </View>

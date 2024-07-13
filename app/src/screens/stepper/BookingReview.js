@@ -1,12 +1,5 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {View, Text, ScrollView, StyleSheet, TextInput} from 'react-native';
 import CustomButton from '../../components/CustomButton';
 import {useDispatch} from 'react-redux';
 import {get} from 'lodash';
@@ -17,11 +10,93 @@ const BookingReview = ({route}) => {
   console.log(data, 'stepper data');
   const dispatch = useDispatch();
 
-  const displayData = [
-    {label: 'Full name', value: 'Nitish Vibhav'},
-    {label: 'Email', value: data.email},
-    {label: 'Phone Number', value: data.phoneNumber},
-    // Add more fields here as needed
+  const [profileData, setProfileData] = useState({
+    fullName: '',
+    email: '',
+    contactNumber: '',
+    organizationName: '',
+    nationality: '',
+    gender: '',
+    state: '',
+    country: '',
+    location: '',
+    numberOfRooms: '',
+    totalGuests: '',
+    numberOfAdults: '',
+    numberOfChildren: '',
+    checkIn: '',
+    checkOut: '',
+    purpose: '',
+    relation:'',
+    dob :''
+  });
+
+  useEffect(() => {
+    if (data) {
+      setProfileData({
+        fullName: data.fullName,
+        email: data.email,
+        phoneNumber: data.phoneNumber.toString(),
+        username: data.username,
+        group: data.group,
+        organizationName: data.organizationName,
+        nationality: data.nationality,
+        gender: data.gender,
+        state: data.state,
+        country: data.country,
+        location: data.location,
+        numberOfRooms: data.numberOfRooms.toString(),
+        totalGuests: data.totalGuests.toString(),
+        numberOfAdults: data.numberOfAdults.toString(),
+        numberOfChildren: data.numberOfChildren.toString(),
+        checkIn: data.checkIn,
+        checkOut: data.checkOut,
+        purpose: data.purpose,
+        relation:data.relation,
+        dob:data.dob
+      });
+    }
+  }, [data]);
+
+  const handleTextChange = (field, value) => {
+    setProfileData({
+      ...profileData,
+      [field]: value,
+    });
+  };
+
+  const handleSave = () => {
+    const data = profileData;
+    console.log(data, 'form data ');
+    dispatch(updateUserDetails(data, data._id)); // Assuming _id is the user ID field
+  };
+
+  // Fields for personal information section
+  const bookingInfoFields = [
+    {key: 'checkIn', label: 'Check-in Date'},
+    {key: 'checkOut', label: 'Check-out Date'},
+    {key: 'numberOfRooms', label: 'No. of Rooms'},
+    {key: 'totalGuests', label: 'Total Guests'},
+    {key: 'numberOfAdults', label: 'No. of Adults'},
+    {key: 'numberOfChildren', label: 'No. of Children'},
+    {key : 'purpose', label : 'Purpose'},
+    {key:'relation', label:'Relation'},
+  ];
+
+  const personalInfoFields = [
+    {key: 'fullName', label: 'Full Name'},
+    {key: 'email', label: 'Email'},
+    {key: 'phoneNumber', label: 'Contact Number'},
+    {key: 'gender', label: 'Gender'},
+    {key: 'nationality', label: 'Nationality'},
+    {key :'dob' , label:'Date of Birth'}
+  ];
+
+  // Fields for address details section
+  const addressFields = [
+    {key: 'state', label: 'State'},
+    {key: 'country', label: 'Country'},
+    {key: 'location', label: 'Location'},
   ];
 
   const handlePost = async () => {
@@ -34,13 +109,21 @@ const BookingReview = ({route}) => {
       status: 'PENDING',
       paymentStatus: 'PENDING',
       bookingMethod: 'OFFLINE',
+      roomCategory: [
+        {
+          _id: '66695ed6d4a4403f0cdf0648',
+          title: 'SUPER-DELUXE-ROOM',
+          bedCapacity: '2',
+          price: '5000',
+        },
+      ],
       checkIn: data.checkIn,
       checkOut: data.checkOut,
       aminities: ['spa', 'bar'],
-      roomCategory: data.roomType,
       relation: data.relation,
       numberOfRooms: data.numberOfRooms.toString(),
       dateOfBirth: data.dob,
+      allotmentStatus: true,
       purpoes: data.purpose,
       address: {
         country: data.country,
@@ -67,41 +150,51 @@ const BookingReview = ({route}) => {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.sectionContainer}>
-        <View style={styles.labelView}>
-          <Text style={{color: '#717171', fontSize: 12}}>CHECK-IN</Text>
-          <Text style={{color: '#717171', fontSize: 12}}>CHECK-OUT</Text>
-        </View>
-        <View style={styles.ContainerView}>
-          <Text style={{color: '#414141', fontSize: 12}}>
-            <Text style={{color: '#000000', fontSize: 16, fontWeight: '700'}}>
-              29 Feb
-            </Text>{' '}
-            2024, Thu
-          </Text>
-          <Text style={{color: '#414141', fontSize: 12}}>
-            <Text style={{color: '#000000', fontSize: 16, fontWeight: '700'}}>
-              1 March
-            </Text>{' '}
-            2024, Fri
-          </Text>
-        </View>
-        <View style={styles.sectionTime}>
-          <Text style={{color: '#414141', fontSize: 12}}>12 PM</Text>
-          <Text style={{color: '#414141', fontSize: 12}}>11 AM</Text>
-        </View>
-      </View>
-      <View style={styles.sectionContainer}>
-        {displayData.map((item, index) => (
-          <View style={styles.maincontainer} key={index}>
-            <View style={styles.labelViewinput}>
-              <Text>{item.label}</Text>
-            </View>
+      {/* Booking Information Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Booking Information</Text>
+        {bookingInfoFields.map(field => (
+          <View key={field.key} style={styles.fieldContainer}>
+            <Text style={styles.label}>{field.label}</Text>
             <TextInput
-              placeholder="name"
               style={styles.input}
-              value={item.value}
-              editable={false}
+              placeholder={`Enter ${field.label}`}
+              placeholderTextColor="#505152"
+              value={profileData[field.key]}
+              onChangeText={value => handleTextChange(field.key, value)}
+            />
+          </View>
+        ))}
+      </View>
+      {/* Personal Information Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Personal Information</Text>
+        {personalInfoFields.map(field => (
+          <View key={field.key} style={styles.fieldContainer}>
+            <Text style={styles.label}>{field.label}</Text>
+            <TextInput
+              style={styles.input}
+              placeholder={`Enter ${field.label}`}
+              placeholderTextColor="#505152"
+              value={profileData[field.key]}
+              onChangeText={value => handleTextChange(field.key, value)}
+            />
+          </View>
+        ))}
+      </View>
+
+      {/* Address Details Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Address Details</Text>
+        {addressFields.map(field => (
+          <View key={field.key} style={styles.fieldContainer}>
+            <Text style={styles.label}>{field.label}</Text>
+            <TextInput
+              style={styles.input}
+              placeholder={`Enter ${field.label}`}
+              placeholderTextColor="#505152"
+              value={profileData[field.key]}
+              onChangeText={value => handleTextChange(field.key, value)}
             />
           </View>
         ))}
@@ -117,90 +210,99 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f0f0f0',
-    paddingHorizontal: 10,
-  },
-  sectionTime: {
-    marginHorizontal: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  maincontainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  ContainerView: {
-    marginHorizontal: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  input: {
-    borderBottomColor: 'black',
-    borderBottomWidth: 1,
-    height: 40,
-    borderStyle: 'dashed',
-  },
-  labelView: {
-    marginTop: 10,
-    marginHorizontal: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  labelViewinput: {
-    marginTop: 10,
-    marginHorizontal: 10,
-    flexDirection: 'row',
-    marginRight: 20,
-  },
-  sectionContainer: {
-    width: '95%',
-    borderRadius: 6,
-    backgroundColor: 'white',
-    alignSelf: 'center',
-    marginTop: 10,
-    elevation: 5,
-    shadowColor: 'grey',
-    marginBottom: 10,
-    paddingBottom: 10,
-  },
-  line: {
-    borderBottomColor: '#d6d6d6',
-    borderBottomWidth: 1,
-    margin: 10,
-    marginTop: 20,
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 20,
+    paddingHorizontal: 20,
+    paddingTop: 20,
     backgroundColor: 'white',
-    marginBottom: 20,
+  },
+  icon: {
+    height: 16,
+    width: 16,
   },
   headerText: {
     fontSize: 18,
     fontWeight: '700',
     color: '#333',
   },
+  saveButton: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2a74d7',
+  },
+  profileSection: {
+    alignItems: 'center',
+    backgroundColor: 'white',
+    paddingVertical: 20,
+    marginBottom: 20,
+  },
+  profileImage: {
+    height: 120,
+    width: 120,
+    borderRadius: 60,
+    backgroundColor: '#e0e3ea',
+    marginBottom: 10,
+  },
+  fullName: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#333',
+    marginBottom: 5,
+  },
+  group: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2a74d7',
+  },
   section: {
     backgroundColor: 'white',
     paddingHorizontal: 20,
     paddingVertical: 15,
+    marginVertical: 10,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#333',
     marginBottom: 10,
-    marginTop: 10,
   },
   fieldContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 15,
   },
   label: {
     width: '40%',
+    marginRight: 10,
     fontSize: 16,
     color: '#333',
   },
-  value: {
-    width: '60%',
-    fontSize: 16,
+  input: {
+    flex: 1,
+    height: 40,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    backgroundColor: '#f5f5f5',
+    fontSize: 14,
     color: '#333',
+  },
+  logoutButton: {
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#ccc',
+  },
+  logoutText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#2a74d7',
   },
 });

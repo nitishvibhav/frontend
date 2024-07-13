@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const url = {
   // base: "http://localhost:3001/api/v1/en/",
-  base: "http://97.74.86.231/api/v1/en/",
+  base: "http://97.74.86.231:3001/api/v1/en/",
 };
 
 

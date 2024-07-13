@@ -88,7 +88,7 @@ const RoomDetails = () => {
           </View>
           <View style={[styles.rowSpaceBetween, styles.marginTop10]}>
             <Text style={styles.labelText}>Room Category</Text>
-            <Text style={styles.valueText}>{item.roomCategory}</Text>
+            <Text style={styles.valueText}>{item.roomCategory.title}</Text>
           </View>
         </View>
         <View style={styles.container}>

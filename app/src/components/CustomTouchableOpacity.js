@@ -5,7 +5,7 @@ import imagePath from '../assets/images/imagePath';
 const CustomTouchableOpacity = ({onPress, icon, text, width, label}) => {
   return (
     <View>
-      <Text style={{marginTop: 5, fontWeight: '700'}}>{label}</Text>
+      <Text style={styles.labelText}>{label}</Text>
       <TouchableOpacity
         style={[styles.container, {width: width}]}
         onPress={onPress}>
@@ -13,10 +13,6 @@ const CustomTouchableOpacity = ({onPress, icon, text, width, label}) => {
           <Image source={icon} style={styles.iconStyle} />
           <Text style={styles.textInput}>{text}</Text>
         </View>
-        <Image
-          source={imagePath.Dropdown}
-          style={{height: 28, width: 28, tintColor: 'black'}}
-        />
       </TouchableOpacity>
     </View>
   );
@@ -32,15 +28,21 @@ const styles = StyleSheet.create({
     borderColor: '#dadada',
     alignItems: 'center',
     backgroundColor: '#eef3ef',
-    padding:10,
-    height: 40,
+    padding: 10,
+    height: 56,
     justifyContent: 'space-between',
   },
+  labelText: {
+    marginTop: 15,
+    fontWeight: '700',
+    fontSize: 12,
+    color: 'black',
+  },
   textInput: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 13,
+    fontWeight: '700',
+    color: 'black',
     marginRight: 5,
-    color: '#7b7d7a',
     fontFamily: 'Quicksand-Bold',
     marginBottom: 2,
   },

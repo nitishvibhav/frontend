@@ -1,50 +1,38 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  TouchableOpacity,
-  Image,
-} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {useNavigation} from '@react-navigation/native';
-
+import React, {useEffect} from 'react';
+import {StyleSheet, Text, View, ScrollView} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-
-import {getRooms} from '../../redux/rooms/action';
-import imagePath from '../../assets/images/imagePath';
+import {getRoomsDetails} from '../../redux/rooms/action';
+import FacilityBadge from '../../components/FacilityBadge';
 
 const AllRoomBooking = () => {
   const dispatch = useDispatch();
-  const navigation = useNavigation();
-
-  const {roomsState, rooms} = useSelector(state => state.roomReducer);
+  const {rooms} = useSelector(state => state.roomReducer);
 
   useEffect(() => {
-    dispatch(getRooms());
-  }, []);
+    dispatch(getRoomsDetails());
+  }, [dispatch]);
 
-  console.log(rooms, 'rooms data');
+  useEffect(() => {
+    console.log('Rooms Data:', rooms);
+    
+  }, [rooms]);
+
 
   return (
     <ScrollView>
       <View style={styles.topContainer}>
-        <View style={{flexDirection: 'row'}}>
-          <View style={{width: '15%', alignItems: 'flex-start'}}>
+        <View style={{flexDirection: 'row', marginVertical: 10}}>
+          <View style={{width: '25%', alignItems: 'flex-start'}}>
             <Text style={styles.headingtext}>Room </Text>
           </View>
-          <View style={{width: '20%', alignItems: 'flex-start'}}>
+          <View style={{width: '25%', alignItems: 'flex-start'}}>
             <Text style={styles.headingtext}>Type</Text>
           </View>
           <View style={{width: '25%', alignItems: 'flex-start'}}>
             <Text style={styles.headingtext}>Status</Text>
           </View>
-          <View style={{width: '20%', alignItems: 'flex-start'}}>
-            <Text style={styles.headingtext}>Rent</Text>
-          </View>
-
-          <View style={{width: '20%', alignItems: 'flex-start'}}>
-            <Text style={styles.headingtext}>Details</Text>
+          <View style={{width: '25%', alignItems: 'flex-start'}}>
+            <Text style={styles.headingtext}>Facilities</Text>
           </View>
         </View>
         <View style={styles.line} />
@@ -56,61 +44,36 @@ const AllRoomBooking = () => {
                 alignItems: 'center',
                 paddingVertical: 4,
               }}>
-              <View style={{width: '15%', alignItems: 'flex-start'}}>
+              <View style={{width: '20%', alignItems: 'flex-start'}}>
                 <Text style={{color: 'purple', fontWeight: '800'}}>
                   {item.roomNumber}
                 </Text>
               </View>
-              <View style={{width: '20%', alignItems: 'flex-start'}}>
-                <Text style={{color: 'black', fontWeight: '500'}}>
+              <View style={{width: '30%', alignItems: 'flex-start'}}>
+                <Text style={{color: 'black', fontWeight: '500', fontSize: 12}}>
                   {item.roomCategory}
                 </Text>
               </View>
-              <View style={{width: '25%', alignItems: 'flex-start'}}>
-                <Text
-                  style={{
-                    color: item.roomStatus == 'Vacant' ? 'orange' : 'green',
-                    fontWeight: '800',
-                  }}>
-                  {item.roomStatus}
-                </Text>
-              </View>
-              <View style={{width: '20%', alignItems: 'flex-start'}}>
-                <Text style={{color: 'black', fontWeight: '500'}}>
-                  {item.price}
-                </Text>
-              </View>
-
               <View
                 style={{
-                  width: '20%',
+                  width: '25%',
                   alignItems: 'flex-start',
-                  borderRadius: 6,
                 }}>
-                <TouchableOpacity
+                <Text
                   style={{
-                    backgroundColor:
-                      item.roomStatus == 'Vacant' ? 'orange' : 'green',
-                    width: '70%',
-                    height: 32,
-                    borderRadius: 3,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                  onPress={() =>
-                    item.roomStatus == 'Vacant'
-                      ? navigation.navigate('Booking', {screen: 'Add booking'})
-                      : navigation.navigate('RoomDetails')
-                  }>
-                  <Image
-                    source={
-                      item.roomStatus == 'Vacant'
-                        ? imagePath.view_icon
-                        : imagePath.view_icon
-                    }
-                    style={{height: 16, width: 16, tintColor: 'white'}}
-                  />
-                </TouchableOpacity>
+                    color: item.roomStatus === 'VACANT' ? 'orange' : item.roomStatus === 'BOOKED' ? 'red' : 'green',
+                    fontWeight: '800',
+                    fontSize: 12,
+                  }}>
+                  {item.roomStatus}
+                  {console.log(item.roomStatus)}
+                </Text>
+              </View>
+              <View
+                style={{width: '25%', flexDirection: 'row', flexWrap: 'wrap'}}>
+                {item.facilities.map(facility => (
+                  <FacilityBadge key={facility} facility={facility} />
+                ))}
               </View>
             </View>
             <View style={styles.line} />
@@ -120,7 +83,6 @@ const AllRoomBooking = () => {
     </ScrollView>
   );
 };
-
 export default AllRoomBooking;
 
 const styles = StyleSheet.create({
@@ -141,5 +103,6 @@ const styles = StyleSheet.create({
   headingtext: {
     color: 'black',
     fontWeight: '800',
+    fontSize: 13,
   },
 });

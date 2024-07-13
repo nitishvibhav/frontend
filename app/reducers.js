@@ -5,6 +5,7 @@ import bookingReducer from './src/redux/booking/reducer'
 import roomCategoryReducer from './src/redux/roomcategory/reducer'
 import amenitiesReducer from './src/redux/amenities/reducer'
 import amenitiesCategoryReducer from './src/redux/amenitiesCategory/reducer'
+import filterationReducer from './src/redux/filteration/reducer'
 
 // import LandingPageReducer from "./LandingPage/Components/redux/reducer"
 
@@ -15,4 +16,5 @@ export default combineReducers({
     roomCategoryReducer,
     amenitiesReducer,
     amenitiesCategoryReducer,
+    filterationReducer,
 })

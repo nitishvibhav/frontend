@@ -6,52 +6,45 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {getRooms} from '../../redux/rooms/action';
-import imagePath from '../../assets/images/imagePath';
+import { getRoomsDetails} from '../../redux/rooms/action';
+import FacilityBadge from '../../components/FacilityBadge';
 
-const ConfirmedBooking = () => {
+
+const AvailableBooking = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
-  const {roomsState, rooms} = useSelector(state => state.roomReducer);
+  const {rooms} = useSelector(state => state.roomReducer);
   const [bookedRooms, setBookedRooms] = useState([]);
 
   useEffect(() => {
-    dispatch(getRooms());
-  }, []);
+    dispatch(getRoomsDetails());
+  }, [dispatch]);
 
   useEffect(() => {
     if (rooms && rooms.result) {
       const filteredRooms = rooms.result.filter(
-        room => room.roomStatus === 'Booked',
+        room => room.roomStatus === 'BOOKED' 
       );
       setBookedRooms(filteredRooms);
     }
   }, [rooms]);
 
   console.log(bookedRooms, 'booked rooms data');
-
   return (
     <ScrollView>
       <View style={styles.topContainer}>
         <View style={{flexDirection: 'row'}}>
-          <View style={{width: '15%', alignItems: 'flex-start'}}>
+          <View style={{width: '25%', alignItems: 'flex-start'}}>
             <Text style={styles.headingtext}>Room </Text>
           </View>
-          <View style={{width: '25%', alignItems: 'flex-start'}}>
+          <View style={{width: '35%', alignItems: 'flex-start'}}>
             <Text style={styles.headingtext}>Type</Text>
           </View>
-          <View style={{width: '20%', alignItems: 'flex-start'}}>
-            <Text style={styles.headingtext}>Status</Text>
-          </View>
-          <View style={{width: '20%', alignItems: 'flex-start'}}>
-            <Text style={styles.headingtext}>Rent</Text>
-          </View>
-
-          <View style={{width: '20%', alignItems: 'flex-start'}}>
-            <Text style={styles.headingtext}>Details</Text>
+          <View style={{width: '40%', alignItems: 'center'}}>
+            <Text style={styles.headingtext}>Facilities</Text>
           </View>
         </View>
         <View style={styles.line} />
@@ -63,52 +56,20 @@ const ConfirmedBooking = () => {
                 alignItems: 'center',
                 paddingVertical: 4,
               }}>
-              <View style={{width: '15%', alignItems: 'flex-start'}}>
+              <View style={{width: '25%', alignItems: 'flex-start'}}>
                 <Text style={{color: 'purple', fontWeight: '800'}}>
                   {item.roomNumber}
                 </Text>
               </View>
-              <View style={{width: '25%', alignItems: 'flex-start'}}>
-                <Text style={{color: 'black', fontWeight: '500'}}>
+              <View style={{width: '35%', alignItems: 'flex-start'}}>
+                <Text style={{color: 'black', fontWeight: '500',fontSize:12}}>
                   {item.roomCategory}
                 </Text>
               </View>
-              <View style={{width: '20%', alignItems: 'flex-start'}}>
-                <Text
-                  style={{
-                    color: 'green',
-                    fontWeight: '800',
-                  }}>
-                  {item.roomStatus}
-                </Text>
-              </View>
-              <View style={{width: '20%', alignItems: 'flex-start'}}>
-                <Text style={{color: 'black', fontWeight: '500'}}>
-                  {item.price}
-                </Text>
-              </View>
-
-              <View
-                style={{
-                  width: '20%',
-                  alignItems: 'flex-start',
-                  borderRadius: 6,
-                }}>
-                <TouchableOpacity
-                  style={{
-                    backgroundColor: 'green',
-                    width: '70%',
-                    height: 32,
-                    borderRadius: 3,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                  onPress={() => navigation.navigate('RoomDetails')}>
-                  <Image
-                    source={imagePath.view_icon}
-                    style={{height: 16, width: 16, tintColor: 'white'}}
-                  />
-                </TouchableOpacity>
+              <View style={{width: '40%', flexDirection: 'row', flexWrap: 'wrap', alignSelf:'flex-end', alignItems:'flex-end'}}>
+                {item.facilities.map(facility => (
+                  <FacilityBadge key={facility} facility={facility} />
+                ))}
               </View>
             </View>
             <View style={styles.line} />
@@ -119,7 +80,7 @@ const ConfirmedBooking = () => {
   );
 };
 
-export default ConfirmedBooking;
+export default AvailableBooking;
 
 const styles = StyleSheet.create({
   topContainer: {
