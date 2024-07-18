@@ -15,6 +15,7 @@ import BookingReview from '../screens/stepper/BookingReview';
 import BookingStepThree from '../screens/stepper/BookingStepThree';
 import BookingStepTwo from '../screens/stepper/BookingStepTwo';
 import BookingStepOne from '../screens/stepper/BookingStepOne';
+import BookingFilteration from '../screens/stepper/BookingFilteration';
 
 const Stack = createStackNavigator();
 
@@ -62,6 +63,12 @@ export default MainStack = () => (
       options={{headerShown: true, title: ' Add booking'}}
     />
 
+<Stack.Screen
+      name="BookingFilteration"
+      component={BookingFilteration}
+      options={{headerShown: true, title: ' Choose Your Rooms'}}
+    />
+
     <Stack.Screen
       name="LostAndFound"
       component={LostAndFound}
@@ -80,17 +87,17 @@ export default MainStack = () => (
     <Stack.Screen
       name="steptwo"
       component={BookingStepTwo}
-      options={{headerShown: true, title: ' Step 2 '}}
+      options={{headerShown: true, title: ' Traveller Details '}}
     />
     <Stack.Screen
       name="stepthree"
       component={BookingStepThree}
-      options={{headerShown: true, title: ' Step 3 '}}
+      options={{headerShown: true, title: ' Final Step '}}
     />
     <Stack.Screen
       name="review"
       component={BookingReview}
-      options={{headerShown: true, title: ' review '}}
+      options={{headerShown: true, title: ' Review Details '}}
     />
   </Stack.Navigator>
 );
