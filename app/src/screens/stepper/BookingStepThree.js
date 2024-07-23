@@ -9,20 +9,18 @@ import {
   Image,
   Button as RNButton,
 } from 'react-native';
+import * as ImagePicker from 'react-native-image-picker';
 import CustomButton from '../../components/CustomButton';
 import MultiSelectPicker from '../../components/MultiSelectPicker';
 import {useDispatch, useSelector} from 'react-redux';
 import {getAminitiesCategoryDetails} from '../../redux/amenitiesCategory/action';
 
 const BookingStepThree = ({navigation, route}) => {
-  const {data} = route.params; // Previous page data
-  console.log('Data from previous page:', data);
-
+  const {data} = route.params;
   const [purpose, setPurpose] = useState('');
   const [relation, setRelation] = useState('');
   const [amenities, setAmenities] = useState([]);
   const [documents, setDocuments] = useState([]);
-  const [errors, setErrors] = useState({});
   const {amenitiesCategory} = useSelector(
     state => state.amenitiesCategoryReducer,
   );
@@ -31,40 +29,64 @@ const BookingStepThree = ({navigation, route}) => {
   useEffect(() => {
     dispatch(getAminitiesCategoryDetails());
   }, [dispatch]);
-
   const amenitiesOptions =
     amenitiesCategory?.result?.map(item => ({
       label: item.title,
       value: item.title,
     })) || [];
 
-  const handleNext = () => {
-    let validationErrors = {};
+  const handleImagePicker = () => {
+    const options = {
+      title: 'Select Document',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
 
-    if (!purpose.trim()) {
-      validationErrors.purpose = 'Purpose is required';
-    }
-    if (!relation.trim()) {
-      validationErrors.relation = 'Relation is required';
-    }
-    if (amenities.length === 0) {
-      validationErrors.amenities = 'Please select at least one amenity';
-    }
-
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-    } else {
-      setErrors({});
-      navigation.navigate('review', {
-        data: {
-          ...data,
-          purpose,
-          relation,
-          amenities,
-        },
-      });
-    }
+    ImagePicker.launchImageLibrary(options, response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else {
+        const source = {uri: response.uri};
+        setDocuments([...documents, source]);
+      }
+    });
   };
+
+  const renderDocuments = () => {
+    return documents.map((document, index) => (
+      <View key={index} style={styles.documentItem}>
+        <Image source={document} style={styles.documentImage} />
+        <TouchableOpacity onPress={() => handleRemoveDocument(index)}>
+          <Text style={styles.removeText}>Remove</Text>
+        </TouchableOpacity>
+      </View>
+    ));
+  };
+
+  const handleRemoveDocument = index => {
+    const updatedDocuments = [...documents];
+    updatedDocuments.splice(index, 1);
+    setDocuments(updatedDocuments);
+  };
+
+  const handleNext = () => {
+    navigation.navigate('review', {
+      data: {
+        ...data,
+        purpose,
+        relation,
+        amenities,
+      },
+    });
+  };
+
+  // Transform amenitiesCategory to the format required by MultiSelectPicker
+
+  console.log(data, 'Data from previous page');
 
   return (
     <ScrollView style={styles.container}>
@@ -77,7 +99,6 @@ const BookingStepThree = ({navigation, route}) => {
             onChangeText={setPurpose}
             value={purpose}
           />
-          {errors.purpose && <Text style={styles.errorText}>{errors.purpose}</Text>}
         </View>
 
         <View style={styles.sectionContainer}>
@@ -88,7 +109,6 @@ const BookingStepThree = ({navigation, route}) => {
             onChangeText={setRelation}
             value={relation}
           />
-          {errors.relation && <Text style={styles.errorText}>{errors.relation}</Text>}
         </View>
 
         <View style={styles.sectionContainer}>
@@ -98,18 +118,12 @@ const BookingStepThree = ({navigation, route}) => {
             selectedValues={amenities}
             onValueChange={setAmenities}
           />
-          {errors.amenities && <Text style={styles.errorText}>{errors.amenities}</Text>}
         </View>
 
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionTitle}>Documents</Text>
-          <View style={styles.documentsContainer}>
-            {/* Placeholder for document design */}
-            <View style={styles.documentPlaceholder}>
-              <Text>Document Placeholder</Text>
-            </View>
-          </View>
-          <RNButton title="Add Document" onPress={() => {}} />
+          <View style={styles.documentsContainer}>{renderDocuments()}</View>
+          <RNButton title="Add Document" onPress={handleImagePicker} />
         </View>
       </View>
 
@@ -164,20 +178,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
-  documentPlaceholder: {
-    width: 100,
-    height: 100,
-    borderWidth: 1,
-    borderColor: '#dadada',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#eef3ef',
+  documentItem: {
     marginRight: 10,
     marginBottom: 10,
+    alignItems: 'center',
   },
-  errorText: {
+  documentImage: {
+    width: 100,
+    height: 100,
+  },
+  removeText: {
     color: 'red',
-    fontSize: 12,
     marginTop: 5,
   },
 });
