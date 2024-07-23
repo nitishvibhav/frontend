@@ -39,5 +39,7 @@ export default {
   paymentStatus: require('../images/peyment-statas.png'),
   paymentDetails: require('../images/peyment_details.png'),
   addressDetails: require('../images/address.png'),
-  guests: require('../images/gusts.png')
+  guests: require('../images/gusts.png'),
+  room : require('../images/room.jpeg'),
+  backButton:require('../images/arrow.png')
 };

@@ -14,12 +14,17 @@ import imagePath from '../../assets/images/imagePath';
 import CustomButton from '../../components/CustomButton';
 import CustomTouchableOpacity from '../../components/CustomTouchableOpacity';
 import {Picker} from '@react-native-picker/picker';
-import { useDispatch } from 'react-redux';
-import { getFilterationDetails, postFilterationDetails } from '../../redux/filteration/action';
+import {useDispatch} from 'react-redux';
+import {
+  getFilterationDetails,
+  postFilterationDetails,
+} from '../../redux/filteration/action';
 
 const BookingStepTwo = ({navigation, route}) => {
+  const dispatch = useDispatch();
+  const [activeGuestIndex, setActiveGuestIndex] = useState(null);
+
   const [data, setData] = useState({
-    ...route.params?.data,
     fullName: '',
     dob: 'dd/mm/yyyy',
     gender: '',
@@ -31,33 +36,101 @@ const BookingStepTwo = ({navigation, route}) => {
     country: '',
     additionalGuests: [],
   });
-  console.log(data, 'stepper data ');
-  const dispatch = useDispatch()
+
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    const data = {
-      hotelId: "singh@123",
-      checkIn: "2024-07-18",
-      checkOut: "2024-07-20",
-      bedCapacity: "2"
-    };
-    console.log('Dispatching with data:', data); // Log the data being dispatched
-    dispatch(postFilterationDetails(data));
-  }, [dispatch]);
+    if (route.params?.nextPageData) {
+      console.log('Data from previous page:', route.params.nextPageData);
+      setData(prevData => ({
+        ...prevData,
+        ...route.params.nextPageData, // Spread previous page data
+      }));
+    } else {
+      console.log('No data received from previous page');
+    }
+  }, [route.params?.nextPageData]);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const currentDate = new Date().toISOString().split('T')[0];
 
   const handlePressDob = day => {
-    setData(prevData => ({
-      ...prevData,
-      dob: day.dateString,
-    }));
+    if (activeGuestIndex !== null) {
+      handleGuestFieldChange(activeGuestIndex, 'dob', day.dateString);
+    } else {
+      setData(prevData => ({
+        ...prevData,
+        dob: day.dateString,
+      }));
+    }
     setIsModalVisible(false);
   };
 
   const handleNext = () => {
-    navigation.navigate('stepthree', {data});
+    let validationErrors = {};
+
+    // Validate primary guest details
+    if (!data.fullName.trim()) {
+      validationErrors.fullName = 'Full Name is required';
+    }
+    if (data.dob === 'dd/mm/yyyy') {
+      validationErrors.dob = 'Date of Birth is required';
+    }
+    if (!data.gender) {
+      validationErrors.gender = 'Gender is required';
+    }
+    if (!data.phoneNumber.trim()) {
+      validationErrors.phoneNumber = 'Phone Number is required';
+    }
+    if (!data.email.trim()) {
+      validationErrors.email = 'Email is required';
+    } else {
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(data.email)) {
+        validationErrors.email = 'Email is invalid';
+      }
+    }
+    if (!data.state.trim()) {
+      validationErrors.state = 'State is required';
+    }
+    if (!data.country.trim()) {
+      validationErrors.country = 'Country is required';
+    }
+    if (!data.location.trim()) {
+      validationErrors.location = 'Location is required';
+    }
+    if (!data.nationality.trim()) {
+      validationErrors.nationality = 'Nationality is required';
+    }
+
+    // Validate additional guests
+    data.additionalGuests.forEach((guest, index) => {
+      if (!guest.name.trim()) {
+        validationErrors[`additionalGuestName_${index}`] =
+          'Full Name is required';
+      }
+      if (guest.dob === 'DOB') {
+        validationErrors[`additionalGuestDob_${index}`] =
+          'Date of Birth is required';
+      }
+      if (!guest.gender) {
+        validationErrors[`additionalGuestGender_${index}`] = 'Gender is required';
+      }
+      if (!guest.age.trim()) {
+        validationErrors[`additionalGuestAge_${index}`] = 'Age is required';
+      }
+    });
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+    } else {
+      setErrors({});
+      const combinedData = {
+        ...route.params.nextPageData,
+        ...data,
+      };
+      navigation.navigate('stepthree', {data: combinedData});
+    }
   };
 
   const handleCheckboxChange = fieldName => {
@@ -119,6 +192,7 @@ const BookingStepTwo = ({navigation, route}) => {
             onChangeText={text => setData({...data, fullName: text})}
             value={data.fullName}
           />
+          {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
         </View>
         <CustomTouchableOpacity
           icon={imagePath.alarmIcon}
@@ -150,6 +224,7 @@ const BookingStepTwo = ({navigation, route}) => {
             </View>
           </TouchableWithoutFeedback>
         </Modal>
+        {errors.dob && <Text style={styles.errorText}>{errors.dob}</Text>}
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Gender</Text>
           <View style={styles.pickerContainer}>
@@ -164,6 +239,7 @@ const BookingStepTwo = ({navigation, route}) => {
               <Picker.Item label="Other" value="other" />
             </Picker>
           </View>
+          {errors.gender && <Text style={styles.errorText}>{errors.gender}</Text>}
         </View>
       </View>
       <View style={[styles.sectionContainer, {marginTop: 10}]}>
@@ -180,14 +256,27 @@ const BookingStepTwo = ({navigation, route}) => {
                 }
                 value={guest.name}
               />
+              {errors[`additionalGuestName_${index}`] && (
+                <Text style={styles.errorText}>
+                  {errors[`additionalGuestName_${index}`]}
+                </Text>
+              )}
             </View>
             <CustomTouchableOpacity
               icon={imagePath.alarmIcon}
               label="DOB"
               text={guest.dob}
               width="100%"
-              onPress={() => {}}
+              onPress={() => {
+                setActiveGuestIndex(index); // Set the active guest index
+                setIsModalVisible(true);
+              }}
             />
+            {errors[`additionalGuestDob_${index}`] && (
+              <Text style={styles.errorText}>
+                {errors[`additionalGuestDob_${index}`]}
+              </Text>
+            )}
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Gender</Text>
               <View style={styles.pickerContainer}>
@@ -202,6 +291,11 @@ const BookingStepTwo = ({navigation, route}) => {
                   <Picker.Item label="Other" value="other" />
                 </Picker>
               </View>
+              {errors[`additionalGuestGender_${index}`] && (
+                <Text style={styles.errorText}>
+                  {errors[`additionalGuestGender_${index}`]}
+                </Text>
+              )}
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Age</Text>
@@ -213,6 +307,11 @@ const BookingStepTwo = ({navigation, route}) => {
                 }
                 value={guest.age}
               />
+              {errors[`additionalGuestAge_${index}`] && (
+                <Text style={styles.errorText}>
+                  {errors[`additionalGuestAge_${index}`]}
+                </Text>
+              )}
             </View>
             <View style={styles.deleteButtonContainer}>
               <Button
@@ -230,6 +329,31 @@ const BookingStepTwo = ({navigation, route}) => {
 
       <View style={[styles.sectionContainer, {marginTop: 10}]}>
         <Text style={styles.sectionTitle}>Contact Details</Text>
+
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Phone Number</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Phone Number"
+            onChangeText={text => setData({...data, phoneNumber: text})}
+            value={data.phoneNumber}
+            keyboardType="phone-pad"
+          />
+          {errors.phoneNumber && (
+            <Text style={styles.errorText}>{errors.phoneNumber}</Text>
+          )}
+        </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Email</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            onChangeText={text => setData({...data, email: text})}
+            value={data.email}
+            keyboardType="email-address"
+          />
+          {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+        </View>
         <View style={styles.rowContainer}>
           <View style={[styles.inputContainer, {width: '49%'}]}>
             <Text style={styles.label}>State</Text>
@@ -239,6 +363,7 @@ const BookingStepTwo = ({navigation, route}) => {
               onChangeText={text => setData({...data, state: text})}
               value={data.state}
             />
+            {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
           </View>
           <View style={[styles.inputContainer, {width: '49%'}]}>
             <Text style={styles.label}>Country</Text>
@@ -248,6 +373,7 @@ const BookingStepTwo = ({navigation, route}) => {
               onChangeText={text => setData({...data, country: text})}
               value={data.country}
             />
+            {errors.country && <Text style={styles.errorText}>{errors.country}</Text>}
           </View>
         </View>
         <View style={styles.rowContainer}>
@@ -259,6 +385,7 @@ const BookingStepTwo = ({navigation, route}) => {
               onChangeText={text => setData({...data, location: text})}
               value={data.location}
             />
+            {errors.location && <Text style={styles.errorText}>{errors.location}</Text>}
           </View>
           <View style={[styles.inputContainer, {width: '49%'}]}>
             <Text style={styles.label}>Nationality</Text>
@@ -268,27 +395,10 @@ const BookingStepTwo = ({navigation, route}) => {
               onChangeText={text => setData({...data, nationality: text})}
               value={data.nationality}
             />
+            {errors.nationality && (
+              <Text style={styles.errorText}>{errors.nationality}</Text>
+            )}
           </View>
-        </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Phone Number</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Phone Number"
-            onChangeText={text => setData({...data, phoneNumber: text})}
-            value={data.phoneNumber}
-            keyboardType="phone-pad"
-          />
-        </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Email</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            onChangeText={text => setData({...data, email: text})}
-            value={data.email}
-            keyboardType="email-address"
-          />
         </View>
       </View>
       <CustomButton
@@ -387,6 +497,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginTop: 5,
   },
 });
 
