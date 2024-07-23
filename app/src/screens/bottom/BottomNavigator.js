@@ -1,4 +1,4 @@
-import {TouchableOpacity, Text, Image} from 'react-native';
+import {View, Text, Image} from 'react-native';
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Booking from './Booking';
@@ -7,15 +7,14 @@ import Home from './Home';
 import Profile from './Profile';
 import imagePath from '../../assets/images/imagePath';
 import AddBooking from '../booking/AddBooking';
-import {useNavigation} from '@react-navigation/native';
-import BookingStepOne from '../stepper/BookingStepOne';
+import { useNavigation } from '@react-navigation/native';
 
 const Bottom = createBottomTabNavigator();
 
 const BottomNavigator = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation()
   return (
-    <Bottom.Navigator >
+    <Bottom.Navigator screenOptions={{tabBarShowLabel: false}}>
       <Bottom.Screen
         name="Home"
         component={Home}
@@ -54,24 +53,19 @@ const BottomNavigator = () => {
           tabBarActiveTintColor: 'black',
         }}
       />
-     <Bottom.Screen
-        name="stepone"
-        component={BookingStepOne}
+      <Bottom.Screen
+        name="Add Booking"
+        component={AddBooking}
+        onPress={() => navigation.navigate('AddBooking')}
         options={{
           headerShown: true,
-          title: "Booking Info",
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Image
-                source={imagePath.backButton} 
-                style={{width: 20, height: 20, marginLeft: 16}}
-              />
-            </TouchableOpacity>
-          ),
           tabBarIcon: ({focused}) => (
             <Image
               source={focused ? imagePath.bottomAddFocus : imagePath.bottomAdd}
-              style={{width: 24, height: 24}}
+              style={{
+                width: 24,
+                height: 24,
+              }}
             />
           ),
           tabBarActiveTintColor: 'black',

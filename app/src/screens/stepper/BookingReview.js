@@ -3,8 +3,7 @@ import {View, Text, ScrollView, StyleSheet, TextInput} from 'react-native';
 import CustomButton from '../../components/CustomButton';
 import {useDispatch} from 'react-redux';
 import {get} from 'lodash';
-import {getBookingDetails, postBooking} from '../../redux/booking/action';
-import { useNavigation } from '@react-navigation/native';
+import {postBooking} from '../../redux/booking/action';
 
 const BookingReview = ({route}) => {
   const {data} = route.params;
@@ -15,6 +14,7 @@ const BookingReview = ({route}) => {
     fullName: '',
     email: '',
     contactNumber: '',
+    organizationName: '',
     nationality: '',
     gender: '',
     state: '',
@@ -27,8 +27,8 @@ const BookingReview = ({route}) => {
     checkIn: '',
     checkOut: '',
     purpose: '',
-    relation: '',
-    dob: '',
+    relation:'',
+    dob :''
   });
 
   useEffect(() => {
@@ -45,15 +45,15 @@ const BookingReview = ({route}) => {
         state: data.state,
         country: data.country,
         location: data.location,
-        numberOfRooms: data.selectedItems.length.toString(),
-        totalGuests: data.bedCapacity.toString(),
-        numberOfAdults: data.adult.toString(),
-        numberOfChildren: data.child.toString(),
+        numberOfRooms: data.numberOfRooms.toString(),
+        totalGuests: data.totalGuests.toString(),
+        numberOfAdults: data.numberOfAdults.toString(),
+        numberOfChildren: data.numberOfChildren.toString(),
         checkIn: data.checkIn,
         checkOut: data.checkOut,
         purpose: data.purpose,
-        relation: data.relation,
-        dob: data.dob,
+        relation:data.relation,
+        dob:data.dob
       });
     }
   }, [data]);
@@ -64,36 +64,64 @@ const BookingReview = ({route}) => {
       [field]: value,
     });
   };
-  const navigation = useNavigation()
+
+  const handleSave = () => {
+    const data = profileData;
+    console.log(data, 'form data ');
+    dispatch(updateUserDetails(data, data._id)); // Assuming _id is the user ID field
+  };
+
+  // Fields for personal information section
+  const bookingInfoFields = [
+    {key: 'checkIn', label: 'Check-in Date'},
+    {key: 'checkOut', label: 'Check-out Date'},
+    {key: 'numberOfRooms', label: 'No. of Rooms'},
+    {key: 'totalGuests', label: 'Total Guests'},
+    {key: 'numberOfAdults', label: 'No. of Adults'},
+    {key: 'numberOfChildren', label: 'No. of Children'},
+    {key : 'purpose', label : 'Purpose'},
+    {key:'relation', label:'Relation'},
+  ];
+
+  const personalInfoFields = [
+    {key: 'fullName', label: 'Full Name'},
+    {key: 'email', label: 'Email'},
+    {key: 'phoneNumber', label: 'Contact Number'},
+    {key: 'gender', label: 'Gender'},
+    {key: 'nationality', label: 'Nationality'},
+    {key :'dob' , label:'Date of Birth'}
+  ];
+
+  // Fields for address details section
+  const addressFields = [
+    {key: 'state', label: 'State'},
+    {key: 'country', label: 'Country'},
+    {key: 'location', label: 'Location'},
+  ];
 
   const handlePost = async () => {
-    const roomCategories = data.selectedItems.map(item => item.roomCategory);
-    const roomNumbers = data.selectedItems.map(item => item.roomNumber);
-
     const req = {
       fullName: data.fullName,
       email: data.email,
       phoneNumber: data.phoneNumber,
       nationality: data.nationality,
-      hotelId: data.hotelId,
+      hotelId: '123456',
       status: 'PENDING',
       paymentStatus: 'PENDING',
       bookingMethod: 'OFFLINE',
-      roomCategory: roomCategories.map((category, index) => ({
-        _id: data.selectedItems[index]._id,
-        title: category,
-        bedCapacity: '1',
-        price: '5000',
-      })),
-      rooms: roomNumbers.map((roomNumber, index) => ({
-        _id: data.selectedItems[index]._id,
-        roomNumber: roomNumber,
-      })),
+      roomCategory: [
+        {
+          _id: '66695ed6d4a4403f0cdf0648',
+          title: 'SUPER-DELUXE-ROOM',
+          bedCapacity: '2',
+          price: '5000',
+        },
+      ],
       checkIn: data.checkIn,
       checkOut: data.checkOut,
-      aminities: data.amenities,
+      aminities: ['spa', 'bar'],
       relation: data.relation,
-      numberOfRooms: data.selectedItems.length.toString(),
+      numberOfRooms: data.numberOfRooms.toString(),
       dateOfBirth: data.dob,
       allotmentStatus: true,
       purpoes: data.purpose,
@@ -103,74 +131,27 @@ const BookingReview = ({route}) => {
         location: data.location,
       },
       numberOfGuest: {
-        adult: data.adult.toString(),
-        child: data.child.toString(),
-        total: data.bedCapacity.toString(),
+        adult: data.numberOfAdults.toString(),
+        child: data.numberOfChildren.toString(),
+        total: data.totalGuests.toString(),
       },
       guests: data.additionalGuests,
     };
-
     const res = await dispatch(postBooking(req));
     console.log(res, 'response');
     const status = get(res, 'value.status');
     if (status === 200) {
       alert(get(res.value.data, 'message', 'Done'));
       dispatch(getBookingDetails());
-      navigation.navigate('Home')
     } else {
       console.log(get(res, 'message', 'Done'));
     }
   };
 
   return (
-    <View style={{   flex: 1,}}>
-      <ScrollView style={styles.container}>
-
-           {/* Booking Summary Section */}
-           <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Booking Summary</Text>
-          <View style={styles.fieldContainer}>
-            <Text style={styles.label}>Total Guests</Text>
-            <Text style={styles.selectedItemText}>{data.bedCapacity}</Text>
-          </View>
-          <View style={styles.fieldContainer}>
-            <Text style={styles.label}>Check-In Date</Text>
-            <Text style={styles.selectedItemText}>{data.checkIn}</Text>
-          </View>
-          <View style={styles.fieldContainer}>
-            <Text style={styles.label}>Check-Out Date</Text>
-            <Text style={styles.selectedItemText}>{data.checkOut}</Text>
-          </View>
-          <View style={styles.fieldContainer}>
-            <Text style={styles.label}>Number of Rooms</Text>
-            <Text style={styles.selectedItemText}>
-              {data.selectedItems.length}
-            </Text>
-          </View>
-        </View>
-
-        {/* Selected Items Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Selected Rooms</Text>
-          {data.selectedItems.map((item, index) => (
-            <View key={index} style={styles.fieldContainer}>
-              <Text style={styles.label}>Room {index + 1}</Text>
-              <View style={styles.selectedItemContainer}>
-                <Text style={styles.selectedItemText}>
-                  Category: {item.roomCategory}
-                </Text>
-                <Text style={styles.selectedItemText}>
-                  Number: {item.roomNumber}
-                </Text>
-              </View>
-            </View>
-          ))}
-        </View>
-
-     
-
-        {/* Booking Information Section */}
-        {/* <View style={styles.section}>
+    <ScrollView style={styles.container}>
+      {/* Booking Information Section */}
+      <View style={styles.section}>
         <Text style={styles.sectionTitle}>Booking Information</Text>
         {bookingInfoFields.map(field => (
           <View key={field.key} style={styles.fieldContainer}>
@@ -184,44 +165,42 @@ const BookingReview = ({route}) => {
             />
           </View>
         ))}
-      </View> */}
+      </View>
+      {/* Personal Information Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Personal Information</Text>
+        {personalInfoFields.map(field => (
+          <View key={field.key} style={styles.fieldContainer}>
+            <Text style={styles.label}>{field.label}</Text>
+            <TextInput
+              style={styles.input}
+              placeholder={`Enter ${field.label}`}
+              placeholderTextColor="#505152"
+              value={profileData[field.key]}
+              onChangeText={value => handleTextChange(field.key, value)}
+            />
+          </View>
+        ))}
+      </View>
 
-        {/* Personal Information Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Personal Information</Text>
-          {personalInfoFields.map(field => (
-            <View key={field.key} style={styles.fieldContainer}>
-              <Text style={styles.label}>{field.label}</Text>
-              <TextInput
-                style={styles.input}
-                placeholder={`Enter ${field.label}`}
-                placeholderTextColor="#505152"
-                value={profileData[field.key]}
-                onChangeText={value => handleTextChange(field.key, value)}
-              />
-            </View>
-          ))}
-        </View>
-
-        {/* Address Details Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Address Details</Text>
-          {addressFields.map(field => (
-            <View key={field.key} style={styles.fieldContainer}>
-              <Text style={styles.label}>{field.label}</Text>
-              <TextInput
-                style={styles.input}
-                placeholder={`Enter ${field.label}`}
-                placeholderTextColor="#505152"
-                value={profileData[field.key]}
-                onChangeText={value => handleTextChange(field.key, value)}
-              />
-            </View>
-          ))}
-        </View>
-      </ScrollView>
-      <CustomButton title="Confirm Booking" width="95%" onPress={handlePost} />
-    </View>
+      {/* Address Details Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Address Details</Text>
+        {addressFields.map(field => (
+          <View key={field.key} style={styles.fieldContainer}>
+            <Text style={styles.label}>{field.label}</Text>
+            <TextInput
+              style={styles.input}
+              placeholder={`Enter ${field.label}`}
+              placeholderTextColor="#505152"
+              value={profileData[field.key]}
+              onChangeText={value => handleTextChange(field.key, value)}
+            />
+          </View>
+        ))}
+      </View>
+      <CustomButton title="Submit" width="100%" onPress={handlePost} />
+    </ScrollView>
   );
 };
 
@@ -229,8 +208,54 @@ export default BookingReview;
 
 const styles = StyleSheet.create({
   container: {
- 
+    flex: 1,
     backgroundColor: '#f0f0f0',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    backgroundColor: 'white',
+  },
+  icon: {
+    height: 16,
+    width: 16,
+  },
+  headerText: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#333',
+  },
+  saveButton: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2a74d7',
+  },
+  profileSection: {
+    alignItems: 'center',
+    backgroundColor: 'white',
+    paddingVertical: 20,
+    marginBottom: 20,
+  },
+  profileImage: {
+    height: 120,
+    width: 120,
+    borderRadius: 60,
+    backgroundColor: '#e0e3ea',
+    marginBottom: 10,
+  },
+  fullName: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#333',
+    marginBottom: 5,
+  },
+  group: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2a74d7',
   },
   section: {
     backgroundColor: 'white',
@@ -252,9 +277,8 @@ const styles = StyleSheet.create({
   label: {
     width: '40%',
     marginRight: 10,
-    fontSize: 14,
+    fontSize: 16,
     color: '#333',
-    fontWeight:'700'
   },
   input: {
     flex: 1,
@@ -267,35 +291,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#333',
   },
-  selectedItemContainer: {
-    flexDirection: 'column',
+  logoutButton: {
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#ccc',
   },
-  selectedItemText: {
-    fontSize: 14,
-    color: '#333',
+  logoutText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#2a74d7',
   },
 });
-
-const bookingInfoFields = [
-  {key: 'checkIn', label: 'Check-In Date'},
-  {key: 'checkOut', label: 'Check-Out Date'},
-  {key: 'numberOfRooms', label: 'Number of Rooms'},
-  {key: 'numberOfAdults', label: 'Number of Adults'},
-  {key: 'numberOfChildren', label: 'Number of Children'},
-  {key: 'totalGuests', label: 'Total Guests'},
-  {key: 'purpose', label: 'Purpose'},
-];
-
-const personalInfoFields = [
-  {key: 'fullName', label: 'Full Name'},
-  {key: 'gender', label: 'Gender'},
-  {key: 'email', label: 'Email'},
-  {key: 'phoneNumber', label: 'Contact Number'},
-  {key: 'nationality', label: 'Nationality'},
-];
-
-const addressFields = [
-  {key: 'state', label: 'State'},
-  {key: 'country', label: 'Country'},
-  {key: 'location', label: 'Location'},
-];
