@@ -8,13 +8,14 @@ import {
   ScrollView,
   Text,
   TextInput,
+  Image,
 } from 'react-native';
 import {Calendar} from 'react-native-calendars';
 import CustomTouchableOpacity from '../../components/CustomTouchableOpacity';
 import imagePath from '../../assets/images/imagePath';
 import CustomButton from '../../components/CustomButton';
 import {useDispatch, useSelector} from 'react-redux';
-import {getRoomsDetails} from '../../redux/rooms/action';
+import {getRoomsDetails} from '../../redux/room/action';
 
 const BookingStepOne = ({navigation, route}) => {
   const [data, setData] = useState(route.params?.data || {});
@@ -70,7 +71,6 @@ const BookingStepOne = ({navigation, route}) => {
     }));
   };
 
-
   const validateFields = () => {
     const newErrors = {};
     if (checkIn === 'CHECK-IN DATE' || !checkIn) {
@@ -93,7 +93,6 @@ const BookingStepOne = ({navigation, route}) => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
 
   const handleNext = () => {
     if (validateFields()) {
@@ -144,28 +143,33 @@ const BookingStepOne = ({navigation, route}) => {
         <View style={styles.rowContainer}>
           <View style={[styles.inputContainer, {width: '49%'}]}>
             <Text style={styles.label}>NUMBER OF ADULT</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="ADULT"
-              value={numberOfAdults}
-              onChangeText={handleNumberOfAdultsChange}
-              keyboardType="numeric"
-              placeholderTextColor="black"
-            />
+            <View style={styles.input}>
+              <Image style={styles.iconinput} source={imagePath.guests} />
+              <TextInput
+                placeholder="ADULT"
+                value={numberOfAdults}
+                onChangeText={handleNumberOfAdultsChange}
+                keyboardType="numeric"
+                placeholderTextColor="black"
+              />
+            </View>
             {errors.numberOfAdults && (
               <Text style={styles.errorText}>{errors.numberOfAdults}</Text>
             )}
           </View>
           <View style={[styles.inputContainer, {width: '49%'}]}>
             <Text style={styles.label}>NUMBER OF CHILDREN</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="CHILDREN"
-              value={numberOfChildren}
-              onChangeText={handleNumberOfChildrenChange}
-              keyboardType="numeric"
-              placeholderTextColor="black"
-            />
+            <View style={styles.input}>
+              <Image style={styles.iconinput} source={imagePath.guests} />
+              <TextInput
+                
+                placeholder="CHILDREN"
+                value={numberOfChildren}
+                onChangeText={handleNumberOfChildrenChange}
+                keyboardType="numeric"
+                placeholderTextColor="black"
+              />
+            </View>
             {errors.numberOfChildren && (
               <Text style={styles.errorText}>{errors.numberOfChildren}</Text>
             )}
@@ -173,14 +177,16 @@ const BookingStepOne = ({navigation, route}) => {
         </View>
         <View style={styles.inputContainer}>
           <Text style={styles.label}>TOTAL NUMBER OF GUESTS</Text>
+          <View style={styles.input}>
+          <Image style={styles.iconinput} source={imagePath.guests} />
           <TextInput
-            style={styles.input}
             placeholder="TOTAL GUESTS"
             value={numberOfGuests}
             onChangeText={handleNumberOfGuestsChange}
             keyboardType="numeric"
             placeholderTextColor="black"
           />
+          </View>
           {errors.numberOfGuests && (
             <Text style={styles.errorText}>{errors.numberOfGuests}</Text>
           )}
@@ -251,6 +257,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 10,
   },
+  iconinput: {
+    height: 20,
+    width: 20,
+    alignSelf: 'center',
+    marginRight: 5,
+  },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -277,6 +289,7 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   input: {
+    flexDirection: 'row',
     height: 56,
     borderColor: '#dadada',
     borderWidth: 1,

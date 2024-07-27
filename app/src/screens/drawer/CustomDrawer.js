@@ -52,7 +52,7 @@ const CustomDrawer = () => {
               All Booking
             </Text>
           </View>
-          <TouchableOpacity onPress={()=>navigation.navigate('Booking', {screen:'All Booking'})}>
+          <TouchableOpacity >
           <Image
             source={imagePath.nextIcon}
             style={styles.nextImage}
@@ -66,7 +66,7 @@ const CustomDrawer = () => {
               Add Booking
             </Text>
           </View>
-          <TouchableOpacity onPress={()=>navigation.navigate('Booking', {screen:'Add Booking'})}>
+          <TouchableOpacity >
           <Image
             source={imagePath.nextIcon}
             style={styles.nextImage}
@@ -84,10 +84,10 @@ const CustomDrawer = () => {
           style={styles.textView}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Text style={styles.text}>
-              All Rooms
+             Payment Details
             </Text>
           </View>
-          <TouchableOpacity onPress={()=>navigation.navigate('Room', {screen:'All Room'})}>
+          <TouchableOpacity onPress={()=>navigation.navigate('ledgerbill')}>
           <Image
             source={imagePath.nextIcon}
             style={styles.nextImage}
@@ -101,7 +101,7 @@ const CustomDrawer = () => {
               Booked Rooms
             </Text>
           </View>
-          <TouchableOpacity onPress={()=>navigation.navigate('Room', {screen:'Confirmed Room'})}>
+          <TouchableOpacity >
           <Image
             source={imagePath.nextIcon}
             style={styles.nextImage}
@@ -115,7 +115,7 @@ const CustomDrawer = () => {
               Available Rooms
             </Text>
           </View>
-          <TouchableOpacity onPress={()=>navigation.navigate('Room', {screen:'Available Room'})}>
+          <TouchableOpacity >
           <Image
             source={imagePath.nextIcon}
             style={styles.nextImage}

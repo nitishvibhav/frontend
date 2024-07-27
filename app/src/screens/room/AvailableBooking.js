@@ -2,7 +2,7 @@ import {StyleSheet, Text, View, ScrollView} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {getRooms, getRoomsDetails} from '../../redux/rooms/action';
+import {getRooms, getRoomsDetails} from '../../redux/room/action';
 import FacilityBadge from '../../components/FacilityBadge';
 
 const AvailableBooking = () => {

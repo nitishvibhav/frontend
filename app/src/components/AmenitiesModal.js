@@ -13,7 +13,7 @@ import imagePath from '../assets/images/imagePath';
 import CustomButton from './CustomButton';
 import {useDispatch, useSelector} from 'react-redux';
 import {getRoomCategoryDetails} from '../redux/roomcategory/action';
-import { getRooms } from '../redux/rooms/action';
+import { getRooms } from '../redux/room/action';
 import { getAminitiesCategoryDetails } from '../redux/amenitiesCategory/action';
 
 const AmenitiesModal = ({visible, onClose}) => {

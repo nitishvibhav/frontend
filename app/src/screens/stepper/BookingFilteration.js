@@ -25,11 +25,14 @@ const BookingFilteration = () => {
   const [responseData, setResponseData] = useState(null);
   const [error, setError] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
+
+  const {user} = useSelector(state => state.loginReducer);
 
   useEffect(() => {
     const fetchData = async () => {
       const formdata = {
-        hotelId: 'singh@123',
+        hotelId: user.result.username,
         checkIn: data.checkIn,
         checkOut: data.checkOut,
         bedCapacity: data.numberOfGuests,
@@ -52,8 +55,10 @@ const BookingFilteration = () => {
   const handleItemPress = item => {
     if (selectedItems.includes(item)) {
       setSelectedItems(selectedItems.filter(i => i !== item));
+      setTotalPrice(totalPrice - item.price); // Subtract the price of the deselected room
     } else {
       setSelectedItems([...selectedItems, item]);
+      setTotalPrice(totalPrice + item.price); // Add the price of the selected room
     }
   };
 
@@ -62,7 +67,7 @@ const BookingFilteration = () => {
       total: data.numberOfGuests,
       adult: data.numberOfAdults,
       child: data.numberOfChildren,
-      hotelId: 'singh@123',
+      hotelId: user.result.username,
       checkIn: data.checkIn,
       checkOut: data.checkOut,
       bedCapacity: data.numberOfGuests,
@@ -96,32 +101,66 @@ const BookingFilteration = () => {
           responseData.result.map(item => (
             <TouchableOpacity
               style={[
-                styles.sectionContainer,
+                styles.normalContainer,
                 selectedItems.includes(item) && styles.selectedItem,
               ]}
               key={item._id}
               onPress={() => handleItemPress(item)}>
-              <View style={{width: '30%', marginRight: 10}}>
-                <Image
-                  source={imagePath.room}
-                  style={{width: '100%', height: 120}}
-                />
+              <View style={styles.roomNumberView}>
+                <View>
+                  <Text style={styles.textRoom}>
+                    Room Number : {item.roomNumber}
+                  </Text>
+                </View>
+                <View>
+                  <Text style={styles.textRoom}>{item.roomCategory}</Text>
+                </View>
               </View>
-              <View>
-                {item.price && <Text>Price :{item.price}</Text>}
-                {item.bedCapacity && (
-                  <Text>Bed Capacity :{item.bedCapacity}</Text>
-                )}
-                <Text>Room Number: {item.roomNumber}</Text>
-                <Text>Room Category: {item.roomCategory}</Text>
-                {item.facilities && (
-                  <View style={styles.facilitiesContainer}>
-                    <Text>Facilities:</Text>
-                    {item.facilities.map((facility, index) => (
-                      <Text key={index}>- {facility}</Text>
-                    ))}
+              <View style={styles.sectionContainer}>
+                <View style={{width: '30%', marginRight: 10}}>
+                  <Image
+                    source={imagePath.room}
+                    style={{width: '100%', height: 130}}
+                  />
+                </View>
+                <View style={{marginTop: 10}}>
+                  {item.facilities && (
+                    <View style={styles.facilitiesContainer}>
+                      {item.facilities.map((facility, index) => (
+                        <View key={index} style={styles.facilityItem}>
+                          <Text
+                            style={{
+                              fontSize: 9,
+                              color: 'black',
+                              fontWeight: '600',
+                            }}>
+                            {facility}
+                          </Text>
+                        </View>
+                      ))}
+                    </View>
+                  )}
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      width: '75%',
+                      marginTop: 10,
+                      alignItems: 'center',
+                    }}>
+                    <Text>Bed Capacity : {item.bedCapacity}</Text>
+                    <View
+                      style={{
+                        backgroundColor: '#ffcc66',
+                        paddingHorizontal: 10,
+                        paddingVertical: 5,
+                        marginLeft: 20,
+                        borderRadius: 6,
+                      }}>
+                      <Text>{item.price} रु/Night</Text>
+                    </View>
                   </View>
-                )}
+                </View>
               </View>
             </TouchableOpacity>
           ))
@@ -133,7 +172,7 @@ const BookingFilteration = () => {
         <View>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Text style={{color: 'white', fontSize: 14, fontWeight: '800'}}>
-              $ 5,785
+              {`रु ${totalPrice}`} {/* Dynamically display the total price */}
             </Text>
             <TouchableOpacity>
               <Image
@@ -142,8 +181,9 @@ const BookingFilteration = () => {
               />
             </TouchableOpacity>
           </View>
-          <Text style={{color: 'white', fontSize: 9}}>including VAT</Text>
-          <Text style={{color: 'white', fontSize: 9}}>For {data.numberOfGuests} person</Text>
+          <Text style={{color: 'white', fontSize: 9}}>
+            For {data.numberOfGuests} person
+          </Text>
         </View>
         <CustomButton
           title="Select Room"
@@ -163,17 +203,36 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 10,
   },
-  sectionContainer: {
+  roomNumberView: {
+    backgroundColor: 'orange',
+    flexDirection: 'row',
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderTopLeftRadius: 6,
+    borderTopRightRadius: 6,
+    justifyContent: 'space-between',
+  },
+  textRoom: {
+    fontSize: 14,
+    color: 'white',
+    fontWeight: '700',
+  },
+  normalContainer: {
     backgroundColor: 'white',
-    padding: 10,
     marginBottom: 10,
     borderRadius: 6,
-    flexDirection: 'row',
     width: '95%',
     alignSelf: 'center',
   },
+  sectionContainer: {
+    marginBottom: 10,
+    borderRadius: 6,
+    flexDirection: 'row',
+    width: '100%',
+    alignSelf: 'center',
+  },
   selectedItem: {
-    backgroundColor: '#d0f0c0', // Change the color to indicate selection
+    backgroundColor: 'orange', // Change the color to indicate selection
   },
   title: {
     fontSize: 20,
@@ -197,7 +256,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   facilitiesContainer: {
-    marginTop: 10,
+    width: '80%',
+    flexDirection: 'row',
+    flexWrap: 'wrap', // allows items to wrap to the next line
+    gap: 5,
+  },
+  facilityItem: {
+    paddingHorizontal: 5,
+    paddingVertical: 5,
+    backgroundColor: '#e6e6ff',
+    borderRadius: 4,
+    margin: 2, // optional, for additional spacing
   },
   bottomMainView: {
     bottom: 0,

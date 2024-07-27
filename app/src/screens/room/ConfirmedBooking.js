@@ -9,7 +9,7 @@ import {
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import { getRoomsDetails} from '../../redux/rooms/action';
+import { getRoomsDetails} from '../../redux/room/action';
 import FacilityBadge from '../../components/FacilityBadge';
 
 

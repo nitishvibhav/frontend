@@ -9,7 +9,7 @@ import {
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import TopMiniCard from '../../components/homepage/TopMiniCard';
-import {getRooms, getRoomsDetails} from '../../redux/rooms/action';
+import {getRooms, getRoomsDetails} from '../../redux/room/action';
 import {useDispatch, useSelector} from 'react-redux';
 import imagePath from '../../assets/images/imagePath';
 import CustomButton from '../../components/CustomButton';
@@ -23,9 +23,9 @@ const Home = () => {
   const [VacantRoomCount, setVacantRoomCount] = useState('');
   const [reservedRooms, setReservedRooms] = useState('');
 
-  useEffect(() => {
-    dispatch(getRoomsDetails());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(getRoo());
+  // }, [dispatch]);
 
   useEffect(() => {
     if (rooms && rooms.result) {
@@ -93,15 +93,11 @@ const Home = () => {
             title="Total Rooms"
             data={totalRooms}
             icon={imagePath.totalRooms}
-            onPress={() => navigation.navigate('RoomType', {screen: 'All Room'})}
           />
           <TopMiniCard
             title="Vacant Rooms"
             data={VacantRoomCount}
             icon={imagePath.vacantRooms}
-            onPress={() =>
-              navigation.navigate('RoomType', {screen: 'Available Room'})
-            }
           />
         </View>
         <View style={styles.mainView}>
@@ -109,9 +105,7 @@ const Home = () => {
             title="Booked Rooms"
             data={bookedRooms}
             icon={imagePath.bookedRooms}
-            onPress={() =>
-              navigation.navigate('RoomType', {screen: 'Confirmed Room'})
-            }
+            
           />
           <TopMiniCard
             title="Reserved Room"

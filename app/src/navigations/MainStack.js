@@ -16,6 +16,8 @@ import BookingStepThree from '../screens/stepper/BookingStepThree';
 import BookingStepTwo from '../screens/stepper/BookingStepTwo';
 import BookingStepOne from '../screens/stepper/BookingStepOne';
 import BookingFilteration from '../screens/stepper/BookingFilteration';
+import LedgerBill from '../screens/ledger/LedgerBill';
+import LedgerDetail from '../screens/ledger/LedgerDetails';
 
 const Stack = createStackNavigator();
 
@@ -62,6 +64,16 @@ export default MainStack = () => (
       component={AddBooking}
       options={{headerShown: true, title: ' Add booking'}}
     />
+    <Stack.Screen
+    name="ledgerbill"
+    component={LedgerBill}
+    options={{headerShown: true, title: 'Payment Details'}}
+  />
+  <Stack.Screen
+    name="LedgerDetail"
+    component={LedgerDetail}
+    options={{headerShown: true, title: 'Payment Details'}}
+  />
 
 <Stack.Screen
       name="BookingFilteration"

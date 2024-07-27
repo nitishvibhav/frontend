@@ -1,16 +1,28 @@
 import {Image, StyleSheet, Text, View, ScrollView} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import FloatingButton from '../../components/FloatingButton';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import CustomButton from '../../components/CustomButton';
 import imagePath from '../../assets/images/imagePath';
+import { useDispatch, useSelector } from 'react-redux';
+import { getByIdLedger, getByReceiptIdLedger } from '../../redux/Ledger/action';
 
 const RoomDetails = () => {
   const navigation = useNavigation();
   const route = useRoute();
+  const dispatch = useDispatch();
 
   const item = route.params?.item;
-  console.log(item, 'item line no.26');
+  console.log(item._id, 'item line no.26');
+
+  useEffect(()=>{
+      dispatch(getByReceiptIdLedger(item._id))
+  },[dispatch])
+
+ const {getLedgerByReceipt} = useSelector(state=>state.ledgerReducer)
+ ledgerData = getLedgerByReceipt.result
+ console.log(ledgerData,"ledger data......")
+
 
   return (
     <View style={styles.flexContainer}>
@@ -100,7 +112,50 @@ const RoomDetails = () => {
           <Image source={imagePath.idCardBack} style={styles.documentIcon} />
           <Text style={styles.documentFont}>Back Side</Text>
         </View>
-      </ScrollView>
+        <View style={styles.container}>
+        <Text style={styles.ledgerTitle}>Ledger Details</Text>
+        {ledgerData && ledgerData.length > 0 ? (
+          ledgerData.map((ledger, index) => (
+            <View key={ledger._id} style={[styles.ledgerItem, index > 0 && styles.marginTop10]}>
+              <View style={styles.rowSpaceBetween}>
+                <Text style={styles.labelText}>Date</Text>
+                <Text style={styles.valueText}>{ledger.date}</Text>
+              </View>
+              <View style={styles.rowSpaceBetween}>
+                <Text style={styles.labelText}>Amount</Text>
+                <Text style={styles.valueText}>{ledger.amount}</Text>
+              </View>
+              <View style={styles.rowSpaceBetween}>
+                <Text style={styles.labelText}>Charge</Text>
+                <Text style={styles.valueText}>{ledger.charge}</Text>
+              </View>
+              <View style={styles.rowSpaceBetween}>
+                <Text style={styles.labelText}>Dues</Text>
+                <Text style={styles.valueText}>{ledger.dues}</Text>
+              </View>
+              <View style={styles.rowSpaceBetween}>
+                <Text style={styles.labelText}>Payable Amount</Text>
+                <Text style={styles.valueText}>{ledger.payableAmount}</Text>
+              </View>
+              <View style={styles.rowSpaceBetween}>
+                <Text style={styles.labelText}>Payment Status</Text>
+                <Text style={styles.valueText}>{ledger.paymentStatus}</Text>
+              </View>
+              <View style={styles.rowSpaceBetween}>
+                <Text style={styles.labelText}>Method</Text>
+                <Text style={styles.valueText}>{ledger.method}</Text>
+              </View>
+              <View style={styles.rowSpaceBetween}>
+                <Text style={styles.labelText}>Remark</Text>
+                <Text style={styles.valueText}>{ledger.remark}</Text>
+              </View>
+            </View>
+          ))
+        ) : (
+          <Text style={styles.noDataText}>No Ledger Data Available</Text>
+        )}
+      </View>
+    </ScrollView>
       <FloatingButton phone={item.phoneNumber} />
       <View style={styles.bottomContainer}>
         <View>
@@ -203,5 +258,17 @@ const styles = StyleSheet.create({
     color: 'gray',
     fontSize: 10,
     fontWeight: '400',
+  },
+  ledgerTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: 'black',
+    marginBottom: 10,
+  },
+  ledgerItem: {
+    backgroundColor: '#f9f9f9',
+    borderRadius: 5,
+    padding: 10,
+    marginTop: 10,
   },
 });

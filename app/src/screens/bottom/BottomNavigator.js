@@ -2,7 +2,7 @@ import {TouchableOpacity, Image} from 'react-native';
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Booking from './Booking';
-import RoomType from './RoomType';
+import Payment from './Payment';
 import Home from './Home';
 import Profile from './Profile';
 import imagePath from '../../assets/images/imagePath';
@@ -77,9 +77,10 @@ const BottomNavigator = () => {
         }}
       />
       <Bottom.Screen
-        name="RoomType"
-        component={RoomType}
+        name="Payment"
+        component={Payment}
         options={{
+          title:"Payment",
           headerShown: false,
           tabBarIcon: ({focused}) => (
             <Image
@@ -89,6 +90,7 @@ const BottomNavigator = () => {
               style={{
                 width: 24,
                 height: 24,
+                tintColor:'orange'
               }}
             />
           ),

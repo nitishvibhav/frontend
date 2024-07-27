@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {StyleSheet, Text, View, ScrollView} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {getRoomsDetails} from '../../redux/rooms/action';
+import {getRoomsDetails} from '../../redux/room/action';
 import FacilityBadge from '../../components/FacilityBadge';
 
 const AllRoomBooking = () => {

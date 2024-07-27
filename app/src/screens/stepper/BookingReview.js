@@ -5,6 +5,7 @@ import {useDispatch} from 'react-redux';
 import {get} from 'lodash';
 import {getBookingDetails, postBooking} from '../../redux/booking/action';
 import { useNavigation } from '@react-navigation/native';
+import { updateRoom } from '../../redux/room/action';
 
 const BookingReview = ({route}) => {
   const {data} = route.params;
@@ -76,9 +77,9 @@ const BookingReview = ({route}) => {
       phoneNumber: data.phoneNumber,
       nationality: data.nationality,
       hotelId: data.hotelId,
-      status: 'PENDING',
-      paymentStatus: 'PENDING',
-      bookingMethod: 'OFFLINE',
+      status: data.bookingStatus,
+      paymentStatus: data.paymentStatus,
+      bookingMethod: "OFFLINE",
       roomCategory: roomCategories.map((category, index) => ({
         _id: data.selectedItems[index]._id,
         title: category,
@@ -114,13 +115,42 @@ const BookingReview = ({route}) => {
     console.log(res, 'response');
     const status = get(res, 'value.status');
     if (status === 200) {
-      alert(get(res.value.data, 'message', 'Done'));
-      dispatch(getBookingDetails());
+      alert(get(res.value.data, 'message', 'Done'))
+      await updateRoomStatus()
       navigation.navigate('Home')
     } else {
       console.log(get(res, 'message', 'Done'));
     }
   };
+
+
+  const updateRoomStatus = async () => {
+    try {
+      const roomData = data.selectedItems.map(item => ({
+        roomId: item._id,
+        roomData: {
+          roomStatus: data.bookingStatus === "CHECK-IN" ? "BOOKED" : data.bookingStatus,
+          reservations: [
+            {
+              startDate: data.checkIn,
+              endDate: data.checkOut,
+            },
+          ],
+        },
+      }));
+  
+      for (const room of roomData) {
+        const res = await dispatch(updateRoom(room.roomData, room.roomId));
+        if (res.status !== 200) {
+          console.log('Failed to update room status for roomId:', room.roomId);
+        }
+      }
+      console.log('Room status updated successfully');
+    } catch (error) {
+      console.log('Error updating room status:', error);
+    }
+  };
+  
 
   return (
     <View style={{   flex: 1,}}>
