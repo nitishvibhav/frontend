@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   labelText: {
-    marginTop: 15,
+    marginTop: 0,
     fontWeight: '700',
     fontSize: 12,
     color: 'black',

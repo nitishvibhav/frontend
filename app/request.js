@@ -43,6 +43,7 @@ const request = {
   patch: async (path, data, header = {}) => axios.patch(url.base + path, data, await getConfig(header)),
   put: async (path, data, header = {}) => axios.put(url.base + path, data, await getConfig(header)),
   putFormData: async (path, data) => axios.put(url.base + path, data, await getConfig({}, true)),
+  postFormData: async (path, data) => axios.post(url.base + path, data, await getConfig({}, true)),
 };
 
 export { request, getAccessToken };

@@ -1,12 +1,4 @@
-import {
-  MainScreen,
-  RoomDetails,
-  Checkout,
-  CategoryDetails,
-  AddBooking,
-} from '../screens';
-import imagePath from '../assets/images/imagePath';
-import {TouchableOpacity, Image} from 'react-native';
+import {RoomDetails,} from '../screens';
 import LostAndFound from '../screens/lostandfound/LostAndFound';
 import DetailsLostItem from '../screens/lostandfound/DetailsLostItem';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -18,6 +10,8 @@ import BookingStepOne from '../screens/stepper/BookingStepOne';
 import BookingFilteration from '../screens/stepper/BookingFilteration';
 import LedgerBill from '../screens/ledger/LedgerBill';
 import LedgerDetail from '../screens/ledger/LedgerDetails';
+import UpdateBooking from '../screens/bookingDetails/UpdateBooking';
+import AddDocument from '../screens/bookingDetails/AddDocument';
 
 const Stack = createStackNavigator();
 
@@ -34,48 +28,22 @@ export default MainStack = () => (
       options={{
         headerShown: true,
         title: 'Booking Details',
-        headerRight: () => (
-          <TouchableOpacity
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <Image
-              source={imagePath.editIcon}
-              style={{
-                height: 26,
-                width: 26,
-                marginRight: 10,
-              }}
-            />
-          </TouchableOpacity>
-        ),
       }}
     />
 
+   
     <Stack.Screen
-      name="Checkout"
-      component={Checkout}
-      options={{headerShown: true, title: 'Checkout'}}
+      name="ledgerbill"
+      component={LedgerBill}
+      options={{headerShown: true, title: 'Add Payment Details'}}
     />
     <Stack.Screen
-      name="AddBooking"
-      component={AddBooking}
-      options={{headerShown: true, title: ' Add booking'}}
+      name="LedgerDetail"
+      component={LedgerDetail}
+      options={{headerShown: true, title: 'Payment Details'}}
     />
-    <Stack.Screen
-    name="ledgerbill"
-    component={LedgerBill}
-    options={{headerShown: true, title: 'Payment Details'}}
-  />
-  <Stack.Screen
-    name="LedgerDetail"
-    component={LedgerDetail}
-    options={{headerShown: true, title: 'Payment Details'}}
-  />
 
-<Stack.Screen
+    <Stack.Screen
       name="BookingFilteration"
       component={BookingFilteration}
       options={{headerShown: true, title: ' Choose Your Rooms'}}
@@ -110,6 +78,17 @@ export default MainStack = () => (
       name="review"
       component={BookingReview}
       options={{headerShown: true, title: ' Review Details '}}
+    />
+    <Stack.Screen
+      name="UpdateBooking"
+      component={UpdateBooking}
+      options={{headerShown: true, title: ' Update Booking Details '}}
+    />
+
+    <Stack.Screen
+      name="AddDocument"
+      component={AddDocument}
+      options={{headerShown: false}}
     />
   </Stack.Navigator>
 );

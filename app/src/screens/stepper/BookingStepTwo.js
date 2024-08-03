@@ -114,7 +114,8 @@ const BookingStepTwo = ({navigation, route}) => {
           'Date of Birth is required';
       }
       if (!guest.gender) {
-        validationErrors[`additionalGuestGender_${index}`] = 'Gender is required';
+        validationErrors[`additionalGuestGender_${index}`] =
+          'Gender is required';
       }
       if (!guest.age.trim()) {
         validationErrors[`additionalGuestAge_${index}`] = 'Age is required';
@@ -133,13 +134,7 @@ const BookingStepTwo = ({navigation, route}) => {
     }
   };
 
-  const handleCheckboxChange = fieldName => {
-    setData(prevData => ({
-      ...prevData,
-      gender: fieldName,
-    }));
-  };
-
+ 
   const addGuest = () => {
     setData(prevData => ({
       ...prevData,
@@ -192,7 +187,9 @@ const BookingStepTwo = ({navigation, route}) => {
             onChangeText={text => setData({...data, fullName: text})}
             value={data.fullName}
           />
-          {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
+          {errors.fullName && (
+            <Text style={styles.errorText}>{errors.fullName}</Text>
+          )}
         </View>
         <CustomTouchableOpacity
           icon={imagePath.alarmIcon}
@@ -239,7 +236,9 @@ const BookingStepTwo = ({navigation, route}) => {
               <Picker.Item label="Other" value="other" />
             </Picker>
           </View>
-          {errors.gender && <Text style={styles.errorText}>{errors.gender}</Text>}
+          {errors.gender && (
+            <Text style={styles.errorText}>{errors.gender}</Text>
+          )}
         </View>
       </View>
       <View style={[styles.sectionContainer, {marginTop: 10}]}>
@@ -268,7 +267,7 @@ const BookingStepTwo = ({navigation, route}) => {
               text={guest.dob}
               width="100%"
               onPress={() => {
-                setActiveGuestIndex(index); // Set the active guest index
+                setActiveGuestIndex(index);
                 setIsModalVisible(true);
               }}
             />
@@ -363,7 +362,9 @@ const BookingStepTwo = ({navigation, route}) => {
               onChangeText={text => setData({...data, state: text})}
               value={data.state}
             />
-            {errors.state && <Text style={styles.errorText}>{errors.state}</Text>}
+            {errors.state && (
+              <Text style={styles.errorText}>{errors.state}</Text>
+            )}
           </View>
           <View style={[styles.inputContainer, {width: '49%'}]}>
             <Text style={styles.label}>Country</Text>
@@ -373,7 +374,9 @@ const BookingStepTwo = ({navigation, route}) => {
               onChangeText={text => setData({...data, country: text})}
               value={data.country}
             />
-            {errors.country && <Text style={styles.errorText}>{errors.country}</Text>}
+            {errors.country && (
+              <Text style={styles.errorText}>{errors.country}</Text>
+            )}
           </View>
         </View>
         <View style={styles.rowContainer}>
@@ -385,7 +388,9 @@ const BookingStepTwo = ({navigation, route}) => {
               onChangeText={text => setData({...data, location: text})}
               value={data.location}
             />
-            {errors.location && <Text style={styles.errorText}>{errors.location}</Text>}
+            {errors.location && (
+              <Text style={styles.errorText}>{errors.location}</Text>
+            )}
           </View>
           <View style={[styles.inputContainer, {width: '49%'}]}>
             <Text style={styles.label}>Nationality</Text>

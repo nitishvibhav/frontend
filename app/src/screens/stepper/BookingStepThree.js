@@ -16,15 +16,15 @@ import {useDispatch, useSelector} from 'react-redux';
 import {getAminitiesCategoryDetails} from '../../redux/amenitiesCategory/action';
 
 const BookingStepThree = ({navigation, route}) => {
-  const {data} = route.params; // Previous page data
+  const {data} = route.params;
   console.log('Data from previous page:', data);
 
   const [purpose, setPurpose] = useState('');
   const [relation, setRelation] = useState('');
   const [amenities, setAmenities] = useState([]);
   const [documents, setDocuments] = useState([]);
-  const [bookingStatus, setBookingStatus] = useState('PENDING'); // New state for booking status
-  const [paymentStatus, setPaymentStatus] = useState('PENDING'); // New state for payment status
+  const [bookingStatus, setBookingStatus] = useState('PENDING'); 
+  const [paymentStatus, setPaymentStatus] = useState('PENDING'); 
   const [errors, setErrors] = useState({});
   const {amenitiesCategory} = useSelector(
     state => state.amenitiesCategoryReducer,

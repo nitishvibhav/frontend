@@ -1,174 +1,369 @@
+import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
-  Text,
   View,
-  TouchableOpacity,
+  Text,
+  TextInput,
+  Button,
   ScrollView,
+  StyleSheet,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {getByHotelIdLedger} from '../../redux/Ledger/action';
-import {useNavigation} from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { Picker } from '@react-native-picker/picker';
+import { Snackbar } from 'react-native-paper';
+import { getByHotelIdBooking } from '../../redux/Booking1/action';
+import { createLedger, updateLedger, getByHotelIdLedger } from '../../redux/Ledger/action';
+import { getUser } from '../../../utils';
 
-const LedgerBill = () => {
+const methodData = ['CARD', 'ONLINE', 'CASH', 'CHEQUE'];
+const statusData = ['PENDING', 'SUCCESS', 'PARTIALLY-PAID'];
+const paymentCat = ['RECEIPT-PAID', 'RECEIPT-RECEIVED'];
+const userCat = ['CUSTOMER', 'STAFF', 'ORGANIZATION'];
+
+export default function LedgerBill({ color, route, navigation }) {
+  const { item } = route.params || {}; // Get the item from the route params
+  const userDetails = getUser().result;
   const dispatch = useDispatch();
-  const navigation = useNavigation();
-  const {user} = useSelector(state => state.loginReducer);
-  const [ledgerData, setLedgerData] = useState([]);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarColor, setSnackbarColor] = useState('green');
+
+  const { getBookingByHotelId, bookingState } = useSelector(
+    state => state.booking1Reducer,
+  );
+
+  const { user } = useSelector(state => state.loginReducer);
 
   useEffect(() => {
-    const fetchLedgerData = async () => {
-      const response = await dispatch(getByHotelIdLedger(user.result.username));
-      if (response.value && response.value.data && response.value.data.result) {
-        setLedgerData(response.value.data.result);
-      }
-    };
-
-    fetchLedgerData();
+    dispatch(getByHotelIdBooking(user.result.username));
   }, [dispatch, user.result.username]);
 
-  const getStatusStyle = status => {
-    switch (status) {
-      case 'PENDING':
-        return {color: 'red', borderColor: 'red'}; // Red for Pending
-      case 'PARTIALLY-PAID':
-        return {color: 'orange', borderColor: 'orange'}; // Orange for Partially Paid
-      case 'SUCCESS':
-        return {color: 'green', borderColor: 'green'}; // Green for Successful
-      default:
-        return {};
+  const filterableData =
+    bookingState === 2 && getBookingByHotelId && getBookingByHotelId.result
+      ? getBookingByHotelId.result.filter(booking => booking.status !== 'CHECKED-OUT')
+      : [];
+
+  const pickerData = filterableData.map(item => ({
+    label: item.fullName,
+    value: item._id,
+  }));
+
+  const RoleSchema = Yup.object().shape({
+    linkupId: Yup.string().required('linkupId is required'),
+    date: Yup.string().required('date is required'),
+    method: Yup.string().required('method is required'),
+    amount: Yup.string().required('amount is required'),
+    charge: Yup.string().required('charge is required'),
+    dues: Yup.string().required('dues is required'),
+    payableAmount: Yup.string().required('payableAmount is required'),
+    paymentStatus: Yup.string().required('paymentStatus is required'),
+    paymentCategory: Yup.string().required('paymentCategory is required'),
+    userCategory: Yup.string().required('userCategory is required'),
+    receiptAgainst: Yup.string().required('receiptAgainst is required'),
+    remark: Yup.string().required('remark is required'),
+  });
+
+  const formik = useFormik({
+    initialValues: {
+    linkupId: user.result.username,
+    date: item ? item.date : '',
+    amount: item ? item.amount.toString() : '', // Ensuring it's a string
+    charge: item ? item.charge.toString() : '', // Ensuring it's a string
+    dues: item ? item.dues.toString() : '', // Ensuring it's a string
+    payableAmount: item ? item.payableAmount.toString() : '', // Ensuring it's a string
+    remark: item ? item.remark : '',
+    method: item ? item.method : '',
+    paymentStatus: item ? item.paymentStatus : '',
+    paymentCategory: item ? item.paymentCategory : '',
+    userCategory: item ? item.userCategory : '',
+    receiptAgainst: item ? item.receiptAgainst : '',
+  },
+    enableReinitialize: true,
+    validationSchema: RoleSchema,
+    onSubmit: values => {
+      if (item) {
+        updateHandler(values);
+      } else {
+        createHandler(values);
+      }
+    },
+  });
+
+  const { errors, touched, handleSubmit, handleChange, handleBlur, values } = formik;
+
+  const createHandler = async values => {
+    const res = await dispatch(createLedger(values));
+    const status = res?.value?.status;
+    if (status === 200) {
+      dispatch(getByHotelIdLedger(user.result.username));
+      setSnackbarColor('green');
+      setSnackbarMessage(res.value.data.message || 'Done');
+      formik.resetForm();
+      navigation.goBack(); // Navigate back to the previous screen
+    } else {
+      setSnackbarColor('red');
+      setSnackbarMessage(res.message || 'Error');
     }
+    setSnackbarVisible(true);
+  };
+
+  const updateHandler = async values => {
+    const res = await dispatch(updateLedger( values,item._id));
+    const status = res?.value?.status;
+    if (status === 200) {
+      dispatch(getByHotelIdLedger(user.result.username));
+      setSnackbarColor('green');
+      setSnackbarMessage(res.value.data.message || 'Updated successfully');
+      formik.resetForm();
+      navigation.goBack(); // Navigate back to the previous screen
+    } else {
+      setSnackbarColor('red');
+      setSnackbarMessage(res.message || 'Error');
+    }
+    setSnackbarVisible(true);
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Method</Text>
-        <Text style={styles.headerText}>Status</Text>
-        <Text style={styles.headerText}>Amount</Text>
-        <Text style={styles.headerText}>Dues</Text>
-        <Text style={styles.headerText}>Date</Text>
-      </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {ledgerData.map((item, index) => (
-          <TouchableOpacity
-            key={index}
-            onPress={() => navigation.navigate('LedgerDetail', {item})}>
-            <View style={styles.row}>
-              <Text style={styles.methodText}>{item.method}</Text>
-              <View
-                style={[
-                  styles.statusContainer,
-                  getStatusStyle(item.paymentStatus),
-                ]}>
-                <Text
-                  style={[
-                    styles.statusText,
-                    getStatusStyle(item.paymentStatus),
-                  ]}>
-                  {item.paymentStatus}
-                </Text>
-              </View>
-              <View style={styles.amountContainer}>
-                <Text style={styles.amountText}>रु {item.amount}</Text>
-              </View>
-              <View style={styles.duesContainer}>
-                <Text style={styles.duesText}>रु {item.dues}</Text>
-              </View>
-              <Text style={styles.dateText}>{item.date}</Text>
+    <View>
+      <ScrollView contentContainerStyle={styles.centeredView}>
+        <View style={styles.modalView}>
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Payment Method</Text>
+            <View style={styles.input}>
+              <Picker
+                selectedValue={values.method}
+                onValueChange={itemValue => formik.setFieldValue('method', itemValue)}
+              >
+                <Picker.Item label="Select Method" value="" />
+                {methodData.map(method => (
+                  <Picker.Item key={method} label={method} value={method} />
+                ))}
+              </Picker>
             </View>
-          </TouchableOpacity>
-        ))}
+            {touched.method && errors.method && (
+              <Text style={styles.errorText}>{errors.method}</Text>
+            )}
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Date</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Date"
+              value={values.date}
+              onChangeText={handleChange('date')}
+              onBlur={handleBlur('date')}
+            />
+            {touched.date && errors.date && (
+              <Text style={styles.errorText}>{errors.date}</Text>
+            )}
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Amount</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Amount"
+              keyboardType="numeric"
+              value={values.amount}
+              onChangeText={handleChange('amount')}
+              onBlur={handleBlur('amount')}
+            />
+            {touched.amount && errors.amount && (
+              <Text style={styles.errorText}>{errors.amount}</Text>
+            )}
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Charge</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Charge"
+              keyboardType="numeric"
+              value={values.charge}
+              onChangeText={handleChange('charge')}
+              onBlur={handleBlur('charge')}
+            />
+            {touched.charge && errors.charge && (
+              <Text style={styles.errorText}>{errors.charge}</Text>
+            )}
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Dues</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Dues"
+              keyboardType="numeric"
+              value={values.dues}
+              onChangeText={handleChange('dues')}
+              onBlur={handleBlur('dues')}
+            />
+            {touched.dues && errors.dues && (
+              <Text style={styles.errorText}>{errors.dues}</Text>
+            )}
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Payable Amount</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Payable Amount"
+              keyboardType="numeric"
+              value={values.payableAmount}
+              onChangeText={handleChange('payableAmount')}
+              onBlur={handleBlur('payableAmount')}
+            />
+            {touched.payableAmount && errors.payableAmount && (
+              <Text style={styles.errorText}>{errors.payableAmount}</Text>
+            )}
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Remark</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter Remark"
+              value={values.remark}
+              onChangeText={handleChange('remark')}
+              onBlur={handleBlur('remark')}
+            />
+            {touched.remark && errors.remark && (
+              <Text style={styles.errorText}>{errors.remark}</Text>
+            )}
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Payment Status</Text>
+            <View style={styles.input}>
+              <Picker
+                selectedValue={values.paymentStatus}
+                onValueChange={itemValue => formik.setFieldValue('paymentStatus', itemValue)}
+              >
+                <Picker.Item label="Select Status" value="" />
+                {statusData.map(status => (
+                  <Picker.Item key={status} label={status} value={status} />
+                ))}
+              </Picker>
+            </View>
+            {touched.paymentStatus && errors.paymentStatus && (
+              <Text style={styles.errorText}>{errors.paymentStatus}</Text>
+            )}
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Payment Category</Text>
+            <View style={styles.input}>
+              <Picker
+                selectedValue={values.paymentCategory}
+                onValueChange={itemValue => formik.setFieldValue('paymentCategory', itemValue)}
+              >
+                <Picker.Item label="Select Category" value="" />
+                {paymentCat.map(category => (
+                  <Picker.Item key={category} label={category} value={category} />
+                ))}
+              </Picker>
+            </View>
+            {touched.paymentCategory && errors.paymentCategory && (
+              <Text style={styles.errorText}>{errors.paymentCategory}</Text>
+            )}
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>User Category</Text>
+            <View style={styles.input}>
+              <Picker
+                selectedValue={values.userCategory}
+                onValueChange={itemValue => formik.setFieldValue('userCategory', itemValue)}
+              >
+                <Picker.Item label="Select User Category" value="" />
+                {userCat.map(category => (
+                  <Picker.Item key={category} label={category} value={category} />
+                ))}
+              </Picker>
+            </View>
+            {touched.userCategory && errors.userCategory && (
+              <Text style={styles.errorText}>{errors.userCategory}</Text>
+            )}
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>Receipt Against</Text>
+            <View style={styles.input}>
+              <Picker
+                selectedValue={values.receiptAgainst}
+                onValueChange={itemValue => formik.setFieldValue('receiptAgainst', itemValue)}
+              >
+                <Picker.Item label="Select Receipt Against" value="" />
+                {pickerData.map(item => (
+                  <Picker.Item key={item.value} label={item.label} value={item.value} />
+                ))}
+              </Picker>
+            </View>
+            {touched.receiptAgainst && errors.receiptAgainst && (
+              <Text style={styles.errorText}>{errors.receiptAgainst}</Text>
+            )}
+          </View>
+
+          <Button onPress={handleSubmit} title={item ? "Update" : "Submit"} color={color} />
+        </View>
       </ScrollView>
+
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => setSnackbarVisible(false)}
+        style={{ backgroundColor: snackbarColor }}
+      >
+        {snackbarMessage}
+      </Snackbar>
     </View>
   );
-};
-
-export default LedgerBill;
+}
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 10,
-    backgroundColor: '#f9f9f9',
+  centeredView: {
+    flexGrow: 1,
+    justifyContent: 'center',
   },
-  header: {
-    flexDirection: 'row',
-    backgroundColor: '#6200ee',
-    paddingVertical: 10,
-    borderRadius: 5,
+  modalView: {
+    backgroundColor: 'white',
+    borderRadius: 0,
+    padding: 20,
+  },
+  modalTitle: {
+    marginBottom: 20,
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  formGroup: {
+    marginBottom: 15,
+  },
+  label: {
+    fontSize: 14,
     marginBottom: 5,
   },
-  headerText: {
-    flex: 1,
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-    fontSize: 11, // Changed size to 11
-  },
-  row: {
-    flexDirection: 'row',
-    paddingVertical: 10,
-    alignItems: 'center',
-    backgroundColor: 'white',
+  input: {
+    height: 50,
+    borderColor: 'gray',
+    borderWidth: 1,
     borderRadius: 5,
-    marginVertical: 5,
-    marginHorizontal:5,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
-    shadowOpacity: 0.2,
-    shadowRadius: 1.5,
-    elevation: 2,
+    paddingLeft: 10,
   },
-  methodText: {
-    flex: 1,
-    color: 'purple',
-    fontWeight: '500',
-    fontSize: 11, // Changed size to 11
-    textAlign: 'center',
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+    marginTop: 5,
   },
-  statusContainer: {
-    width: '20%',
-    borderWidth: 0.5,
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 5,
-  },
-  statusText: {
-    fontWeight: 'bold',
-    fontSize: 11, // Changed size to 11
-  },
-  amountContainer: {
-    flex: 1,
-    backgroundColor: '#e0f7fa', // Light cyan background
-    borderRadius: 5,
-    padding: 5,
-    marginHorizontal: 5,
-    alignItems: 'center',
-  },
-  amountText: {
-    color: '#00796b', // Dark teal color
-    fontWeight: '600',
-    fontSize: 11, // Changed size to 11
-  },
-  duesContainer: {
-    flex: 1,
-    backgroundColor: '#ffe0b2', // Light orange background
-    borderRadius: 5,
-    padding: 5,
-    marginHorizontal: 5,
-    alignItems: 'center',
-  },
-  duesText: {
-    color: '#e65100', // Dark orange color
-    fontWeight: '600',
-    fontSize: 11, // Changed size to 11
-  },
-  dateText: {
-    flex: 1,
-    color: 'black',
-    fontWeight: '600',
-    fontSize: 10, // Changed size to 11
-    textAlign: 'center',
+  buttonContainer: {
+    justifyContent: 'space-between',
+    width: '100%',
   },
 });
+
+
+
+
+
+

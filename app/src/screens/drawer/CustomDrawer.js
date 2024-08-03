@@ -98,10 +98,10 @@ const CustomDrawer = () => {
           style={styles.textView}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <Text style={styles.text}>
-              Booked Rooms
+              Image Upload
             </Text>
           </View>
-          <TouchableOpacity >
+          <TouchableOpacity onPress={()=>navigation.navigate("ImageUpload")} >
           <Image
             source={imagePath.nextIcon}
             style={styles.nextImage}

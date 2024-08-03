@@ -1,4 +1,4 @@
-import {TouchableOpacity, Image} from 'react-native';
+import {TouchableOpacity, Image, Text} from 'react-native';
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Booking from './Booking';
@@ -14,7 +14,7 @@ const Bottom = createBottomTabNavigator();
 const BottomNavigator = () => {
   const navigation = useNavigation();
   return (
-    <Bottom.Navigator >
+    <Bottom.Navigator>
       <Bottom.Screen
         name="Home"
         component={Home}
@@ -38,7 +38,16 @@ const BottomNavigator = () => {
         name="Booking"
         component={Booking}
         options={{
-          headerShown: false,
+          headerShown: true,
+          title:"Booking Details",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Image
+                source={imagePath.backButton}
+                style={{width: 18, height: 18, marginLeft: 16}}
+              />
+            </TouchableOpacity>
+          ),
           tabBarIcon: ({focused}) => (
             <Image
               source={
@@ -53,16 +62,16 @@ const BottomNavigator = () => {
           tabBarActiveTintColor: 'black',
         }}
       />
-     <Bottom.Screen
+      <Bottom.Screen
         name="stepone"
         component={BookingStepOne}
         options={{
           headerShown: true,
-          title: "Booking Info",
+          title: 'Booking Info',
           headerLeft: () => (
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <Image
-                source={imagePath.backButton} 
+                source={imagePath.backButton}
                 style={{width: 20, height: 20, marginLeft: 16}}
               />
             </TouchableOpacity>
@@ -80,8 +89,29 @@ const BottomNavigator = () => {
         name="Payment"
         component={Payment}
         options={{
-          title:"Payment",
-          headerShown: false,
+          title: 'Payment',
+          headerShown: true,
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Image
+                source={imagePath.backButton}
+                style={{width: 18, height: 18, marginLeft: 16}}
+              />
+            </TouchableOpacity>
+          ),
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("ledgerbill")}
+              style={{
+                marginRight: 16,
+                backgroundColor: 'gray',
+                paddingHorizontal: 10,
+                paddingVertical: 5,
+                borderRadius: 6,
+              }}>
+              <Text style={{color:'white'}}>+ Add</Text>
+            </TouchableOpacity>
+          ),
           tabBarIcon: ({focused}) => (
             <Image
               source={
@@ -90,7 +120,7 @@ const BottomNavigator = () => {
               style={{
                 width: 24,
                 height: 24,
-                tintColor:'orange'
+                tintColor: 'orange',
               }}
             />
           ),

@@ -23,9 +23,11 @@ const Home = () => {
   const [VacantRoomCount, setVacantRoomCount] = useState('');
   const [reservedRooms, setReservedRooms] = useState('');
 
-  // useEffect(() => {
-  //   dispatch(getRoo());
-  // }, [dispatch]);
+  const {getBookingByHotelId} = useSelector(state=>state.booking1Reducer)
+  console.log(getBookingByHotelId,"booking details")
+
+  const bookingData = getBookingByHotelId
+
 
   useEffect(() => {
     if (rooms && rooms.result) {
@@ -171,6 +173,7 @@ const Home = () => {
         <View
           style={{borderBottomWidth: 1, borderColor: 'gray', marginVertical: 5}}
         />
+
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <View style={{width: '25%', alignItems: 'flex-start'}}>
             <Text style={{color: 'black', fontWeight: '500'}}>
@@ -260,11 +263,7 @@ const Home = () => {
           </View>
         </View>
       </View>
-      <CustomButton
-        title="Add Booking"
-        onPress={() => navigation.navigate('stepone')}
-        width="95%"
-      />
+     
       <View
         style={{
           justifyContent: 'space-between',

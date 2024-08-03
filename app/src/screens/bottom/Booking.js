@@ -1,113 +1,146 @@
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, ScrollView, Alert} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
 import {
-  getBookingDetails,
-  deleteBookingDetails,
-} from '../../redux/booking/action';
-import CustomDataTable from '../../components/CustomDataTable';
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getByHotelIdBooking } from '../../redux/Booking1/action';
+import { useNavigation } from '@react-navigation/native';
 
 const Booking = () => {
-  const navigation = useNavigation();
   const dispatch = useDispatch();
-  const {booking} = useSelector(state => state.bookingReducer);
+  const navigation = useNavigation();
+  const { user } = useSelector((state) => state.loginReducer);
+  const [ledgerData, setLedgerData] = useState([]);
 
   useEffect(() => {
-    dispatch(getBookingDetails());
-  }, [dispatch]);
+    const fetchLedgerData = async () => {
+      const response = await dispatch(getByHotelIdBooking(user.result.username));
+      if (response.value && response.value.data && response.value.data.result) {
+        const upcomingBookings = filterUpcomingBookings(response.value.data.result);
+        setLedgerData(upcomingBookings);
+      }
+    };
 
-  const [bookingData, setBookingData] = useState([]);
+    fetchLedgerData();
+  }, [dispatch, user.result.username]);
 
-  useEffect(() => {
-    if (booking.result) {
-      setBookingData(booking.result);
-    }
-  }, [booking]);
-
-  const bookingColumns = [
-    {label: 'Customer', field: 'fullName', numeric: false},
-    {label: 'Status', field: 'status', numeric: false},
-    {label: 'Check-in', field: 'checkIn', numeric: false},
-    {label: 'Check-out', field: 'checkOut', numeric: false},
-  ];
-
-  const handleEdit = () => {};
-
-  const handleRowPress = row => {
-    navigation.navigate('RoomDetails', {item: row});
+  const filterUpcomingBookings = (bookings) => {
+    const today = new Date();
+    return bookings.filter((booking) => {
+      const checkOutDate = new Date(booking.checkOut);
+      return checkOutDate > today;
+    });
   };
 
-  const handleDelete = (row, rowIndex) => {
-    dispatch(deleteBookingDetails(row._id));
-    Alert.alert("data has been deleted succesfully")
-    dispatch(getBookingDetails());
-  };
-
-  const getCellStyle = (field, value, row) => {
-    if (field === 'status') {
-      return {
-        color:
-          value === 'CHECK-IN'
-            ? 'green'
-            : value === 'PENDING'
-            ? 'orange'
-            : 'red',
-      };
+  const getStatusColor = (status) => {
+    switch (status.toLowerCase()) {
+      case 'check-in':
+        return { color: 'green' };
+      case 'reserved':
+        return { color: 'orange' };
+      case 'pending':
+        return { color: 'red' };
+      default:
+        return { color: 'black' };
     }
-    return {};
   };
 
   return (
-    <ScrollView>
-      <CustomDataTable
-        columns={bookingColumns}
-        data={bookingData}
-        title="Booking Data"
-        onRowPress={handleRowPress}
-        onEdit={handleEdit}
-        onDelete={(row, rowIndex) => handleDelete(row, rowIndex)}
-        getCellStyle={getCellStyle}
-      />
-    </ScrollView>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Full Name</Text>
+        <Text style={styles.headerText}>Status</Text>
+        <Text style={styles.headerText}>Check-In</Text>
+        <Text style={styles.headerText}>Check-Out</Text>
+      </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {ledgerData.map((item, index) => (
+          <TouchableOpacity
+            key={index}
+            onPress={() => navigation.navigate('RoomDetails', { item })}
+          >
+            <View style={styles.row}>
+              <Text style={styles.methodText}>{item.fullName}</Text>
+              <View style={styles.amountContainer}>
+                <Text style={[styles.amountText, getStatusColor(item.status)]}>
+                  {item.status}
+                </Text>
+              </View>
+              <Text style={styles.dateText}>{item.checkIn}</Text>
+              <Text style={styles.dateText}>{item.checkOut}</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </View>
   );
 };
 
 export default Booking;
 
 const styles = StyleSheet.create({
-  topContainer: {
-    width: '95%',
-    alignSelf: 'center',
+  container: {
     padding: 10,
-    marginTop: 10,
-    backgroundColor: 'white',
-    borderRadius: 6,
-    paddingBottom: 20,
+    backgroundColor: '#f9f9f9',
   },
-  headerContainer: {
+  header: {
     flexDirection: 'row',
+    backgroundColor: '#6200ee',
+    paddingVertical: 10,
+    borderRadius: 5,
+    marginBottom: 5,
   },
   headerText: {
-    width: '25%',
-    alignItems: 'flex-start',
-    color: 'black',
-    fontWeight: '800',
-    fontSize: 13,
+    flex: 1,
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: 11, // Changed size to 11
   },
-  itemContainer: {
+  row: {
     flexDirection: 'row',
+    paddingVertical: 10,
     alignItems: 'center',
-    paddingVertical: 4,
+    backgroundColor: 'white',
+    borderRadius: 5,
+    marginVertical: 5,
+    marginHorizontal: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.5,
+    elevation: 2,
   },
-  itemText: {
-    color: 'black',
+  methodText: {
+    flex: 1,
+    color: 'purple',
     fontWeight: '500',
-    fontSize: 12,
+    fontSize: 11, // Changed size to 11
+    textAlign: 'left',
+    marginLeft: 5,
   },
-  line: {
-    borderBottomWidth: 1,
-    borderColor: 'gray',
-    marginVertical: 15,
+  amountContainer: {
+    flex: 1,
+    backgroundColor: '#e0f7fa', // Light cyan background
+    borderRadius: 5,
+    padding: 5,
+    marginHorizontal: 5,
+    alignItems: 'center',
+  },
+  amountText: {
+    fontWeight: '600',
+    fontSize: 11, // Changed size to 11
+  },
+  dateText: {
+    flex: 1,
+    color: 'black',
+    fontWeight: '600',
+    fontSize: 10, // Changed size to 11
+    textAlign: 'center',
+    marginRight: 5,
   },
 });

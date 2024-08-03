@@ -8,6 +8,7 @@ import amenitiesCategoryReducer from './src/redux/amenitiesCategory/reducer'
 import filterationReducer from './src/redux/filteration/reducer'
 import booking1Reducer from './src/redux/Booking1/reducer'
 import ledgerReducer from './src/redux/Ledger/reducer'
+import documentReducer from './src/redux/documents/reducer'
 
 // import LandingPageReducer from "./LandingPage/Components/redux/reducer"
 
@@ -21,4 +22,5 @@ export default combineReducers({
     filterationReducer,
     booking1Reducer,
     ledgerReducer,
+    documentReducer,
 })

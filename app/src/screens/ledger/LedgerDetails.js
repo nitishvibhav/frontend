@@ -6,7 +6,7 @@ const LedgerDetail = ({ route, navigation }) => {
 
   const handleUpdate = () => {
     // Navigate to the update page or handle the update logic
-    navigation.navigate('Payment', { item });
+    navigation.navigate('ledgerbill', { item });
   };
 
   return (

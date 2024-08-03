@@ -14,8 +14,6 @@ import {Calendar} from 'react-native-calendars';
 import CustomTouchableOpacity from '../../components/CustomTouchableOpacity';
 import imagePath from '../../assets/images/imagePath';
 import CustomButton from '../../components/CustomButton';
-import {useDispatch, useSelector} from 'react-redux';
-import {getRoomsDetails} from '../../redux/room/action';
 
 const BookingStepOne = ({navigation, route}) => {
   const [data, setData] = useState(route.params?.data || {});
