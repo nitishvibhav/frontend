@@ -9,53 +9,76 @@ import {
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import TopMiniCard from '../../components/homepage/TopMiniCard';
-import {getRooms, getRoomsDetails} from '../../redux/room/action';
 import {useDispatch, useSelector} from 'react-redux';
 import imagePath from '../../assets/images/imagePath';
-import CustomButton from '../../components/CustomButton';
+import {getByHotelIdBooking} from '../../redux/Booking1/action';
+import {getByHotelIdLedger} from '../../redux/Ledger/action';
+import {getRoomByHotelID} from '../../redux/room/action';
 
 const Home = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const {rooms} = useSelector(state => state.roomReducer);
-  const [totalRooms, setTotalRooms] = useState('');
+  const {roomByHotelID} = useSelector(state => state.roomReducer);
   const [bookedRooms, setBookedRooms] = useState('');
   const [VacantRoomCount, setVacantRoomCount] = useState('');
   const [reservedRooms, setReservedRooms] = useState('');
+  const [recentBookings, setRecentBookings] = useState([]);
+  const [recentPayment, setRecentPayment] = useState([]);
 
-  const {getBookingByHotelId} = useSelector(state=>state.booking1Reducer)
-  console.log(getBookingByHotelId,"booking details")
+  const {getBookingByHotelId} = useSelector(state => state.booking1Reducer);
+  const bookingData = getBookingByHotelId?.result || [];
 
-  const bookingData = getBookingByHotelId
+  const {user} = useSelector(state => state.loginReducer);
+  const {getLedgerByHotelId} = useSelector(state => state.ledgerReducer);
+  const paymentData = getLedgerByHotelId.result;
+  console.log(paymentData, 'paymentdata is here');
+
+  useEffect(() => {
+    dispatch(getByHotelIdBooking(user.result.username));
+    dispatch(getByHotelIdLedger(user.result.username));
+    dispatch(getRoomByHotelID(user.result.username));
+  }, [dispatch]);
 
 
   useEffect(() => {
-    if (rooms && rooms.result) {
-      const filteredRoomsVacant = rooms.result.filter(
-        room => room.roomStatus === 'VACANT',
-      );
-      setVacantRoomCount(filteredRoomsVacant.length);
-      setTotalRooms(rooms.count);
+    if (Array.isArray(bookingData) && bookingData.length > 0) {
+      const sortedAndSlicedBookings = bookingData
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 5);
+      setRecentBookings(sortedAndSlicedBookings);
     }
-  }, [rooms]);
+  }, [bookingData]);
 
   useEffect(() => {
-    if (rooms && rooms.result) {
-      const filteredBookedRooms = rooms.result.filter(
-        room => (room.roomStatus = 'BOOKED'),
-      );
-      setBookedRooms(filteredBookedRooms.length);
+    if (Array.isArray(paymentData) && paymentData.length > 0) {
+      const sortedAndSlicedPayment = paymentData
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 5);
+      setRecentPayment(sortedAndSlicedPayment);
     }
-  }, [rooms]);
+  }, [paymentData]);
+
+
 
   useEffect(() => {
-    if (rooms && rooms.result) {
-      const filteredReservedRooms = rooms.result.filter(
-        room => (room.roomStatus = 'RESERVED'),
-      );
-      setReservedRooms(filteredReservedRooms.length);
-    }
-  }, [rooms]);
+    const today = new Date().toISOString().split('T')[0];
+    const bookingsToday = bookingData.filter(
+      booking => booking.checkIn.split('T')[0] === today,
+    );
+    const bookedToday = bookingsToday.filter(
+      booking => booking.status === 'BOOKED',
+    ).length;
+    const pendingToday = bookingsToday.filter(
+      booking => booking.status === 'PENDING',
+    ).length;
+    const reservedToday = bookingsToday.filter(
+      booking => booking.status === 'RESERVED',
+    ).length;
+
+    setBookedRooms(bookedToday);
+    setVacantRoomCount(pendingToday);
+    setReservedRooms(reservedToday);
+  }, [bookingData]);
 
   return (
     <ScrollView>
@@ -93,11 +116,11 @@ const Home = () => {
         <View style={styles.mainView}>
           <TopMiniCard
             title="Total Rooms"
-            data={totalRooms}
+            data={roomByHotelID.count}
             icon={imagePath.totalRooms}
           />
           <TopMiniCard
-            title="Vacant Rooms"
+            title="Pending Rooms"
             data={VacantRoomCount}
             icon={imagePath.vacantRooms}
           />
@@ -107,7 +130,6 @@ const Home = () => {
             title="Booked Rooms"
             data={bookedRooms}
             icon={imagePath.bookedRooms}
-            
           />
           <TopMiniCard
             title="Reserved Room"
@@ -152,118 +174,91 @@ const Home = () => {
         </TouchableOpacity>
       </View>
       <View style={styles.topContainer2}>
-        <View style={{flexDirection: 'row'}}>
+        <View style={{flexDirection: 'row', paddingVertical: 5}}>
           <View style={{width: '25%', alignItems: 'flex-start'}}>
-            <Text style={{color: 'black', fontWeight: '800'}}>Customer</Text>
+            <Text style={{color: 'black', fontWeight: '800', fontSize: 12}}>
+              Customer
+            </Text>
           </View>
           <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'black', fontWeight: '800'}}>
+            <Text style={{color: 'black', fontWeight: '800', fontSize: 12}}>
               Booking Status
             </Text>
           </View>
           <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'black', fontWeight: '800'}}>
+            <Text style={{color: 'black', fontWeight: '800', fontSize: 12}}>
               Arrived Date
             </Text>
           </View>
           <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'black', fontWeight: '800'}}>Payment</Text>
-          </View>
-        </View>
-        <View
-          style={{borderBottomWidth: 1, borderColor: 'gray', marginVertical: 5}}
-        />
-
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <View style={{width: '25%', alignItems: 'flex-start'}}>
-            <Text style={{color: 'black', fontWeight: '500'}}>
-              Abhishek Kumar
+            <Text style={{color: 'black', fontWeight: '800', fontSize: 12}}>
+              Payment
             </Text>
           </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'orange', fontWeight: '800'}}>Available</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'black', fontWeight: '500'}}>12-04-2024</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'orange', fontWeight: '800'}}>due</Text>
-          </View>
         </View>
         <View
-          style={{borderBottomWidth: 1, borderColor: 'gray', marginVertical: 5}}
+          style={{
+            borderBottomWidth: 0.5,
+            borderColor: 'gray',
+            marginVertical: 5,
+          }}
         />
-        <View style={{flexDirection: 'row'}}>
-          <View style={{width: '25%', alignItems: 'flex-start'}}>
-            <Text style={{color: 'black', fontWeight: '500'}}>Ashish</Text>
+        {recentBookings?.map(item => (
+          <View key={item._id}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingVertical: 5,
+              }}
+              >
+              <View style={{width: '25%', alignItems: 'flex-start'}}>
+                <Text style={{color: 'black', fontWeight: '500', fontSize: 11}}>
+                  {item.fullName}
+                </Text>
+              </View>
+              <View style={{width: '25%', alignItems: 'center'}}>
+                <Text
+                  style={{
+                    color:
+                      item.status == 'CHECK-IN'
+                        ? 'green'
+                        : item.status == 'PENDING'
+                        ? 'red'
+                        : 'orange',
+                    fontWeight: '800',
+                    fontSize: 11,
+                  }}>
+                  {item.status}
+                </Text>
+              </View>
+              <View style={{width: '25%', alignItems: 'center'}}>
+                <Text style={{color: 'black', fontWeight: '500', fontSize: 11}}>
+                  {item.checkIn}
+                </Text>
+              </View>
+              <View style={{width: '25%', alignItems: 'center'}}>
+                <Text
+                  style={{
+                    color: item.paymentStatus == 'SUCCESS' ? 'green' : 'red',
+                    fontWeight: '800',
+                    fontSize: 11,
+                  }}>
+                  {item.paymentStatus}
+                </Text>
+              </View>
+            </View>
+            <View
+              style={{
+                borderBottomWidth: 0.5,
+                borderColor: 'gray',
+                marginVertical: 5,
+              }}
+            />
           </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'green', fontWeight: '800'}}>Booked</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'black', fontWeight: '500'}}>11-04-2024</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'green', fontWeight: '800'}}>Paid</Text>
-          </View>
-        </View>
-        <View
-          style={{borderBottomWidth: 1, borderColor: 'gray', marginVertical: 5}}
-        />
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <View style={{width: '25%', alignItems: 'flex-start'}}>
-            <Text style={{color: 'black', fontWeight: '500'}}>
-              Sounak Kumar
-            </Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'orange', fontWeight: '800'}}>Available</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'black', fontWeight: '500'}}>12-04-2024</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'orange', fontWeight: '800'}}>due</Text>
-          </View>
-        </View>
-        <View
-          style={{borderBottomWidth: 1, borderColor: 'gray', marginVertical: 5}}
-        />
-        <View style={{flexDirection: 'row'}}>
-          <View style={{width: '25%', alignItems: 'flex-start'}}>
-            <Text style={{color: 'black', fontWeight: '500'}}>Bibek Panda</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'orange', fontWeight: '800'}}>Available</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'black', fontWeight: '500'}}>12-04-2024</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'orange', fontWeight: '800'}}>due</Text>
-          </View>
-        </View>
-        <View
-          style={{borderBottomWidth: 1, borderColor: 'gray', marginVertical: 5}}
-        />
-        <View style={{flexDirection: 'row'}}>
-          <View style={{width: '25%', alignItems: 'flex-start'}}>
-            <Text style={{color: 'black', fontWeight: '500'}}>
-              Nitish Kumar
-            </Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'green', fontWeight: '800'}}>Booked</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'black', fontWeight: '500'}}>11-04-2024</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'green', fontWeight: '800'}}>Paid</Text>
-          </View>
-        </View>
+        ))}
       </View>
-     
+
       <View
         style={{
           justifyContent: 'space-between',
@@ -277,7 +272,7 @@ const Home = () => {
             fontWeight: '800',
             fontSize: 18,
           }}>
-          Recent Room Booking
+          Payment Info
         </Text>
         <TouchableOpacity
           onPress={() => navigation.navigate('Room', {screen: 'All Room'})}
@@ -299,104 +294,97 @@ const Home = () => {
       </View>
       <View style={styles.topContainer2}>
         <View style={{flexDirection: 'row'}}>
-          <View style={{width: '25%', alignItems: 'flex-start'}}>
-            <Text style={{color: 'black', fontWeight: '800'}}>Room No.</Text>
+          <View style={{width: '20%', alignItems: 'flex-start'}}>
+            <Text style={{color: 'black', fontWeight: '800', fontSize: 12}}>
+              Room No.
+            </Text>
           </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'black', fontWeight: '800'}}>Room Type</Text>
+          <View style={{width: '20%', alignItems: 'center'}}>
+            <Text style={{color: 'black', fontWeight: '800', fontSize: 12}}>
+              Payment
+            </Text>
           </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'black', fontWeight: '800'}}>Rent</Text>
+          <View style={{width: '20%', alignItems: 'center'}}>
+            <Text style={{color: 'black', fontWeight: '800', fontSize: 12}}>
+              Paid
+            </Text>
           </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'black', fontWeight: '800'}}>Status</Text>
+          <View style={{width: '20%', alignItems: 'center'}}>
+            <Text style={{color: 'black', fontWeight: '800', fontSize: 12}}>
+              Dues
+            </Text>
           </View>
-        </View>
-        <View
-          style={{borderBottomWidth: 1, borderColor: 'gray', marginVertical: 5}}
-        />
-        <View style={{flexDirection: 'row'}}>
-          <View style={{width: '25%', alignItems: 'flex-start'}}>
-            <Text style={{color: 'purple', fontWeight: '500'}}>103</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'black', fontWeight: '500'}}>Single</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'black', fontWeight: '500'}}>$1200</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'orange', fontWeight: '800'}}>Available</Text>
+          <View style={{width: '20%', alignItems: 'center'}}>
+            <Text style={{color: 'black', fontWeight: '800', fontSize: 12}}>
+              Amount
+            </Text>
           </View>
         </View>
         <View
-          style={{borderBottomWidth: 1, borderColor: 'gray', marginVertical: 5}}
+          style={{
+            borderBottomWidth: 0.5,
+            borderColor: 'gray',
+            marginVertical: 10,
+          }}
         />
-        <View style={{flexDirection: 'row'}}>
-          <View style={{width: '25%', alignItems: 'flex-start'}}>
-            <Text style={{color: 'purple', fontWeight: '500'}}>105</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'black', fontWeight: '500'}}>double</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'black', fontWeight: '500'}}>$1100</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'green', fontWeight: '800'}}>Booked</Text>
-          </View>
-        </View>
-        <View
-          style={{borderBottomWidth: 1, borderColor: 'gray', marginVertical: 5}}
-        />
-        <View style={{flexDirection: 'row'}}>
-          <View style={{width: '25%', alignItems: 'flex-start'}}>
-            <Text style={{color: 'purple', fontWeight: '500'}}>203</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'black', fontWeight: '500'}}>Deluxe</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'black', fontWeight: '500'}}>$1600</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'orange', fontWeight: '800'}}>Available</Text>
-          </View>
-        </View>
-        <View
-          style={{borderBottomWidth: 1, borderColor: 'gray', marginVertical: 5}}
-        />
-        <View style={{flexDirection: 'row'}}>
-          <View style={{width: '25%', alignItems: 'flex-start'}}>
-            <Text style={{color: 'purple', fontWeight: '500'}}>303</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'black', fontWeight: '500'}}>Deluxe</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'black', fontWeight: '500'}}>$1600</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'green', fontWeight: '800'}}>Booked</Text>
-          </View>
-        </View>
-        <View
-          style={{borderBottomWidth: 1, borderColor: 'gray', marginVertical: 5}}
-        />
-        <View style={{flexDirection: 'row'}}>
-          <View style={{width: '25%', alignItems: 'flex-start'}}>
-            <Text style={{color: 'purple', fontWeight: '500'}}>403</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'black', fontWeight: '500'}}>Deluxe</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'black', fontWeight: '500'}}>$1600</Text>
-          </View>
-          <View style={{width: '25%', alignItems: 'center'}}>
-            <Text style={{color: 'orange', fontWeight: '800'}}>Available</Text>
-          </View>
-        </View>
+        {recentPayment?.map(item => {
+          const name =
+            bookingData &&
+            bookingData.find(data => data._id === item.receiptAgainst);
+          return (
+            <View key={item._id}>
+              <View style={{flexDirection: 'row'}} >
+                <View style={{width: '20%', alignItems: 'flex-start'}}>
+                  <Text
+                    style={{color: 'purple', fontWeight: '500', fontSize: 11}}>
+                    {name ? name.fullName : 'USER'}
+                  </Text>
+                </View>
+                <View style={{width: '20%', alignItems: 'center'}}>
+                  <Text
+                    style={{
+                      color:
+                        item.paymentStatus == 'SUCCESS'
+                          ? 'green'
+                          : item.paymentStatus == 'PENDING'
+                          ? 'red'
+                          : 'orange',
+                      fontWeight: '800',
+                      fontSize: 11,
+                    }}>
+                    {item.paymentStatus === 'PARTIALLY-PAID'
+                      ? 'PARTIALLY'
+                      : item.paymentStatus}
+                  </Text>
+                </View>
+                <View style={{width: '20%', alignItems: 'center'}}>
+                  <Text
+                    style={{color: 'green', fontWeight: '500', fontSize: 11}}>
+                    {item.payableAmount}
+                  </Text>
+                </View>
+                <View style={{width: '20%', alignItems: 'center'}}>
+                  <Text style={{color: 'red', fontWeight: '800', fontSize: 11}}>
+                    {item.dues}
+                  </Text>
+                </View>
+                <View style={{width: '20%', alignItems: 'center'}}>
+                  <Text
+                    style={{color: 'orange', fontWeight: '800', fontSize: 11}}>
+                    {item.amount}
+                  </Text>
+                </View>
+              </View>
+              <View
+                style={{
+                  borderBottomWidth: 0.5,
+                  borderColor: 'gray',
+                  marginVertical: 10,
+                }}
+              />
+            </View>
+          );
+        })}
       </View>
     </ScrollView>
   );

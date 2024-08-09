@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import CustomButton from '../../components/CustomButton';
 import {useDispatch, useSelector} from 'react-redux';
 import {getByReceiptIdLedger} from '../../redux/Ledger/action';
 import {launchImageLibrary} from 'react-native-image-picker';
@@ -112,7 +111,7 @@ const RoomDetails = () => {
     formData.append('title', 'Uploaded Image');
 
     try {
-      await dispatch(updateDocumentByID(formData));
+      await dispatch(uploadDocumentFile(formData));
       Alert.alert('Success', 'Documents uploaded successfully');
       setDocuments([]);
     } catch (error) {
@@ -124,6 +123,102 @@ const RoomDetails = () => {
   return (
     <View style={styles.flexContainer}>
       <ScrollView>
+        {/* Booking Details Container */}
+        <View style={styles.container}>
+          <View style={styles.ViewContainer}>
+            <Text style={styles.bookingTitle}>Booking Details</Text>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={styles.updateButton}
+                onPress={() => navigation.navigate('UpdateBooking', {item})}>
+                <Text style={styles.updateButtonText}>Update</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.ViewContainer}>
+            <Text style={styles.labelText}>Booking Status:</Text>
+            <Text style={styles.valueText}>{item.status}</Text>
+          </View>
+          <View style={styles.ViewContainer}>
+            <Text style={styles.labelText}>Payment Status:</Text>
+            <Text style={styles.valueText}>{item.paymentStatus}</Text>
+          </View>
+          <View style={styles.ViewContainer}>
+            <Text style={styles.labelText}>Full Name:</Text>
+            <Text style={styles.valueText}>{item.fullName}</Text>
+          </View>
+          <View style={styles.ViewContainer}>
+            <Text style={styles.labelText}>Check-In:</Text>
+            <Text style={styles.valueText}>{item.checkIn}</Text>
+          </View>
+          <View style={styles.ViewContainer}>
+            <Text style={styles.labelText}>Check-Out:</Text>
+            <Text style={styles.valueText}>{item.checkOut}</Text>
+          </View>
+          <View style={styles.ViewContainer}>
+            <Text style={styles.labelText}>Room Number:</Text>
+            <View style={{flexDirection: 'row'}}>
+              {item.rooms.map(Room => (
+                <View key={Room._id} style={styles.smallContainer}>
+                  <Text style={styles.roomTextContainer}>
+                    {Room.roomNumber}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </View>
+          <View style={styles.ViewContainer}>
+            <Text style={styles.labelText}>Total Guests:</Text>
+            <Text style={styles.valueText}>{item.numberOfGuest.total}</Text>
+          </View>
+          <View style={styles.ViewContainer}>
+            <Text style={styles.labelText}>Amenities:</Text>
+            <Text style={styles.valueText}>{item.aminities.join(', ')}</Text>
+          </View>
+          <View style={styles.ViewContainer}>
+            <Text style={styles.labelText}>Booking Method:</Text>
+            <Text style={styles.valueText}>{item.bookingMethod}</Text>
+          </View>
+
+          {item.guests && item.guests.length > 0 && (
+            <View style={styles.ViewContainer}>
+              <Text style={styles.labelText}>Guests:</Text>
+              {item.guests.map(guest => (
+                <Text style={styles.valueText} key={guest._id}>
+                  {`${guest.name} (Age: ${guest.age}, Gender: ${guest.gender})`}
+                </Text>
+              ))}
+            </View>
+          )}
+        </View>
+
+        {/* Fetched Images Section */}
+        <View style={styles.container}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+            <Text style={styles.uploadTitle}>Fetched Images</Text>
+            <TouchableOpacity
+              style={styles.updateButton}
+              onPress={() => setIsModalVisible(true)}>
+              <Text style={styles.updateButtonText}>Add image</Text>
+            </TouchableOpacity>
+          </View>
+          {fetchedImages.length > 0 ? (
+            fetchedImages.map((imageUrl, index) => (
+              <Image
+                key={index}
+                source={{uri: imageUrl}}
+                style={styles.uploadedImage}
+              />
+            ))
+          ) : (
+            <Text>No images fetched yet</Text>
+          )}
+        </View>
         <View style={styles.container}>
           <Text style={styles.ledgerTitle}>Payment History</Text>
           {ledgerData && ledgerData.length > 0 ? (
@@ -194,100 +289,6 @@ const RoomDetails = () => {
             ))
           ) : (
             <Text style={styles.noDataText}>No Ledger Data Available</Text>
-          )}
-        </View>
-
-        {/* Booking Details Container */}
-        <View style={styles.container}>
-          <View style={styles.ViewContainer}>
-            <Text style={styles.bookingTitle}>Booking Details</Text>
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={styles.updateButton}
-                onPress={() => navigation.navigate('UpdateBooking', {item})}>
-                <Text style={styles.updateButtonText}>Update</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View style={styles.ViewContainer}>
-            <Text style={styles.labelText}>Booking Status:</Text>
-            <Text style={styles.valueText}>{item.status}</Text>
-          </View>
-          <View style={styles.ViewContainer}>
-            <Text style={styles.labelText}>Full Name:</Text>
-            <Text style={styles.valueText}>{item.fullName}</Text>
-          </View>
-          <View style={styles.ViewContainer}>
-            <Text style={styles.labelText}>Check-In:</Text>
-            <Text style={styles.valueText}>{item.checkIn}</Text>
-          </View>
-          <View style={styles.ViewContainer}>
-            <Text style={styles.labelText}>Check-Out:</Text>
-            <Text style={styles.valueText}>{item.checkOut}</Text>
-          </View>
-          <View style={styles.ViewContainer}>
-            <Text style={styles.labelText}>Room Number:</Text>
-            <View style={{flexDirection: 'row'}}>
-              {item.rooms.map(Room => (
-                <View key={Room._id} style={styles.smallContainer}>
-                  <Text style={styles.roomTextContainer}>
-                    {Room.roomNumber}
-                  </Text>
-                </View>
-              ))}
-            </View>
-          </View>
-          <View style={styles.ViewContainer}>
-            <Text style={styles.labelText}>Guests:</Text>
-            {item.guests.map(guest => (
-              <Text
-                style={styles.valueText}
-                key={
-                  guest._id
-                }>{`${guest.name} (Age: ${guest.age}, Gender: ${guest.gender})`}</Text>
-            ))}
-          </View>
-          <View style={styles.ViewContainer}>
-            <Text style={styles.labelText}>Total Guests:</Text>
-            <Text style={styles.valueText}>{item.numberOfGuest.total}</Text>
-          </View>
-          <View style={styles.ViewContainer}>
-            <Text style={styles.labelText}>Amenities:</Text>
-            <Text style={styles.valueText}>{item.aminities.join(', ')}</Text>
-          </View>
-          <View style={styles.ViewContainer}>
-            <Text style={styles.labelText}>Booking Method:</Text>
-            <Text style={styles.valueText}>{item.bookingMethod}</Text>
-          </View>
-        </View>
-
-        {/* Document Upload Section */}
-
-        {/* Fetched Images Section */}
-        <View style={styles.container}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-            <Text style={styles.uploadTitle}>Fetched Images</Text>
-            <TouchableOpacity
-              style={styles.updateButton}
-              onPress={() => setIsModalVisible(true)}>
-              <Text style={styles.updateButtonText}>Add image</Text>
-            </TouchableOpacity>
-          </View>
-          {fetchedImages.length > 0 ? (
-            fetchedImages.map((imageUrl, index) => (
-              <Image
-                key={index}
-                source={{uri: imageUrl}}
-                style={styles.uploadedImage}
-              />
-            ))
-          ) : (
-            <Text>No images fetched yet</Text>
           )}
         </View>
         <Modal
@@ -392,7 +393,7 @@ const styles = StyleSheet.create({
   },
   updateButtonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 12,
   },
   bookingTitle: {
     fontSize: 18,
@@ -409,10 +410,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#007BFF',
     borderRadius: 5,
     marginHorizontal: 5,
+    paddingHorizontal: 10,
   },
   roomTextContainer: {
     padding: 5,
     color: 'white',
+    fontSize: 11,
   },
   uploadTitle: {
     fontSize: 18,
