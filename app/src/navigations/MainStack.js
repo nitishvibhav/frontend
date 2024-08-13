@@ -12,6 +12,7 @@ import LedgerBill from '../screens/ledger/LedgerBill';
 import LedgerDetail from '../screens/ledger/LedgerDetails';
 import UpdateBooking from '../screens/bookingDetails/UpdateBooking';
 import AddDocument from '../screens/bookingDetails/AddDocument';
+import AllBooking from '../screens/allScreens/AllBooking';
 
 const Stack = createStackNavigator();
 
@@ -88,6 +89,12 @@ export default MainStack = () => (
     <Stack.Screen
       name="AddDocument"
       component={AddDocument}
+      options={{headerShown: false}}
+    />
+
+    <Stack.Screen
+      name="AllBooking"
+      component={AllBooking}
       options={{headerShown: false}}
     />
   </Stack.Navigator>

@@ -27,6 +27,11 @@ const BookingStepOne = ({navigation, route}) => {
   const [errors, setErrors] = useState({});
   const currentDate = new Date().toISOString().split('T')[0];
 
+  useEffect(() => {
+    const total = parseInt(numberOfAdults || 0) + parseInt(numberOfChildren || 0);
+    setNumberOfGuests(total.toString());
+  }, [numberOfAdults, numberOfChildren]);
+
   const handlePressCheckin = day => {
     setCheckIn(day.dateString);
     setData(prevData => ({
@@ -43,14 +48,6 @@ const BookingStepOne = ({navigation, route}) => {
       checkOut: day.dateString,
     }));
     setIsModalVisible1(false);
-  };
-
-  const handleNumberOfGuestsChange = text => {
-    setNumberOfGuests(text);
-    setData(prevData => ({
-      ...prevData,
-      numberOfGuests: text,
-    }));
   };
 
   const handleNumberOfAdultsChange = text => {
@@ -160,7 +157,6 @@ const BookingStepOne = ({navigation, route}) => {
             <View style={styles.input}>
               <Image style={styles.iconinput} source={imagePath.guests} />
               <TextInput
-                
                 placeholder="CHILDREN"
                 value={numberOfChildren}
                 onChangeText={handleNumberOfChildrenChange}
@@ -176,14 +172,13 @@ const BookingStepOne = ({navigation, route}) => {
         <View style={styles.inputContainer}>
           <Text style={styles.label}>TOTAL NUMBER OF GUESTS</Text>
           <View style={styles.input}>
-          <Image style={styles.iconinput} source={imagePath.guests} />
-          <TextInput
-            placeholder="TOTAL GUESTS"
-            value={numberOfGuests}
-            onChangeText={handleNumberOfGuestsChange}
-            keyboardType="numeric"
-            placeholderTextColor="black"
-          />
+            <Image style={styles.iconinput} source={imagePath.guests} />
+            <TextInput
+              placeholder="TOTAL GUESTS"
+              value={numberOfGuests}
+              style={styles.TextInput}
+              editable={false} // Disable editing as it's calculated automatically
+            />
           </View>
           {errors.numberOfGuests && (
             <Text style={styles.errorText}>{errors.numberOfGuests}</Text>
@@ -238,9 +233,17 @@ const BookingStepOne = ({navigation, route}) => {
   );
 };
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  placeholder: {
+    position: 'absolute',
+    left: 10,
+    top: 10,
+    color: 'black',
+    fontWeight: 'bold',
   },
   sectionContainer: {
     marginTop: 15,

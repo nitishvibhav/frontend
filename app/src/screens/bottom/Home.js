@@ -155,7 +155,7 @@ const Home = () => {
         </Text>
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate('Booking', {screen: 'All Booking'})
+            navigation.navigate('AllBooking')
           }
           style={{flexDirection: 'row', alignItems: 'flex-end'}}>
           <Text
